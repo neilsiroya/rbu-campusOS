@@ -1,0 +1,10 @@
+"use client";
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { NOTIFICATIONS } from "@/lib/campus-data";
+import { PageIntro } from "@/components/os/PageIntro";
+import { DemoNotice } from "@/components/os/DemoNotice";
+import { EmptyState } from "@/components/os/EmptyState";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+export default function NotificationsPage() { const [items, setItems] = useState(NOTIFICATIONS); const [query, setQuery] = useState(""); const list = useMemo(() => items.filter((n) => `${n.title} ${n.body}`.toLowerCase().includes(query.toLowerCase())), [items, query]); return <div className="space-y-6"><PageIntro kicker="System" title="Notifications" description="CampusOS alerts from this demo product. Read state is held only in this view."/><DemoNotice/><div className="flex flex-col gap-3 sm:flex-row"><Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search notifications" className="sm:max-w-xs"/><Button variant="outline" onClick={() => setItems((all) => all.map((n) => ({...n, unread:false})))}>Mark all read</Button></div>{list.length === 0 ? <EmptyState title="No notifications match" body="Try a different search."/> : <div className="space-y-3">{list.map((n) => <article key={n.id} className={`rounded-2xl border border-border p-4 ${n.unread ? "bg-muted/30" : ""}`}><div className="flex flex-col justify-between gap-2 sm:flex-row"><div><p className="font-medium">{n.title}</p><p className="mt-1 text-sm text-muted-foreground">{n.body}</p><p className="mt-2 text-xs text-muted-foreground">{n.time} · {n.unread ? "Unread" : "Read"}</p></div><div className="flex gap-2"><Button variant="outline" size="sm" onClick={() => setItems((all) => all.map((x) => x.id === n.id ? {...x, unread:false} : x))}>Mark read</Button><Link href={n.href} className="rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground">Open</Link></div></div></article>)}</div>}</div>; }

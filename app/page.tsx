@@ -1,69 +1,8 @@
-import Image from "next/image";
-
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
-}
+"use client";
+import Link from "next/link";
+import { ArrowRight, Bot, CalendarDays, Map, MessageCircleHeart, Search, UsersRound } from "lucide-react";
+import { motion } from "framer-motion";
+import { BrandMark } from "@/components/os/BrandMark";
+import { Button } from "@/components/ui/button";
+const lanes = [{icon: MessageCircleHeart, title:"The campus conversation", text:"Feed, confessions, clubs, people and a kinder Lost & Found."},{icon: Map,title:"The campus, legible",text:"A visual map, facilities and student-facing services when you need them."},{icon: CalendarDays,title:"A week with momentum",text:"Events, hackathons, internships and placement discovery — clearly marked demo where appropriate."},{icon: Bot,title:"Campus-aware help",text:"A knowledge layer for places, events, clubs and your demo timetable."}];
+export default function Home(){return <main className="min-h-screen overflow-hidden"><header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8"><BrandMark href="/"/><div className="flex items-center gap-2"><Link href="/auth/login"><Button variant="ghost" className="rounded-full">Log in</Button></Link><Link href="/auth/signup"><Button className="rounded-full">Get started</Button></Link></div></header><section className="mx-auto grid max-w-7xl gap-12 px-5 pb-20 pt-10 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:pt-20"><div><p className="text-[11px] font-semibold uppercase tracking-[.28em] text-muted-foreground">RBU CampusOS · community first</p><h1 className="mt-5 max-w-3xl font-display text-6xl leading-[.92] tracking-tight sm:text-8xl">ONE CAMPUS.<br/>ONE IDENTITY.<br/><span className="text-primary">EVERY EXPERIENCE.</span></h1><p className="mt-6 max-w-xl text-xl leading-relaxed text-muted-foreground">A social operating system for the moments that make a campus feel shared — with useful academic tools tucked in when you need them.</p><div className="mt-8 flex flex-wrap gap-3"><Link href="/auth/signup"><Button size="lg" className="rounded-full">Create your identity <ArrowRight className="ml-2 size-4"/></Button></Link><Link href="/auth/login"><Button size="lg" variant="outline" className="rounded-full">Enter CampusOS</Button></Link></div></div><motion.div initial={{opacity:0,y:18}} animate={{opacity:1,y:0}} transition={{duration:.55}} className="glass-strong rounded-[2rem] p-5 shadow-2xl"><div className="rounded-2xl border border-border bg-background/55 p-4"><div className="flex items-center justify-between"><p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Campus pulse</p><span className="size-2 rounded-full bg-success"/></div><p className="mt-3 font-display text-2xl">Something to do, someone to find, a place to be.</p></div><div className="mt-4 grid gap-3 sm:grid-cols-2"><div className="rounded-2xl bg-primary p-4 text-primary-foreground"><UsersRound className="size-5"/><p className="mt-5 text-sm font-medium">Club Fair · 12 Sep</p><p className="mt-1 text-xs opacity-75">Central Quad</p></div><div className="rounded-2xl border border-border p-4"><MessageCircleHeart className="size-5 text-primary"/><p className="mt-5 text-sm font-medium">A quieter place to say it</p><p className="mt-1 text-xs text-muted-foreground">Anonymous confessions</p></div><div className="rounded-2xl border border-border p-4"><Map className="size-5 text-primary"/><p className="mt-5 text-sm font-medium">Find Lab-4</p><p className="mt-1 text-xs text-muted-foreground">Campus schematic</p></div><div className="rounded-2xl bg-muted p-4"><Search className="size-5 text-primary"/><p className="mt-5 text-sm font-medium">One search, campus-wide</p><p className="mt-1 text-xs text-muted-foreground">People, places, events</p></div></div></motion.div></section><section className="mx-auto max-w-7xl px-5 pb-24 sm:px-8"><div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">{lanes.map(({icon:Icon,title,text},i)=><motion.article key={title} initial={{opacity:0,y:12}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:i*.08}} className="group rounded-3xl border border-border bg-card/80 p-6 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"><span className="text-xs font-bold text-primary/40">{String(i+1).padStart(2,'0')}</span><Icon className="mt-4 size-6 text-primary"/><h2 className="mt-6 font-display text-xl font-bold text-foreground">{title}</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p></motion.article>)}</div><div className="mt-16 rounded-[2rem] bg-foreground px-7 py-10 text-background sm:px-10"><p className="text-xs uppercase tracking-[.22em] opacity-65">RBU CampusOS</p><div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><h2 className="max-w-xl font-display text-4xl leading-tight">One home for the life around your degree.</h2><Link href="/auth/signup"><Button className="rounded-full bg-background text-foreground hover:bg-background/90">Join your campus <ArrowRight className="ml-2 size-4"/></Button></Link></div></div></section></main>}
