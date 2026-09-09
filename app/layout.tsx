@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import LiquidCursor from "@/components/CursorSpotlight";
+import { ToastProvider } from "@/lib/toast-context";
+import { ToastViewport } from "@/components/ui/Toast";
 
 export const metadata: Metadata = {
   title: "RBU CampusOS",
@@ -15,11 +17,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className="h-full antialiased"
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col relative">
+      <body className="min-h-full flex flex-col relative" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <div className="aurora-bg" />
           <LiquidCursor />
-          {children}
+          <ToastProvider>
+            {children}
+            <ToastViewport />
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
   Sparkles,
@@ -231,6 +231,7 @@ function resolveCampusQuery(query: string): { text: string; card?: StructuredCar
 
 export default function CampusAIPage() {
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "m-init",
@@ -239,6 +240,12 @@ export default function CampusAIPage() {
       timestamp: "Now",
     },
   ]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const latestIdRef = useRef<number>(0);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages, isTyping]);
 
   const handleSend = (text: string) => {
     const q = text.trim();
@@ -260,8 +267,16 @@ export default function CampusAIPage() {
       timestamp: "Just now",
     };
 
-    setMessages((prev) => [...prev, userMsg, assistantMsg]);
+    const id = ++latestIdRef.current;
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setIsTyping(true);
+
+    setTimeout(() => {
+      if (latestIdRef.current !== id) return;
+      setMessages((prev) => [...prev, assistantMsg]);
+      setIsTyping(false);
+    }, 1100);
   };
 
   return (
@@ -300,7 +315,7 @@ export default function CampusAIPage() {
           </div>
 
           {/* Conversation history */}
-          <div className="flex-1 space-y-4 overflow-y-auto p-6 custom-scrollbar">
+          <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto p-6 custom-scrollbar">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -364,6 +379,26 @@ export default function CampusAIPage() {
                 </div>
               </div>
             ))}
+
+            {isTyping && (
+              <div className="flex gap-3 mr-auto max-w-[88%]">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                  <Bot className="size-4" />
+                </div>
+                <div className="rounded-2xl rounded-tl-none px-4 py-3.5 activity-surface shadow-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="flex items-center gap-1">
+                      <span className="size-1.5 rounded-full bg-primary animate-bounce [animation-delay:0ms]" />
+                      <span className="size-1.5 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
+                      <span className="size-1.5 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
+                    </span>
+                    <span className="text-[11px] text-muted-foreground">
+                      Synthesizing campus knowledge…
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Input Box Form */}

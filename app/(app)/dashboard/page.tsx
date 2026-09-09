@@ -20,6 +20,7 @@ import ConfessionPreview from "@/components/dashboard/ConfessionPreview";
 import QuickActions from "@/components/dashboard/QuickActions";
 import AcademicPreview from "@/components/dashboard/AcademicPreview";
 import XPProgress from "@/components/dashboard/XPProgress";
+import CampusAIQuickAsk from "@/components/dashboard/CampusAIQuickAsk";
 import CampusAIPreview from "@/components/dashboard/CampusAIPreview";
 
 export default function DashboardPage() {
@@ -186,6 +187,9 @@ export default function DashboardPage() {
 
       {/* Academics & Urgency Section */}
       <AcademicPreview nextClass={nextClass} tasks="" />
+
+      {/* Campus AI Quick Ask */}
+      <CampusAIQuickAsk />
 
       {/* Campus AI Intelligence Preview */}
       <CampusAIPreview />
