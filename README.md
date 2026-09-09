@@ -1,40 +1,186 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RBU CampusOS
 
-## Getting Started
+**A student-centric digital operating system for campus life at Ramdeobaba University.**
 
-First, run the development server:
+[🚀 Live Demo](https://rbu-campus-os.vercel.app/)
+
+RBU CampusOS is a modern web platform designed to bring academic tools, campus information, student utilities, and community features into one unified interface.
+
+The project is being developed as a personal student project with a focus on modern web development, AI-powered interfaces, and practical campus technology.
+
+---
+
+## ✨ Features
+
+### 📊 Academic Dashboard
+A centralized dashboard for viewing important academic information such as schedules, coursework, exams, and attendance.
+
+### 🤖 Campus AI Assistant
+An AI-oriented interface designed around answering campus-specific questions and helping students navigate university information.
+
+### 🔎 Omnisearch
+A command-based search and navigation system accessible through `Ctrl + K`, allowing users to quickly navigate through CampusOS.
+
+### 💬 Anonymous Confessions
+A privacy-focused interface for campus confessions featuring alias-based posting, privacy indicators, and interactive confession cards.
+
+### 🛒 Student Marketplace & Resources
+A unified interface for student listings and academic resources, designed to eventually provide a central place for students to exchange items and materials.
+
+### 🎨 Modern UI
+A responsive glass-morphic interface with dark and light themes, animated interactions, aurora backgrounds, cursor effects, and reusable UI components.
+
+---
+
+## 🚀 Tech Stack
+
+| Category | Technology |
+| --- | --- |
+| Framework | Next.js 16 — App Router |
+| Library | React 19 |
+| Language | TypeScript |
+| Styling | Tailwind CSS 4 |
+| Animation | Framer Motion |
+| UI | shadcn/ui, Base UI |
+| Icons | Lucide React |
+| Backend & Storage | Supabase |
+| Deployment | Vercel |
+
+---
+
+## 🏗️ How It Works
+
+RBU CampusOS follows a modular Next.js App Router architecture.
+
+- **`app/`** contains the application's routes and page-level functionality.
+- **`components/`** contains reusable UI components organized by feature and purpose.
+- **`lib/`** contains shared utilities, data, helpers, and application logic.
+- **Supabase** provides the backend infrastructure and storage used by the application.
+- **Vercel** handles production deployment and automatically deploys changes pushed to the `main` branch.
+
+The application is structured so that individual campus modules can be developed independently while sharing the same application shell, navigation, UI system, and backend infrastructure.
+
+---
+
+## 📁 Project Structure
+
+```text
+rbu-campus-os/
+├── app/
+│   ├── (app)/              # Main application routes
+│   └── auth/               # Authentication routes
+│
+├── components/
+│   ├── dashboard/          # Dashboard-specific components
+│   ├── confessions/        # Confession-related components
+│   ├── layout/             # Header, sidebar, app shell, navigation
+│   └── ui/                 # Shared UI primitives
+│
+├── lib/                    # Utilities, helpers, data, and shared logic
+├── public/                 # Static assets
+├── supabase/               # Supabase configuration and migrations
+│
+├── .env.example            # Environment variable reference
+├── next.config.ts          # Next.js configuration
+├── package.json            # Dependencies and project scripts
+├── package-lock.json       # Locked dependency versions
+└── tsconfig.json            # TypeScript configuration
+```
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Installation
+
+Clone the repository and install the dependencies:
+
+```bash
+git clone https://github.com/neilsiroya/rbu-campusOS.git
+cd rbu-campusOS
+npm install
+```
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at:
+http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Configuration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Some functionality uses Supabase and requires the appropriate environment variables to be configured locally.
 
-## Learn More
+Create a .env.local file based on the variables defined in .env.example.
 
-To learn more about Next.js, take a look at the following resources:
+Environment variables are intentionally not included in the repository.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📜 Available Scripts
 
-## Deploy on Vercel
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Starts the development server |
+| `npm run build` | Creates a production build |
+| `npm run start` | Runs the production build |
+| `npm run lint` | Runs ESLint checks |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# rbu-campusOS
->>>>>>> 7558b2c5cd344d9e7862a884684e0689c6ac6bd9
+## 🗺️ Roadmap
+
+### Completed
+- Modern glass-morphic application shell
+- Dashboard interface
+- Dashboard urgency-card system
+- Inline AI QuickAsk interface
+- Campus AI interface
+- Omnisearch and command navigation
+- Toast notification system
+- Confessions interface and composer
+- Privacy-focused confession UI
+- Dark and light themes
+- Responsive layouts
+- Supabase integration
+- Production deployment on Vercel
+
+### Planned
+- Full backend integration for persistent data (Supabase).
+- User profile customization and telemetry.
+- Real-time notification system.
+- Interactive campus map enhancements.
+- Expanded attendance management
+- Timetable and academic data integration
+- Additional student utilities
+
+---
+
+## 📦 Deployment
+
+The production application is deployed using Vercel.
+
+The main branch is connected to the production deployment, allowing changes pushed to GitHub to trigger new deployments automatically.
+
+Live application:
+https://rbu-campus-os.vercel.app/
+
+---
+
+## 👨‍💻 Author
+
+**Neil Siroya**
+
+RBU CampusOS is an independently developed student project focused on building a modern digital experience for campus life while exploring full-stack development, AI, and modern web technologies.
+
+## ⚖️ License
+
+All Rights Reserved.
+
+This repository is publicly available for viewing and reference. The source code may not be copied, modified, redistributed, or used commercially without permission from the author.
