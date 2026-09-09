@@ -185,7 +185,7 @@ export default function DashboardPage() {
       />
 
       {/* Academics & Urgency Section */}
-      <AcademicPreview nextClass={nextClass} />
+      <AcademicPreview nextClass={nextClass} tasks="" />
 
       {/* Campus AI Intelligence Preview */}
       <CampusAIPreview />
