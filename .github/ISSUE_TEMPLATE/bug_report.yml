@@ -1,0 +1,62 @@
+name: Bug report
+description: Report a defect so it can be fixed.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue. Please fill in as much detail as you can so it can be reproduced and fixed quickly.
+  - type: input
+    id: page
+    attributes:
+      label: Where did it happen?
+      description: The page or feature affected (e.g. Dashboard, Campus AI, Marketplace).
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug, what you expected to happen, and what actually happened.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. See error
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where were you viewing the app?
+      options:
+        - Live demo (Vercel)
+        - Local development
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      description: Which browser did you use?
+      options:
+        - Chrome / Edge / Chromium
+        - Firefox
+        - Safari
+        - Other
+      default: 0
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Verification
+      options:
+        - label: I searched for an existing issue before filing this report.
+          required: true

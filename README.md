@@ -67,24 +67,23 @@ The application is structured so that individual campus modules can be developed
 ```text
 rbu-campus-os/
 ├── app/
-│   ├── (app)/              # Main application routes
+│   ├── (app)/              # Main application routes (dashboard, modules)
 │   └── auth/               # Authentication routes
 │
 ├── components/
 │   ├── dashboard/          # Dashboard-specific components
-│   ├── confessions/        # Confession-related components
 │   ├── layout/             # Header, sidebar, app shell, navigation
+│   ├── os/                 # System-level primitives and notices
 │   └── ui/                 # Shared UI primitives
 │
 ├── lib/                    # Utilities, helpers, data, and shared logic
 ├── public/                 # Static assets
-├── supabase/               # Supabase configuration and migrations
 │
-├── .env.example            # Environment variable reference
+├── proxy.ts                # Edge middleware (auth / routing gate)
 ├── next.config.ts          # Next.js configuration
 ├── package.json            # Dependencies and project scripts
 ├── package-lock.json       # Locked dependency versions
-└── tsconfig.json            # TypeScript configuration
+└── tsconfig.json           # TypeScript configuration
 ```
 
 ## 🛠️ Getting Started
@@ -115,11 +114,14 @@ http://localhost:3000
 
 ### Environment Configuration
 
-Some functionality uses Supabase and requires the appropriate environment variables to be configured locally.
+Authentication and profile identity use Supabase and require the following environment variables in a local `.env.local` file:
 
-Create a .env.local file based on the variables defined in .env.example.
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | The public (anon) API key for your project |
 
-Environment variables are intentionally not included in the repository.
+Both values are public by design and must be tagged `NEXT_PUBLIC_` so the browser client can read them. Environment variables are intentionally not committed to the repository; the project runs as an anonymized demo without them.
 
 ---
 
@@ -131,6 +133,7 @@ Environment variables are intentionally not included in the repository.
 | `npm run build` | Creates a production build |
 | `npm run start` | Runs the production build |
 | `npm run lint` | Runs ESLint checks |
+| `npm run typecheck` | Runs the TypeScript type checker |
 
 ---
 

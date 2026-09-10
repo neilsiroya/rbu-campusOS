@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: CampusOS Live Demo
+    url: https://rbu-campus-os.vercel.app/
+    about: Check the live application before filing a bug report.
