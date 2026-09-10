@@ -22,7 +22,6 @@ import {
   LOST_FOUND,
   MAP_PLACES,
   MARKETPLACE_LISTINGS,
-  SERVICES,
   STUDY_RESOURCES,
   TIMETABLE,
 } from "@/lib/campus-data";
@@ -162,7 +161,6 @@ function resolveCampusQuery(query: string): { text: string; card?: StructuredCar
 
   // 5. Shuttle / Bus / Gate query
   if (q.includes("bus") || q.includes("shuttle") || q.includes("gate") || q.includes("transport")) {
-    const shuttle = SERVICES.find((s) => s.id === "s3") || SERVICES[0];
     return {
       text: `Campus Electric Shuttle operates on a continuous 15-minute loop connecting Main Gate 1, Quad, Library, and South Gate 2 from 7:30 AM to 8:30 PM.`,
       card: {

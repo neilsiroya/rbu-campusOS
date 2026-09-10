@@ -3,11 +3,9 @@
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { usePathname } from 'next/navigation';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     const onResize = () => {

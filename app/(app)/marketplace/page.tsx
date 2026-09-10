@@ -12,8 +12,6 @@ import {
   ShieldCheck,
   X,
   Sparkles,
-  ArrowRight,
-  Filter,
   CheckCircle2,
   Bike,
   Calculator,
@@ -23,7 +21,6 @@ import {
   Bed,
   Dumbbell,
   Radio,
-  SlidersHorizontal,
 } from "lucide-react";
 import { MARKETPLACE_LISTINGS, type MarketplaceListing } from "@/lib/campus-data";
 import { useSessionItems } from "@/lib/session-store";

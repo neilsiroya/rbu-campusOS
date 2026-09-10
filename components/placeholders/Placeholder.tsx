@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Cpu } from "lucide-react";
 
 export default function PlaceholderPage({ title, description }: { title: string, description: string }) {
+  const router = useRouter();
   // Extract category from title (e.g., "Academic Hub" -> "ACADEMICS")
   const category = title.split(" ")[1] || "SYSTEM";
-  const [modId, setModId] = useState(() => Math.floor(Math.random() * 1000000).toString(16));
+  const [modId] = useState(() => Math.floor(Math.random() * 1000000).toString(16));
 
   return (
     <div className="flex items-center justify-center min-h-[80vh] p-6">
@@ -56,7 +58,7 @@ export default function PlaceholderPage({ title, description }: { title: string,
               <Button
                 variant="outline"
                 className="rounded-full px-8 h-10 text-xs font-bold uppercase tracking-widest transition-all hover:scale-105"
-                onClick={() => window.location.href = "/dashboard"}
+                onClick={() => router.push("/dashboard")}
               >
                 Return to Command Center
               </Button>

@@ -1,33 +1,24 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 /**
  * Session-only persistence hook.
  * Stores ephemeral student interactions (created listings, notes, confessions, etc.)
  * in browser sessionStorage without pretending to write to a backend server.
  */
-export function useSessionItems<T>(key: string, seed: T[]) {
-  const [items, setItems] = useState<T[]>(seed);
-  const [hydrated, setHydrated] = useState(false);
+function readStorage<T>(key: string): T[] | null {
+  try {
+    const raw = sessionStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T[]) : null;
+  } catch {
+    // Keep seed data if storage is unavailable
+    return null;
+  }
+}
 
-  useEffect(() => {
-    let isMounted = true;
-    try {
-      const raw = sessionStorage.getItem(key);
-      if (raw && isMounted) {
-        setItems(JSON.parse(raw) as T[]);
-      }
-    } catch {
-      // Keep seed data if storage is unavailable
-    }
-    if (isMounted) {
-      setHydrated(true);
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [key]);
+export function useSessionItems<T>(key: string, seed: T[]) {
+  const [items, setItems] = useState<T[]>(() => readStorage(key) ?? seed);
 
   const prepend = useCallback(
     (item: T) => {
@@ -59,5 +50,5 @@ export function useSessionItems<T>(key: string, seed: T[]) {
     [key]
   );
 
-  return { items, prepend, update, hydrated };
+  return { items, prepend, update };
 }

@@ -5,20 +5,13 @@ import {
   BookOpen,
   FileText,
   Share2,
-  Sparkles,
   ThumbsUp,
   X,
   Search,
-  CheckCircle2,
   GraduationCap,
-  Layers,
   Download,
-  Filter,
   Flame,
-  Clock,
-  Tag,
   BookMarked,
-  Eye,
 } from "lucide-react";
 import { STUDY_RESOURCES, type StudyResource } from "@/lib/campus-data";
 import { useSessionItems } from "@/lib/session-store";

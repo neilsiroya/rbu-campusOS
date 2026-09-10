@@ -5,23 +5,15 @@ import {
   ShoppingBag,
   BookOpen,
   MapPin,
-  Calendar,
-  Users,
-  Search,
   ArrowRight,
   Briefcase,
-  Sparkles,
 } from "lucide-react";
 
 interface QuickActionsProps {
-  clubs?: string;
-  lostFound?: string;
   opportunities?: string;
 }
 
 export default function QuickActions({
-  clubs = "Robotics & Coding clubs meet tonight in Lab-4.",
-  lostFound = "Navy Hoodie found near LT-101.",
   opportunities = "3 summer internship positions posted.",
 }: QuickActionsProps) {
   return (

@@ -1,20 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Map, ShoppingBag, BookOpen, Sparkles, Zap, Tag, Flame, Users } from "lucide-react";
+import { ArrowRight, ShoppingBag, BookOpen, Flame } from "lucide-react";
 import {
   CURRENT_STUDENT,
   CONFESSIONS,
   EVENTS,
   FEED_POSTS,
-  LOST_FOUND,
   TIMETABLE,
   DEMO_NOTICE,
   MARKETPLACE_LISTINGS,
   STUDY_RESOURCES,
 } from "@/lib/campus-data";
 import { DemoNotice } from "@/components/os/DemoNotice";
-import { Button } from "@/components/ui/button";
 import CampusPulse from "@/components/dashboard/CampusPulse";
 import ConfessionPreview from "@/components/dashboard/ConfessionPreview";
 import QuickActions from "@/components/dashboard/QuickActions";
@@ -29,7 +27,6 @@ export default function DashboardPage() {
   const nextClass = TIMETABLE[2];
   const confession = CONFESSIONS[0];
   const event = EVENTS[0];
-  const lost = LOST_FOUND[0];
 
   return (
     <div className="space-y-8">
@@ -186,7 +183,7 @@ export default function DashboardPage() {
       />
 
       {/* Academics & Urgency Section */}
-      <AcademicPreview nextClass={nextClass} tasks="" />
+      <AcademicPreview nextClass={nextClass} />
 
       {/* Campus AI Quick Ask */}
       <CampusAIQuickAsk />

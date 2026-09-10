@@ -6,9 +6,6 @@ import {
   Trophy,
   MapPin,
   Calendar,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   Dumbbell,
   Activity
 } from "lucide-react";

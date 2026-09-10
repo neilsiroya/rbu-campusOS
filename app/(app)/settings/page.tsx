@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTheme } from "next-themes";
 import { PageIntro } from "@/components/os/PageIntro";
 import { DemoNotice } from "@/components/os/DemoNotice";

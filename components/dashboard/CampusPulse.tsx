@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Newspaper, MessageSquare, Flame, Sparkles } from "lucide-react";
+import { ArrowRight, Newspaper, MessageSquare, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FEED_POSTS, type FeedPost } from "@/lib/campus-data";
+import { type FeedPost } from "@/lib/campus-data";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface CampusPulseProps {

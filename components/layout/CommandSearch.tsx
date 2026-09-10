@@ -2,18 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Search,
-  X,
-  FileText,
-  ShoppingBag,
-  Calendar,
-  Users,
-  Building2,
-  Compass,
-  ArrowRight,
-  Command,
-} from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   CLUBS,
@@ -53,10 +42,12 @@ export default function CommandSearch() {
   }, []);
 
   useEffect(() => {
-    if (open) {
-      setTimeout(() => dialogInputRef.current?.focus(), 0);
+    if (!open) return;
+    const id = setTimeout(() => {
+      dialogInputRef.current?.focus();
       setActiveIndex(0);
-    }
+    }, 0);
+    return () => clearTimeout(id);
   }, [open]);
 
   const hits = useMemo(() => {

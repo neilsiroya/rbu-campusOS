@@ -1,15 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Clock, ClipboardList, FileText, GraduationCap, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Clock, ClipboardList, GraduationCap, AlertTriangle, CheckCircle2 } from "lucide-react";
 import type { TimetableEntry } from "@/lib/campus-data";
 
 interface AcademicPreviewProps {
   nextClass: TimetableEntry;
-  tasks: string;
 }
 
-export default function AcademicPreview({ nextClass, tasks }: AcademicPreviewProps) {
+export default function AcademicPreview({ nextClass }: AcademicPreviewProps) {
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
