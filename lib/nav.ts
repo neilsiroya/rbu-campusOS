@@ -21,6 +21,8 @@ import {
   Bell,
   Settings,
   Sparkles,
+  Gamepad2,
+  Trophy,
 } from "lucide-react";
 
 export type NavItem = {
@@ -57,11 +59,20 @@ export const NAV_GROUPS: NavGroup[] = [
       { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
       { name: "Facilities", href: "/facilities", icon: Building2 },
       { name: "Services", href: "/services", icon: LifeBuoy },
+      { name: "Hostels", href: "/hostels", icon: Building2 },
+    ],
+  },
+  {
+    group: "Campus Life",
+    items: [
+      { name: "Sports", href: "/sports", icon: Trophy },
+      { name: "Gaming", href: "/gaming", icon: Gamepad2 },
     ],
   },
   {
     group: "Knowledge & Academics",
     items: [
+      { name: "Academics", href: "/academics", icon: GraduationCap },
       { name: "Study Hub", href: "/notes", icon: BookOpen },
       { name: "Timetable", href: "/timetable", icon: Clock3 },
       { name: "Attendance", href: "/attendance", icon: ClipboardList },
@@ -89,6 +100,7 @@ export const NAV_GROUPS: NavGroup[] = [
 
 export const PAGE_TITLES: Record<string, string> = {
   "/dashboard": "Campus Command",
+  "/academics": "Academics",
   "/feed": "Campus Feed",
   "/confessions": "Confessions",
   "/events": "Events",
@@ -99,6 +111,9 @@ export const PAGE_TITLES: Record<string, string> = {
   "/map": "Campus Map",
   "/facilities": "Facilities",
   "/services": "Services",
+  "/hostels": "Hostels",
+  "/sports": "Sports",
+  "/gaming": "Gaming",
   "/notes": "Study Hub",
   "/timetable": "Timetable",
   "/attendance": "Attendance",

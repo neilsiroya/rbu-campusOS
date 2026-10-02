@@ -17,8 +17,13 @@ export default function TimetablePage() {
       <PageIntro kicker="Academics" title="Timetable" description="A personal week view. This is demo schedule data, not an official university timetable sync." />
       <DemoNotice />
       <FilterChips value={day} onChange={setDay} options={[...DAYS]} />
-      <div className="overflow-hidden rounded-3xl border border-border">
-        <table className="w-full text-left text-sm">
+      <div
+        role="region"
+        aria-label="Weekly timetable"
+        tabIndex={0}
+        className="overflow-x-auto rounded-3xl border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+      >
+        <table className="w-full min-w-[40rem] text-left text-sm">
           <thead className="bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Day</th>

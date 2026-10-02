@@ -334,13 +334,18 @@ export default function MarketplacePage() {
             return (
               <article
                 key={item.id}
-                onClick={() => {
-                  setSelectedItem(item);
-                  setContactSent(false);
-                }}
-                className="activity-surface group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 cursor-pointer"
+                className="activity-surface group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
               >
-                <div>
+                <button
+                  type="button"
+                  aria-label={`View listing: ${item.title}`}
+                  onClick={() => {
+                    setSelectedItem(item);
+                    setContactSent(false);
+                  }}
+                  className="absolute inset-0 z-10 cursor-pointer rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                />
+                <div className="pointer-events-none relative z-0">
                   {/* Top card visual bar */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2">
@@ -603,10 +608,11 @@ export default function MarketplacePage() {
 
             <form onSubmit={handleCreate} className="mt-5 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <label htmlFor="listing-title" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Item Title *
                 </label>
                 <Input
+                  id="listing-title"
                   required
                   placeholder="e.g. Casio fx-991EX, Hero Cycle, BEE Textbook"
                   value={form.title}
@@ -617,11 +623,11 @@ export default function MarketplacePage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <label htmlFor="listing-type" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Exchange Type
                   </label>
                   <select
-                    aria-label="Listing exchange type"
+                    id="listing-type"
                     value={form.type}
                     onChange={(e) =>
                       setForm({ ...form, type: e.target.value as MarketplaceListing["type"] })
@@ -636,11 +642,11 @@ export default function MarketplacePage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <label htmlFor="listing-category" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Category
                   </label>
                   <select
-                    aria-label="Item category"
+                    id="listing-category"
                     value={form.category}
                     onChange={(e) =>
                       setForm({
@@ -666,10 +672,11 @@ export default function MarketplacePage() {
               {form.type !== "Free" && form.type !== "Lend / Borrow" && (
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <label htmlFor="listing-price" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Price (₹)
                     </label>
                     <Input
+                      id="listing-price"
                       type="number"
                       placeholder="e.g. 500"
                       value={form.price}
@@ -678,10 +685,11 @@ export default function MarketplacePage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <label htmlFor="listing-pricing-unit" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Pricing Unit
                     </label>
                     <Input
+                      id="listing-pricing-unit"
                       placeholder="e.g. one-time, / day, / week"
                       value={form.pricingUnit}
                       onChange={(e) => setForm({ ...form, pricingUnit: e.target.value })}
@@ -693,11 +701,11 @@ export default function MarketplacePage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <label htmlFor="listing-condition" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Item Condition
                   </label>
                   <select
-                    aria-label="Item condition"
+                    id="listing-condition"
                     value={form.condition}
                     onChange={(e) =>
                       setForm({
@@ -715,10 +723,11 @@ export default function MarketplacePage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <label htmlFor="listing-location" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Campus Location
                   </label>
                   <Input
+                    id="listing-location"
                     placeholder="e.g. Library, LT-101, Gate 2"
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -728,10 +737,11 @@ export default function MarketplacePage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <label htmlFor="listing-availability" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Availability Note
                 </label>
                 <Input
+                  id="listing-availability"
                   placeholder="e.g. Evenings after 5pm, Weekends"
                   value={form.availability}
                   onChange={(e) => setForm({ ...form, availability: e.target.value })}
@@ -740,10 +750,11 @@ export default function MarketplacePage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <label htmlFor="listing-description" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Description
                 </label>
                 <Textarea
+                  id="listing-description"
                   placeholder="Mention key specs, condition, accessories included, and pickup preferences…"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}

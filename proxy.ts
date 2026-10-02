@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const protectedPrefixes = [
   "/dashboard",
+  "/academics",
   "/feed",
   "/confessions",
   "/events",
@@ -25,6 +26,9 @@ const protectedPrefixes = [
   "/settings",
   "/profile",
   "/campus-ai",
+  "/gaming",
+  "/hostels",
+  "/sports",
 ];
 
 export async function proxy(request: NextRequest) {

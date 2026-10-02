@@ -60,12 +60,15 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">University Email</label>
+                <label htmlFor="login-email" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">University Email</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
+                    id="login-email"
+                    name="email"
                     className="pl-10 bg-background/50 border-border/50 focus:ring-primary/20"
                     type="email"
+                    autoComplete="email"
                     placeholder="student@rbu.ac.in"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -74,12 +77,15 @@ export default function LoginPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Access Key</label>
+                <label htmlFor="login-password" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Access Key</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
+                    id="login-password"
+                    name="password"
                     className="pl-10 bg-background/50 border-border/50 focus:ring-primary/20"
                     type="password"
+                    autoComplete="current-password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

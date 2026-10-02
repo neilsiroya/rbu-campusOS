@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, Settings, UserRound } from "lucide-react";
@@ -10,6 +10,14 @@ import { CURRENT_STUDENT } from "@/lib/campus-data";
 export default function ProfileMenu() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape" && open) {
+      event.preventDefault();
+      setOpen(false);
+      triggerRef.current?.focus();
+    }
+  };
 
   const logout = async () => {
     const supabase = createClient();
@@ -18,13 +26,15 @@ export default function ProfileMenu() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" onKeyDown={onKeyDown}>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-xl py-1 pl-1 pr-2 hover:bg-muted"
+        className="flex min-h-11 min-w-11 items-center gap-2 rounded-xl py-1 pl-1 pr-2 hover:bg-muted"
+        aria-label={`Account menu for ${CURRENT_STUDENT.name}`}
         aria-expanded={open}
-        aria-haspopup="menu"
+        aria-controls={open ? "profile-menu" : undefined}
       >
         <span className="grid size-8 place-items-center rounded-lg bg-foreground font-display text-sm text-background">
           {CURRENT_STUDENT.name.charAt(0)}
@@ -39,18 +49,22 @@ export default function ProfileMenu() {
           <button
             type="button"
             className="fixed inset-0 z-40 cursor-default"
-            aria-label="Close profile menu"
-            onClick={() => setOpen(false)}
+            aria-hidden="true"
+            tabIndex={-1}
+            onClick={() => {
+              setOpen(false);
+              triggerRef.current?.focus();
+            }}
           />
-          <div role="menu" className="glass-strong absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl py-1 shadow-xl">
-            <Link href="/profile" role="menuitem" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted" onClick={() => setOpen(false)}>
-              <UserRound className="size-4" /> Profile
+          <div id="profile-menu" className="glass-strong absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl py-1 shadow-xl">
+            <Link href="/profile" className="flex min-h-11 items-center gap-2 px-3 py-2 text-sm hover:bg-muted" onClick={() => setOpen(false)}>
+              <UserRound className="size-4" aria-hidden="true" /> Profile
             </Link>
-            <Link href="/settings" role="menuitem" className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted" onClick={() => setOpen(false)}>
-              <Settings className="size-4" /> Settings
+            <Link href="/settings" className="flex min-h-11 items-center gap-2 px-3 py-2 text-sm hover:bg-muted" onClick={() => setOpen(false)}>
+              <Settings className="size-4" aria-hidden="true" /> Settings
             </Link>
-            <button type="button" role="menuitem" className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted" onClick={logout}>
-              <LogOut className="size-4" /> Log out
+            <button type="button" className="flex min-h-11 w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted" onClick={logout}>
+              <LogOut className="size-4" aria-hidden="true" /> Log out
             </button>
           </div>
         </>

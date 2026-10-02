@@ -75,11 +75,14 @@ export default function SignupPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Full Name</label>
+                  <label htmlFor="signup-full-name" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Full Name</label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                     <Input
+                      id="signup-full-name"
+                      name="fullName"
                       className="pl-10 bg-background/50 border-border/50 focus:ring-primary/20"
+                      autoComplete="name"
                       placeholder="John Doe"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
@@ -88,12 +91,15 @@ export default function SignupPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">University Email</label>
+                  <label htmlFor="signup-email" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">University Email</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                     <Input
+                      id="signup-email"
+                      name="email"
                       className="pl-10 bg-background/50 border-border/50 focus:ring-primary/20"
                       type="email"
+                      autoComplete="email"
                       placeholder="student@rbu.ac.in"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -102,12 +108,15 @@ export default function SignupPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Access Key</label>
+                  <label htmlFor="signup-password" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Access Key</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                     <Input
+                      id="signup-password"
+                      name="password"
                       className="pl-10 bg-background/50 border-border/50 focus:ring-primary/20"
                       type="password"
+                      autoComplete="new-password"
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -119,11 +128,14 @@ export default function SignupPage() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Academic Branch</label>
+                  <label htmlFor="signup-branch" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Academic Branch</label>
                   <div className="relative">
                     <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                     <Input
+                      id="signup-branch"
+                      name="branch"
                       className="pl-10 bg-background/50 border-border/50 focus:ring-primary/20"
+                      autoComplete="off"
                       placeholder="CSE"
                       value={branch}
                       onChange={(e) => setBranch(e.target.value)}
@@ -132,11 +144,14 @@ export default function SignupPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Academic Year</label>
+                  <label htmlFor="signup-year" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Academic Year</label>
                   <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground font-bold text-[10px]">YR</div>
                     <Input
+                      id="signup-year"
+                      name="year"
                       className="pl-10 bg-background/50 border-border/50 focus:ring-primary/20"
+                      autoComplete="off"
                       placeholder="2nd"
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
