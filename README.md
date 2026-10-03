@@ -1,177 +1,121 @@
 # RBU CampusOS
 
-**A student-centric digital operating system for campus life at Ramdeobaba University.**
+A student-first campus operating system for Ramdeobaba University, designed to bring academics, community, discovery, and daily campus workflows into a single experience.
 
-[🚀 Live Demo](https://rbu-campus-os.vercel.app/)
+[🚀 Live demo](https://rbu-campus-os.vercel.app/)
 
-RBU CampusOS is a modern web platform designed to bring academic tools, campus information, student utilities, and community features into one unified interface.
-
-The project is being developed as a personal student project with a focus on modern web development, AI-powered interfaces, and practical campus technology.
+RBU CampusOS combines a modern campus dashboard with utility-driven modules such as timetable, assignments, attendance, events, placements, internships, facilities, and student community spaces. The product is built with a modern React/Next.js stack and emphasizes a polished, responsive interface for mobile and desktop users.
 
 ---
 
-## ✨ Features
+## ✨ Core features
 
-### 📊 Academic Dashboard
-A centralized dashboard for viewing important academic information such as schedules, coursework, exams, and attendance.
-
-### 🤖 Campus AI Assistant
-An AI-oriented interface designed around answering campus-specific questions and helping students navigate university information.
-
-### 🔎 Omnisearch
-A command-based search and navigation system accessible through `Ctrl + K`, allowing users to quickly navigate through CampusOS.
-
-### 💬 Anonymous Confessions
-A privacy-focused interface for campus confessions featuring alias-based posting, privacy indicators, and interactive confession cards.
-
-### 🛒 Student Marketplace & Resources
-A unified interface for student listings and academic resources, designed to eventually provide a central place for students to exchange items and materials.
-
-### 🎨 Modern UI
-A responsive glass-morphic interface with dark and light themes, animated interactions, aurora backgrounds, cursor effects, and reusable UI components.
+- Academic dashboard with important student information at a glance
+- Campus AI assistant experience for contextual campus support
+- Omni-search and fast navigation across the app
+- Community features such as confessions and student feed
+- Opportunities board for placements, internships, hackathons, and events
+- Student utilities including timetable, notes, services, and facilities
+- Responsive, glassmorphism-inspired interface with theme support
 
 ---
 
-## 🚀 Tech Stack
+## 🧰 Tech stack
 
-| Category | Technology |
+| Category | Stack |
 | --- | --- |
-| Framework | Next.js 16 — App Router |
-| Library | React 19 |
+| Framework | Next.js 16 (App Router) |
+| UI library | React 19 |
 | Language | TypeScript |
 | Styling | Tailwind CSS 4 |
 | Animation | Framer Motion |
-| UI | shadcn/ui, Base UI |
+| UI components | shadcn/ui, Base UI |
 | Icons | Lucide React |
-| Backend & Storage | Supabase |
+| Backend | Supabase |
 | Deployment | Vercel |
 
 ---
 
-## 🏗️ How It Works
-
-RBU CampusOS follows a modular Next.js App Router architecture.
-
-- **`app/`** contains the application's routes and page-level functionality.
-- **`components/`** contains reusable UI components organized by feature and purpose.
-- **`lib/`** contains shared utilities, data, helpers, and application logic.
-- **Supabase** provides the backend infrastructure and storage used by the application.
-- **Vercel** handles production deployment and automatically deploys changes pushed to the `main` branch.
-
-The application is structured so that individual campus modules can be developed independently while sharing the same application shell, navigation, UI system, and backend infrastructure.
-
----
-
-## 📁 Project Structure
+## 🏗️ Project structure
 
 ```text
 rbu-campus-os/
-├── app/
-│   ├── (app)/              # Main application routes (dashboard, modules)
-│   └── auth/               # Authentication routes
-│
-├── components/
-│   ├── dashboard/          # Dashboard-specific components
-│   ├── layout/             # Header, sidebar, app shell, navigation
-│   ├── os/                 # System-level primitives and notices
-│   └── ui/                 # Shared UI primitives
-│
-├── lib/                    # Utilities, helpers, data, and shared logic
-├── public/                 # Static assets
-│
-├── proxy.ts                # Edge middleware (auth / routing gate)
-├── next.config.ts          # Next.js configuration
-├── package.json            # Dependencies and project scripts
-├── package-lock.json       # Locked dependency versions
-└── tsconfig.json           # TypeScript configuration
+├── app/                  # App Router pages and layouts
+│   ├── (app)/            # Main campus app routes
+│   └── auth/             # Login and signup routes
+├── components/           # Reusable UI and feature components
+├── lib/                  # Shared utilities, config, and data
+├── public/               # Static files/assets
+├── proxy.ts              # Middleware/proxy logic
+├── next.config.ts        # Next.js configuration
+├── package.json          # Scripts and dependencies
+├── package-lock.json     # Locked dependency list
+├── tsconfig.json         # TypeScript config
+├── .github/              # GitHub workflows and templates
+├── README.md             # Project overview and setup guide
+└── .gitignore            # Git ignore rules
 ```
 
-## 🛠️ Getting Started
+---
+
+## 🛠️ Getting started
 
 ### Prerequisites
 
 - Node.js 20+
 - npm
 
-### Installation
-
-Clone the repository and install the dependencies:
+### Install and run locally
 
 ```bash
 git clone https://github.com/neilsiroya/rbu-campusOS.git
 cd rbu-campusOS
-npm install
-```
-
-Start the development server:
-
-```bash
+npm ci
 npm run dev
 ```
 
-The application will be available at:
+Then open:
+
+```text
 http://localhost:3000
+```
 
-### Environment Configuration
+### Environment variables
 
-Authentication and profile identity use Supabase and require the following environment variables in a local `.env.local` file:
+Supabase is required for authentication and authenticated campus routes. Add the following values to a local `.env.local` file to test those flows:
 
 | Variable | Description |
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | The public (anon) API key for your project |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anon key used by the frontend |
 
-Both values are public by design and must be tagged `NEXT_PUBLIC_` so the browser client can read them. Environment variables are intentionally not committed to the repository; the project runs as an anonymized demo without them.
+These values are intentionally public and must be prefixed with `NEXT_PUBLIC_` so the browser can access them.
 
 ---
 
-## 📜 Available Scripts
+## 📜 Available scripts
 
-| Command | Description |
+| Command | Purpose |
 | --- | --- |
-| `npm run dev` | Starts the development server |
-| `npm run build` | Creates a production build |
-| `npm run start` | Runs the production build |
-| `npm run lint` | Runs ESLint checks |
-| `npm run typecheck` | Runs the TypeScript type checker |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm run start` | Run the production build |
+| `npm run lint` | Run ESLint checks |
+| `npm run typecheck` | Run the TypeScript checker |
 
 ---
 
-## 🗺️ Roadmap
+## 🚦 Current status
 
-### Completed
-- Modern glass-morphic application shell
-- Dashboard interface
-- Dashboard urgency-card system
-- Inline AI QuickAsk interface
-- Campus AI interface
-- Omnisearch and command navigation
-- Toast notification system
-- Confessions interface and composer
-- Privacy-focused confession UI
-- Dark and light themes
-- Responsive layouts
-- Supabase integration
-- Production deployment on Vercel
-
-### Planned
-- Full backend integration for persistent data (Supabase).
-- User profile customization and telemetry.
-- Real-time notification system.
-- Interactive campus map enhancements.
-- Expanded attendance management
-- Timetable and academic data integration
-- Additional student utilities
+The project is in active frontend development with a demo-first campus experience. Most pages are implemented as polished interfaces and route-level views, while backend persistence and live data integration continue to evolve.
 
 ---
 
 ## 📦 Deployment
 
-The production application is deployed using Vercel.
+The application is deployed to Vercel using the repository's main branch. GitHub Actions also run lint, type checking, and production build validation on pushes and pull requests.
 
-The main branch is connected to the production deployment, allowing changes pushed to GitHub to trigger new deployments automatically.
-
-Live application:
+Live app:
 https://rbu-campus-os.vercel.app/
 
 ---
@@ -180,10 +124,10 @@ https://rbu-campus-os.vercel.app/
 
 **Neil Siroya**
 
-RBU CampusOS is an independently developed student project focused on building a modern digital experience for campus life while exploring full-stack development, AI, and modern web technologies.
+This project is an independently developed student initiative focused on building a modern campus experience using web technologies, AI-oriented UX, and full-stack product thinking.
 
 ## ⚖️ License
 
-All Rights Reserved.
+All rights reserved.
 
-This repository is publicly available for viewing and reference. The source code may not be copied, modified, redistributed, or used commercially without permission from the author.
+This repository is publicly available for reference and viewing. The source code may not be copied, modified, redistributed, or used commercially without permission from the author.

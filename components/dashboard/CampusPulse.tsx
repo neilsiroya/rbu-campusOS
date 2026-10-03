@@ -73,12 +73,15 @@ export default function CampusPulse({ posts }: CampusPulseProps) {
       </div>
 
       <div className="mt-5 pt-3 border-t border-border/70 flex justify-end">
-        <Link href="/feed">
-          <Button size="sm" className="rounded-full gap-2 text-xs">
-            Join the Conversation
-            <ArrowRight className="size-3.5" />
-          </Button>
-        </Link>
+        <Button
+          render={<Link href="/feed" />}
+          nativeButton={false}
+          size="sm"
+          className="min-h-11 gap-2 rounded-full text-xs"
+        >
+          Join the Conversation
+          <ArrowRight className="size-3.5" aria-hidden="true" />
+        </Button>
       </div>
     </article>
   );

@@ -42,6 +42,7 @@
 }
 
 :root {
+  color-scheme: light;
   --background: oklch(0.978 0.006 250);
   --foreground: oklch(0.20 0.025 260);
   --card: oklch(0.995 0.003 90);
@@ -85,6 +86,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: oklch(0.10 0.03 240);
   --foreground: oklch(0.965 0.006 90);
   --card: oklch(0.14 0.03 240);
@@ -133,6 +135,20 @@
 
   :focus-visible {
     @apply outline-none ring-2 ring-ring/60 ring-offset-2 ring-offset-background;
+  }
+
+  @media (pointer: coarse) {
+    :where(button) {
+      min-height: 44px;
+    }
+
+    :where(button[aria-label]) {
+      min-width: 44px;
+    }
+
+    :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+      min-height: 44px;
+    }
   }
 
   ::selection {

@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { DemoNotice } from "@/components/os/DemoNotice";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
+import { useSessionItems } from "@/lib/session-store";
 
 // --- TYPES ---
 type GameType = "FPS" | "MOBA" | "Battle Royale" | "Strategy";
@@ -119,11 +122,11 @@ const ArenaLeaderboard = ({ players }: { players: Player[] }) => (
       <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
         <Crown className="size-4 text-primary" /> Leaderboard Nexus
       </h2>
-      <span className="text-[10px] font-bold text-muted-foreground uppercase">Live Rankings</span>
+      <span className="text-[10px] font-bold text-muted-foreground uppercase">Demo Rankings</span>
     </div>
     <div className="divide-y divide-border/50">
       {players.map((p, i) => (
-        <div key={i} className="flex items-center justify-between p-4 hover:bg-primary/5 transition-all motion-fast group cursor-pointer">
+        <div key={i} className="group flex items-center justify-between p-4">
           <div className="flex items-center gap-4">
             <span className={cn(
               "text-xs font-mono font-bold w-6",
@@ -144,7 +147,17 @@ const ArenaLeaderboard = ({ players }: { players: Player[] }) => (
   </div>
 );
 
-const TournamentCard = ({ tournament, index }: { tournament: Tournament; index: number }) => (
+const TournamentCard = ({
+  tournament,
+  index,
+  saved,
+  onToggleSaved,
+}: {
+  tournament: Tournament;
+  index: number;
+  saved: boolean;
+  onToggleSaved: () => void;
+}) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
@@ -174,14 +187,27 @@ const TournamentCard = ({ tournament, index }: { tournament: Tournament; index: 
         <Trophy className="size-3 text-yellow-400" />
         <span className="text-xs font-bold text-foreground">{tournament.prize}</span>
       </div>
-      <Button variant="ghost" size="sm" className="h-8 px-3 text-[10px] font-bold uppercase tracking-widest hover:bg-primary/10 hover:text-primary transition-all">
-        Join
+      <Button
+        variant={saved ? "secondary" : "ghost"}
+        size="sm"
+        aria-pressed={saved}
+        onClick={onToggleSaved}
+        className="min-h-11 px-3 text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-primary/10 hover:text-primary"
+      >
+        {saved ? "Saved this session" : "Save for this session"}
       </Button>
     </div>
   </motion.div>
 );
 
 export default function GamingPage() {
+  const {
+    items: savedTournaments,
+    update: updateSavedTournaments,
+    storageError,
+  } =
+    useSessionItems<string>("campusos.gaming.saved-tournaments", []);
+
   return (
     <div className="space-y-8">
       <motion.div
@@ -202,6 +228,9 @@ export default function GamingPage() {
           </p>
         </div>
       </motion.div>
+
+      <DemoNotice />
+      <SessionStorageNotice message={storageError} />
 
       <GamerProfile user={DEMO_GAMING_DATA.user} />
 
@@ -231,15 +260,27 @@ export default function GamingPage() {
         <div className="lg:col-span-5 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
-              <Zap className="size-4 text-primary" /> Active Tournaments
+              <Zap className="size-4 text-primary" /> Tournament examples
             </h2>
-            <Button variant="ghost" className="text-[10px] font-bold uppercase tracking-widest h-7 px-2 rounded-lg hover:bg-primary/10 hover:text-primary">
-              View All
-            </Button>
+            <span className="text-[10px] font-medium text-muted-foreground">
+              {DEMO_GAMING_DATA.tournaments.length} demo listings
+            </span>
           </div>
           <div className="grid grid-cols-1 gap-4">
             {DEMO_GAMING_DATA.tournaments.map((t, i) => (
-              <TournamentCard key={t.id} tournament={t} index={i} />
+              <TournamentCard
+                key={t.id}
+                tournament={t}
+                index={i}
+                saved={savedTournaments.includes(t.id)}
+                onToggleSaved={() =>
+                  updateSavedTournaments((current) =>
+                    current.includes(t.id)
+                      ? current.filter((id) => id !== t.id)
+                      : [...current, t.id]
+                  )
+                }
+              />
             ))}
           </div>
         </div>

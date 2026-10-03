@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ export default function PlaceholderPage({ title, description }: { title: string,
   const router = useRouter();
   // Extract category from title (e.g., "Academic Hub" -> "ACADEMICS")
   const category = title.split(" ")[1] || "SYSTEM";
-  const [modId] = useState(() => Math.floor(Math.random() * 1000000).toString(16));
 
   return (
     <div className="flex items-center justify-center min-h-[80vh] p-6">
@@ -27,9 +25,6 @@ export default function PlaceholderPage({ title, description }: { title: string,
               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 System / {category}
               </span>
-            </div>
-            <div className="text-[10px] font-mono text-muted-foreground opacity-50">
-              MOD_ID: 0x{modId}
             </div>
           </div>
 

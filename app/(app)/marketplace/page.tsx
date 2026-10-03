@@ -25,6 +25,7 @@ import {
 import { MARKETPLACE_LISTINGS, type MarketplaceListing } from "@/lib/campus-data";
 import { useSessionItems } from "@/lib/session-store";
 import { DemoNotice } from "@/components/os/DemoNotice";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 import { EmptyState } from "@/components/os/EmptyState";
 import { PageIntro } from "@/components/os/PageIntro";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,7 @@ const LISTING_TYPES = ["All Types", "For Sale", "For Rent", "Free", "Lend / Borr
 const CONDITIONS = ["All Conditions", "New", "Like new", "Good", "Used"] as const;
 
 export default function MarketplacePage() {
-  const { items, prepend } = useSessionItems<MarketplaceListing>(
+  const { items, prepend, storageError } = useSessionItems<MarketplaceListing>(
     "campusos.marketplace",
     MARKETPLACE_LISTINGS
   );
@@ -175,6 +176,7 @@ export default function MarketplacePage() {
       <DemoNotice>
         Marketplace listings are demo records. Listings you create stay stored in your browser session; no monetary transaction or external message is processed.
       </DemoNotice>
+      <SessionStorageNotice message={storageError} />
 
       {/* NexDash-inspired Marketplace Command Surface */}
       <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8">

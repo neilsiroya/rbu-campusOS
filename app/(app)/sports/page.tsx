@@ -61,13 +61,14 @@ const DEMO_SPORTS_DATA = {
 // --- SUB-COMPONENTS ---
 
 const ScoreTicker = ({ match }: { match: MatchScore }) => (
-  <div className="flex items-center justify-between px-4 py-2 rounded-xl bg-background/40 border border-border/50 min-w-[200px] motion-fast">
+  <div className="flex w-full min-w-0 items-center justify-between rounded-xl border border-border/50 bg-background/40 px-4 py-2 motion-fast">
     <div className="flex items-center gap-2">
       <span className="text-[10px] font-bold text-foreground">{match.homeTeam}</span>
       <span className="text-xs font-black text-primary">{match.homeScore}</span>
     </div>
     <div className="flex items-center gap-1">
       <span className="text-[10px] font-black text-muted-foreground">VS</span>
+      <span className="text-[10px] font-semibold text-muted-foreground">{match.status}</span>
       {match.status === "Live" && <div className="size-1 rounded-full bg-success animate-pulse" />}
     </div>
     <div className="flex items-center gap-2 text-right">
@@ -107,10 +108,10 @@ const FacilityCard = ({ facility, index }: { facility: Facility; index: number }
       </h3>
       <p className="text-xs text-muted-foreground mb-6">{facility.type} Facility</p>
       <Button
-        disabled={facility.status !== "Available"}
+        disabled
         className="w-full h-9 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all hover:scale-105"
       >
-        Book Facility
+        Booking unavailable
       </Button>
     </motion.div>
   );
@@ -121,25 +122,25 @@ const AthleticEvent = ({ event, index }: { event: SportsEvent; index: number }) 
     initial={{ opacity: 0, x: -10 }}
     animate={{ opacity: 1, x: 0 }}
     transition={{ delay: index * 0.1 }}
-    className="flex items-center justify-between p-3 rounded-xl border border-border/50 bg-background/20 hover:bg-primary/5 transition-all motion-fast group"
+    className="flex min-w-0 items-start justify-between gap-3 rounded-xl border border-border/50 bg-background/20 p-3 transition-all motion-fast group hover:bg-primary/5 sm:items-center"
   >
-    <div className="flex items-center gap-4">
-      <div className="text-xs font-mono font-bold text-muted-foreground w-24 text-right">
+    <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center sm:gap-4">
+      <div className="w-20 shrink-0 break-words text-right font-mono text-[11px] font-bold text-muted-foreground sm:w-24 sm:text-xs">
         {event.time}
       </div>
-      <div className="relative flex items-center justify-center size-2">
+      <div className="relative flex size-2 shrink-0 items-center justify-center">
         <div className="absolute size-2 rounded-full bg-border group-hover:bg-primary transition-colors" />
         <div className="absolute size-1 rounded-full bg-background" />
       </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{event.title}</span>
-        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+      <div className="flex min-w-0 flex-1 flex-col">
+        <span className="break-words text-sm font-bold text-foreground transition-colors group-hover:text-primary">{event.title}</span>
+        <span className="flex flex-wrap items-center gap-1 text-[10px] text-muted-foreground">
           <MapPin className="size-2.5" /> {event.location} &bull; {event.sport}
         </span>
       </div>
     </div>
     <div className={cn(
-      "text-[9px] font-black uppercase px-2 py-0.5 rounded border",
+      "shrink-0 self-start rounded border px-2 py-0.5 text-[9px] font-black uppercase sm:self-center",
       event.type === "Match" ? "border-primary/30 text-primary bg-primary/10" : "border-border text-muted-foreground bg-muted/20"
     )}>
       {event.type}
@@ -166,11 +167,14 @@ export default function SportsPage() {
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
             facility booking & performance telemetry
           </p>
+          <p className="max-w-prose text-xs leading-relaxed text-muted-foreground">
+            Demo data only. Scores and availability are not live, and facility bookings are not connected.
+          </p>
         </div>
       </motion.div>
 
       {/* Live Score Ticker */}
-      <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {DEMO_SPORTS_DATA.liveScores.map((match, i) => (
           <ScoreTicker key={i} match={match} />
         ))}

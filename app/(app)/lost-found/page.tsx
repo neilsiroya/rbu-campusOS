@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { LOST_FOUND, SESSION_NOTICE, type LostFoundItem } from "@/lib/campus-data";
 import { useSessionItems } from "@/lib/session-store";
 import { DemoNotice } from "@/components/os/DemoNotice";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 import { EmptyState } from "@/components/os/EmptyState";
 import { FilterChips } from "@/components/os/FilterChips";
 import { PageIntro } from "@/components/os/PageIntro";
@@ -11,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function LostFoundPage() {
-  const { items, prepend } = useSessionItems<LostFoundItem>("campusos.lostfound", LOST_FOUND);
+  const { items, prepend, storageError } = useSessionItems<LostFoundItem>("campusos.lostfound", LOST_FOUND);
   const [kind, setKind] = useState<"All" | "lost" | "found">("All");
   const [q, setQ] = useState("");
   const [form, setForm] = useState({ kind: "lost" as "lost" | "found", title: "", location: "", category: "Other" as LostFoundItem["category"], description: "" });
@@ -36,6 +37,7 @@ export default function LostFoundPage() {
         description="Listings with a place, a date, and a way to reclaim — without pretending the desk is staffed by a server."
       />
       <DemoNotice />
+      <SessionStorageNotice message={storageError} />
 
       <section className="glass rounded-3xl p-5">
         <p className="text-sm font-medium">New listing</p>

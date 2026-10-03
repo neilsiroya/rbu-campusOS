@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+import { Dialog } from "@base-ui/react/dialog";
+import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   CLUBS,
@@ -22,12 +23,56 @@ type Hit = {
   category: "Page" | "Marketplace" | "Study Hub" | "Event" | "People" | "Club" | "Facility";
 };
 
+const SEARCH_INDEX: Hit[] = [
+  ...SEARCHABLE_ROUTES.map((route) => ({
+    label: route.name,
+    href: route.href,
+    hint: route.group,
+    category: "Page" as const,
+  })),
+  ...MARKETPLACE_LISTINGS.map((listing) => ({
+    label: listing.title,
+    href: "/marketplace",
+    hint: `${listing.type} · ₹${listing.price} (${listing.category})`,
+    category: "Marketplace" as const,
+  })),
+  ...STUDY_RESOURCES.map((resource) => ({
+    label: resource.title,
+    href: "/notes",
+    hint: `${resource.subject} · ${resource.type}`,
+    category: "Study Hub" as const,
+  })),
+  ...EVENTS.map((event) => ({
+    label: event.title,
+    href: "/events",
+    hint: `${event.date} · ${event.location}`,
+    category: "Event" as const,
+  })),
+  ...CLUBS.map((club) => ({
+    label: club.name,
+    href: "/clubs",
+    hint: club.category,
+    category: "Club" as const,
+  })),
+  ...FACILITIES.map((facility) => ({
+    label: facility.name,
+    href: "/facilities",
+    hint: `${facility.category} · ${facility.location}`,
+    category: "Facility" as const,
+  })),
+  ...PEOPLE.map((person) => ({
+    label: person.name,
+    href: "/people",
+    hint: `${person.branch} · ${person.year}`,
+    category: "People" as const,
+  })),
+];
+
 export default function CommandSearch() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
-  const dialogInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -35,95 +80,40 @@ export default function CommandSearch() {
         e.preventDefault();
         setOpen((prev) => !prev);
       }
-      if (e.key === "Escape") setOpen(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const id = setTimeout(() => {
-      dialogInputRef.current?.focus();
-      setActiveIndex(0);
-    }, 0);
-    return () => clearTimeout(id);
-  }, [open]);
+  const normalizedQuery = query.trim().toLowerCase();
+  const hits = normalizedQuery
+    ? SEARCH_INDEX.filter((hit) =>
+        `${hit.label} ${hit.hint} ${hit.category}`
+          .toLowerCase()
+          .includes(normalizedQuery)
+      ).slice(0, 12)
+    : SEARCH_INDEX.filter((hit) => hit.category === "Page").slice(0, 7);
 
-  const hits = useMemo(() => {
-    const q = query.trim().toLowerCase();
-
-    const routes: Hit[] = SEARCHABLE_ROUTES.map((r) => ({
-      label: r.name,
-      href: r.href,
-      hint: r.group,
-      category: "Page",
-    }));
-
-    const marketplace: Hit[] = MARKETPLACE_LISTINGS.map((m) => ({
-      label: m.title,
-      href: "/marketplace",
-      hint: `${m.type} · ₹${m.price} (${m.category})`,
-      category: "Marketplace",
-    }));
-
-    const study: Hit[] = STUDY_RESOURCES.map((s) => ({
-      label: s.title,
-      href: "/notes",
-      hint: `${s.subject} · ${s.type}`,
-      category: "Study Hub",
-    }));
-
-    const people: Hit[] = PEOPLE.map((p) => ({
-      label: p.name,
-      href: "/people",
-      hint: `${p.branch} · ${p.year}`,
-      category: "People",
-    }));
-
-    const events: Hit[] = EVENTS.map((e) => ({
-      label: e.title,
-      href: "/events",
-      hint: `${e.date} · ${e.location}`,
-      category: "Event",
-    }));
-
-    const clubs: Hit[] = CLUBS.map((c) => ({
-      label: c.name,
-      href: "/clubs",
-      hint: c.category,
-      category: "Club",
-    }));
-
-    const facilities: Hit[] = FACILITIES.map((f) => ({
-      label: f.name,
-      href: "/facilities",
-      hint: `${f.category} · ${f.location}`,
-      category: "Facility",
-    }));
-
-    const all = [...routes, ...marketplace, ...study, ...events, ...clubs, ...facilities, ...people];
-
-    if (!q) return routes.slice(0, 7);
-
-    return all
-      .filter((h) => `${h.label} ${h.hint} ${h.category}`.toLowerCase().includes(q))
-      .slice(0, 12);
-  }, [query]);
-
-  const go = (href: string) => {
+  const close = () => {
     setOpen(false);
     setQuery("");
+    setActiveIndex(0);
+  };
+
+  const go = (href: string) => {
+    close();
     router.push(href);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActiveIndex((prev) => (prev + 1) % (hits.length || 1));
+      setActiveIndex((previous) => (hits.length ? (previous + 1) % hits.length : 0));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActiveIndex((prev) => (prev - 1 + hits.length) % (hits.length || 1));
+      setActiveIndex((previous) =>
+        hits.length ? (previous - 1 + hits.length) % hits.length : 0
+      );
     } else if (e.key === "Enter" && hits[activeIndex]) {
       e.preventDefault();
       go(hits[activeIndex].href);
@@ -148,98 +138,136 @@ export default function CommandSearch() {
   };
 
   return (
-    <>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="size-9 rounded-xl border border-border/60 hover:bg-muted"
-        aria-label="Search CampusOS (Ctrl+K)"
-        onClick={() => setOpen(true)}
-      >
-        <Search className="size-4 text-foreground" />
-      </Button>
-
-      {open ? (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-foreground/25 p-4 pt-[10vh] backdrop-blur-md">
-          <div
-            role="dialog"
-            aria-label="CampusOS Omnisearch"
-            className="glass-rich w-full max-w-xl overflow-hidden rounded-3xl shadow-2xl animate-in fade-in zoom-in-95 duration-150"
+    <Dialog.Root
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) {
+          setQuery("");
+          setActiveIndex(0);
+        }
+      }}
+    >
+      <Dialog.Trigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-9 rounded-xl border border-border/60 hover:bg-muted"
+            aria-label="Search CampusOS (Ctrl+K)"
           >
-            {/* Search Input Bar */}
-            <div className="flex items-center gap-3 border-b border-border/80 px-4 py-3">
-              <Search className="size-5 text-primary shrink-0" />
-              <input
-                ref={dialogInputRef}
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setActiveIndex(0);
-                }}
-                onKeyDown={handleKeyDown}
-                placeholder="Search routes, marketplace gear, notes, events, clubs, facilities…"
-                className="h-9 w-full bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground"
-                autoComplete="off"
-              />
-              <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded-lg border border-border bg-muted/60 px-2 py-0.5 text-[10px] font-mono text-muted-foreground">
-                ESC
-              </kbd>
-            </div>
+            <Search className="size-4 text-foreground" />
+          </Button>
+        }
+      />
 
-            {/* Results list */}
-            <ul className="max-h-[380px] overflow-y-auto p-2 space-y-1 custom-scrollbar">
-              {hits.length === 0 ? (
-                <li className="px-4 py-8 text-center text-sm text-muted-foreground">
-                  No matches found for &quot;{query}&quot;. Try searching for &quot;calculators&quot;, &quot;notes&quot;, or &quot;events&quot;.
-                </li>
-              ) : (
-                hits.map((hit, idx) => (
-                  <li key={`${hit.category}-${hit.href}-${hit.label}-${idx}`}>
-                    <button
-                      type="button"
-                      onClick={() => go(hit.href)}
-                      onMouseEnter={() => setActiveIndex(idx)}
-                      className={cn(
-                        "flex w-full items-center justify-between rounded-2xl px-3.5 py-2.5 text-left transition-colors",
-                        activeIndex === idx
-                          ? "bg-primary/15 text-foreground"
-                          : "hover:bg-muted/70 text-foreground/90"
-                      )}
-                    >
-                      <div className="flex items-center gap-2.5 truncate">
-                        <span
-                          className={cn(
-                            "rounded-lg border px-2 py-0.5 text-[10px] font-semibold shrink-0",
-                            getCategoryBadge(hit.category)
-                          )}
-                        >
-                          {hit.category}
-                        </span>
-                        <span className="text-sm font-medium truncate">{hit.label}</span>
-                      </div>
-                      <span className="text-xs text-muted-foreground truncate pl-3 max-w-[200px]">
-                        {hit.hint}
-                      </span>
-                    </button>
-                  </li>
-                ))
-              )}
-            </ul>
+      <Dialog.Portal>
+        <Dialog.Backdrop className="fixed inset-0 z-40 bg-foreground/25 backdrop-blur-md" />
+        <Dialog.Popup className="glass-rich fixed left-1/2 top-[8vh] z-50 flex max-h-[84dvh] w-[min(92vw,40rem)] -translate-x-1/2 flex-col overflow-hidden rounded-3xl shadow-2xl">
+          <Dialog.Title className="sr-only">Search CampusOS</Dialog.Title>
+          <Dialog.Description className="sr-only">
+            Search campus pages and demo content. Use the arrow keys to move through
+            results and Enter to open one.
+          </Dialog.Description>
 
-            {/* Omnisearch Footer */}
-            <div className="flex items-center justify-between border-t border-border/80 px-4 py-2.5 text-[11px] text-muted-foreground bg-muted/20">
-              <span>Use ↑ ↓ to navigate, ↵ to select</span>
-              <span>RBU CampusOS Omnisearch</span>
-            </div>
+          <div className="flex shrink-0 items-center gap-3 border-b border-border/80 px-4 py-3">
+            <Search className="size-5 shrink-0 text-primary" aria-hidden="true" />
+            <input
+              autoFocus
+              role="combobox"
+              aria-label="Search CampusOS"
+              aria-autocomplete="list"
+              aria-expanded={hits.length > 0}
+              aria-controls="campus-search-results"
+              aria-activedescendant={
+                hits.length > 0 ? `campus-search-result-${activeIndex}` : undefined
+              }
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setActiveIndex(0);
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder="Search pages, notes, events, clubs, facilities…"
+              className="h-10 min-w-0 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground"
+              autoComplete="off"
+              spellCheck={false}
+            />
+            <kbd className="hidden shrink-0 rounded-lg border border-border bg-muted/60 px-2 py-1 text-[10px] font-mono text-muted-foreground sm:inline-flex">
+              ESC
+            </kbd>
+            <Dialog.Close
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="size-9 shrink-0 rounded-xl"
+                  aria-label="Close search"
+                >
+                  <X className="size-4" />
+                </Button>
+              }
+            />
           </div>
-          <button
-            type="button"
-            className="absolute inset-0 -z-10 cursor-default"
-            aria-label="Close search modal"
-            onClick={() => setOpen(false)}
-          />
-        </div>
-      ) : null}
-    </>
+
+          <ul
+            id="campus-search-results"
+            role="listbox"
+            aria-label="Search results"
+            className="custom-scrollbar min-h-0 space-y-1 overflow-y-auto p-2"
+          >
+            {hits.length === 0 ? (
+              <li
+                role="none"
+                className="px-4 py-8 text-center text-sm text-muted-foreground"
+              >
+                No matches found for &quot;{query}&quot;. Try &quot;notes&quot;,
+                &quot;events&quot;, or a page name.
+              </li>
+            ) : (
+              hits.map((hit, index) => (
+                <li role="none" key={`${hit.category}-${hit.href}-${hit.label}`}>
+                  <button
+                    id={`campus-search-result-${index}`}
+                    type="button"
+                    role="option"
+                    aria-selected={activeIndex === index}
+                    onClick={() => go(hit.href)}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    className={cn(
+                      "flex min-h-11 w-full items-center justify-between gap-3 rounded-2xl px-3.5 py-2.5 text-left transition-colors",
+                      activeIndex === index
+                        ? "bg-primary/15 text-foreground"
+                        : "text-foreground/90 hover:bg-muted/70"
+                    )}
+                  >
+                    <span className="flex min-w-0 items-center gap-2.5">
+                      <span
+                        className={cn(
+                          "shrink-0 rounded-lg border px-2 py-0.5 text-[10px] font-semibold",
+                          getCategoryBadge(hit.category)
+                        )}
+                      >
+                        {hit.category}
+                      </span>
+                      <span className="truncate text-sm font-medium">{hit.label}</span>
+                    </span>
+                    <span className="max-w-[40%] shrink-0 truncate pl-2 text-xs text-muted-foreground">
+                      {hit.hint}
+                    </span>
+                  </button>
+                </li>
+              ))
+            )}
+          </ul>
+
+          <div className="flex shrink-0 items-center justify-between border-t border-border/80 bg-muted/20 px-4 py-2.5 text-[11px] text-muted-foreground">
+            <span>↑ ↓ navigate · Enter open</span>
+            <span>CampusOS Omnisearch</span>
+          </div>
+        </Dialog.Popup>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
