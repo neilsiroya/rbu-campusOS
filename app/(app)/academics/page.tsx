@@ -240,7 +240,7 @@ export default function AcademicsPage() {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row md:items-end justify-between gap-6"
+        className="flex flex-col gap-6"
       >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -255,7 +255,7 @@ export default function AcademicsPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full md:w-auto">
+        <div className="grid w-full grid-cols-2 gap-4 xl:grid-cols-4">
           <AcademicStat
             label="Current GPA"
             value={DEMO_ACADEMIC_DATA.stats.gpa}

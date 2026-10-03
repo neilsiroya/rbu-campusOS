@@ -18,7 +18,6 @@ export function BrandMark({
     <Link
       href={href}
       className={cn("group flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90", className)}
-      aria-label="RBU CampusOS home"
     >
       {/* Refined Geometric CampusOS Monogram / Emblem */}
       <div className="relative flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-foreground via-foreground/95 to-foreground/80 p-[1px] shadow-sm shadow-foreground/10 ring-1 ring-border/80 transition-transform group-hover:scale-[1.02]">
