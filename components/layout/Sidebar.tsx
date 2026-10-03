@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut, X } from "lucide-react";
@@ -11,44 +12,62 @@ import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
   isOpen: boolean;
-  isDesktop: boolean;
   setIsOpen: (open: boolean) => void;
 }
 
-export default function Sidebar({ isOpen, isDesktop, setIsOpen }: SidebarProps) {
+export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
 
   const handleLogout = async () => {
-    await createClient().auth.signOut();
-    router.replace("/auth/login", { scroll: false });
+    setLoggingOut(true);
+    setLogoutError("");
+    try {
+      const { error } = await createClient().auth.signOut();
+      if (error) throw error;
+      router.replace("/auth/login", { scroll: false });
+    } catch (error: unknown) {
+      setLogoutError(
+        error instanceof Error ? error.message : "Could not log out. Please try again."
+      );
+    } finally {
+      setLoggingOut(false);
+    }
   };
+
+  const closeMobileMenu = () => {
+    setIsOpen(false);
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      window.requestAnimationFrame(() => {
+        document.querySelector<HTMLButtonElement>('[aria-controls="app-sidebar"]')?.focus();
+      });
+    }
+  };
+
   return (
     <aside
       id="app-sidebar"
-      role={isOpen && !isDesktop ? "dialog" : undefined}
-      aria-modal={isOpen && !isDesktop ? true : undefined}
-      aria-label={isOpen && !isDesktop ? "CampusOS navigation" : undefined}
-      inert={!isOpen && !isDesktop}
       className={cn(
-        "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 glass-strong transition-transform duration-300 ease-out motion-reduce:transition-none md:relative md:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 glass-strong transition-transform duration-300 ease-out md:relative md:translate-x-0",
+        isOpen ? "visible translate-x-0" : "invisible -translate-x-full md:visible"
       )}
     >
       <div className="flex items-center justify-between px-5 py-5">
-        <BrandMark />
+        <BrandMark onClick={closeMobileMenu} />
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden"
-          onClick={() => setIsOpen(false)}
+          className="size-9 md:hidden"
+          onClick={closeMobileMenu}
           aria-label="Close navigation"
         >
-          <X className="size-4 text-foreground" aria-hidden="true" />
+          <X className="size-4 text-foreground" />
         </Button>
       </div>
 
-      <nav aria-label="Primary navigation" className="custom-scrollbar flex-1 space-y-6 overflow-y-auto px-3 pb-8">
+      <nav aria-label="Primary" className="custom-scrollbar flex-1 space-y-6 overflow-y-auto px-3 pb-8">
         {NAV_GROUPS.map((group) => (
           <div key={group.group} className="space-y-1">
             <h2 className="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
@@ -56,21 +75,22 @@ export default function Sidebar({ isOpen, isDesktop, setIsOpen }: SidebarProps) 
             </h2>
             {group.items.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const isActive =
+                pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={closeMobileMenu}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors",
                     isActive
                       ? "bg-primary text-primary-foreground font-medium"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
-                  aria-current={isActive ? "page" : undefined}
                 >
-                  <Icon className="size-4 shrink-0 text-current" aria-hidden="true" />
+                  <Icon className="size-4 shrink-0 text-foreground" />
                   {item.name}
                 </Link>
               );
@@ -80,13 +100,19 @@ export default function Sidebar({ isOpen, isDesktop, setIsOpen }: SidebarProps) 
       </nav>
 
       <div className="border-t border-border/70 p-3">
+        {logoutError ? (
+          <p role="alert" className="mb-2 rounded-lg bg-danger/10 px-3 py-2 text-xs text-danger">
+            {logoutError}
+          </p>
+        ) : null}
         <Button
           variant="ghost"
           className="min-h-11 w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
           onClick={handleLogout}
+          disabled={loggingOut}
         >
-          <LogOut className="size-4 text-foreground" aria-hidden="true" />
-          Log out
+          <LogOut className="size-4 text-foreground" />
+          {loggingOut ? "Logging out…" : "Log out"}
         </Button>
       </div>
     </aside>

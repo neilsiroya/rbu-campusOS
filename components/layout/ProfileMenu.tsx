@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, Settings, UserRound } from "lucide-react";
@@ -9,32 +9,63 @@ import { CURRENT_STUDENT } from "@/lib/campus-data";
 
 export default function ProfileMenu() {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
+  const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Escape" && open) {
-      event.preventDefault();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  const logout = async () => {
+    setLoggingOut(true);
+    setLogoutError("");
+    try {
+      const { error } = await createClient().auth.signOut();
+      if (error) throw error;
       setOpen(false);
-      triggerRef.current?.focus();
+      router.replace("/auth/login");
+    } catch (error: unknown) {
+      setLogoutError(
+        error instanceof Error ? error.message : "Could not log out. Please try again."
+      );
+    } finally {
+      setLoggingOut(false);
     }
   };
 
-  const logout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.replace("/auth/login");
-  };
-
   return (
-    <div className="relative" onKeyDown={onKeyDown}>
+    <div ref={menuRef} className="relative">
       <button
         ref={triggerRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="flex min-h-11 min-w-11 items-center gap-2 rounded-xl py-1 pl-1 pr-2 hover:bg-muted"
-        aria-label={`Account menu for ${CURRENT_STUDENT.name}`}
+        onClick={() => {
+          setLogoutError("");
+          setOpen((value) => !value);
+        }}
+        className="flex min-h-11 items-center gap-2 rounded-xl py-1 pl-1 pr-2 hover:bg-muted"
+        aria-label={`Profile options for ${CURRENT_STUDENT.name}`}
+        aria-controls="profile-actions"
         aria-expanded={open}
-        aria-controls={open ? "profile-menu" : undefined}
       >
         <span className="grid size-8 place-items-center rounded-lg bg-foreground font-display text-sm text-background">
           {CURRENT_STUDENT.name.charAt(0)}
@@ -45,29 +76,33 @@ export default function ProfileMenu() {
         </span>
       </button>
       {open ? (
-        <>
-          <button
-            type="button"
-            className="fixed inset-0 z-40 cursor-default"
-            aria-hidden="true"
-            tabIndex={-1}
-            onClick={() => {
-              setOpen(false);
-              triggerRef.current?.focus();
-            }}
-          />
-          <div id="profile-menu" className="glass-strong absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl py-1 shadow-xl">
+        <div
+          id="profile-actions"
+          className="glass-strong absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl py-1 shadow-xl"
+        >
+          <nav aria-label="Profile options">
             <Link href="/profile" className="flex min-h-11 items-center gap-2 px-3 py-2 text-sm hover:bg-muted" onClick={() => setOpen(false)}>
-              <UserRound className="size-4" aria-hidden="true" /> Profile
+              <UserRound className="size-4" /> Profile
             </Link>
             <Link href="/settings" className="flex min-h-11 items-center gap-2 px-3 py-2 text-sm hover:bg-muted" onClick={() => setOpen(false)}>
-              <Settings className="size-4" aria-hidden="true" /> Settings
+              <Settings className="size-4" /> Settings
             </Link>
-            <button type="button" className="flex min-h-11 w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted" onClick={logout}>
-              <LogOut className="size-4" aria-hidden="true" /> Log out
-            </button>
-          </div>
-        </>
+          </nav>
+          {logoutError ? (
+            <p role="alert" className="mx-2 my-1 rounded-lg bg-danger/10 px-3 py-2 text-xs text-danger">
+              {logoutError}
+            </p>
+          ) : null}
+          <button
+            type="button"
+            className="flex min-h-11 w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted disabled:opacity-60"
+            onClick={logout}
+            disabled={loggingOut}
+          >
+            <LogOut className="size-4" />
+            {loggingOut ? "Logging out…" : "Log out"}
+          </button>
+        </div>
       ) : null}
     </div>
   );

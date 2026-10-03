@@ -6,6 +6,7 @@ interface BrandMarkProps {
   compact?: boolean;
   className?: string;
   showTagline?: boolean;
+  onClick?: () => void;
 }
 
 export function BrandMark({
@@ -13,10 +14,12 @@ export function BrandMark({
   compact = false,
   className,
   showTagline = false,
+  onClick,
 }: BrandMarkProps) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={cn("group flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90", className)}
     >
       {/* Refined Geometric CampusOS Monogram / Emblem */}

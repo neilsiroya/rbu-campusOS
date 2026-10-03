@@ -16,13 +16,13 @@ import {
   ClipboardList,
   FileText,
   GraduationCap,
+  Gamepad2,
+  Trophy,
   Briefcase,
   Zap,
   Bell,
   Settings,
   Sparkles,
-  Gamepad2,
-  Trophy,
 } from "lucide-react";
 
 export type NavItem = {
@@ -63,21 +63,21 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    group: "Campus Life",
-    items: [
-      { name: "Sports", href: "/sports", icon: Trophy },
-      { name: "Gaming", href: "/gaming", icon: Gamepad2 },
-    ],
-  },
-  {
     group: "Knowledge & Academics",
     items: [
-      { name: "Academics", href: "/academics", icon: GraduationCap },
       { name: "Study Hub", href: "/notes", icon: BookOpen },
+      { name: "Academics", href: "/academics", icon: GraduationCap },
       { name: "Timetable", href: "/timetable", icon: Clock3 },
       { name: "Attendance", href: "/attendance", icon: ClipboardList },
       { name: "Assignments", href: "/assignments", icon: FileText },
       { name: "Exams", href: "/exams", icon: GraduationCap },
+    ],
+  },
+  {
+    group: "Student Life",
+    items: [
+      { name: "Sports", href: "/sports", icon: Trophy },
+      { name: "Gaming", href: "/gaming", icon: Gamepad2 },
     ],
   },
   {
@@ -100,7 +100,6 @@ export const NAV_GROUPS: NavGroup[] = [
 
 export const PAGE_TITLES: Record<string, string> = {
   "/dashboard": "Campus Command",
-  "/academics": "Academics",
   "/feed": "Campus Feed",
   "/confessions": "Confessions",
   "/events": "Events",
@@ -110,11 +109,10 @@ export const PAGE_TITLES: Record<string, string> = {
   "/marketplace": "Marketplace",
   "/map": "Campus Map",
   "/facilities": "Facilities",
-  "/services": "Services",
   "/hostels": "Hostels",
-  "/sports": "Sports",
-  "/gaming": "Gaming",
+  "/services": "Services",
   "/notes": "Study Hub",
+  "/academics": "Academics",
   "/timetable": "Timetable",
   "/attendance": "Attendance",
   "/assignments": "Assignments",
@@ -122,6 +120,8 @@ export const PAGE_TITLES: Record<string, string> = {
   "/internships": "Internships",
   "/hackathons": "Hackathons",
   "/placements": "Placements",
+  "/sports": "Sports",
+  "/gaming": "Gaming",
   "/notifications": "Notifications",
   "/settings": "Settings",
   "/campus-ai": "Campus AI",

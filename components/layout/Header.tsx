@@ -12,16 +12,11 @@ import NotificationsMenu from "./NotificationsMenu";
 import ProfileMenu from "./ProfileMenu";
 
 interface HeaderProps {
-  isMobileMenuOpen: boolean;
-  menuButtonRef: React.RefObject<HTMLButtonElement | null>;
   onMenuToggle: () => void;
+  isMobileMenuOpen: boolean;
 }
 
-export default function Header({
-  isMobileMenuOpen,
-  menuButtonRef,
-  onMenuToggle,
-}: HeaderProps) {
+export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) {
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -36,14 +31,13 @@ export default function Header({
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-border/70 px-3 glass-surface md:px-5">
       <div className="flex min-w-0 items-center gap-3">
         <Button
-          ref={menuButtonRef}
           variant="ghost"
           size="icon"
-          className="size-11 md:hidden hover:bg-muted/50"
+          className="size-9 shrink-0 hover:bg-muted/50 md:hidden"
           onClick={onMenuToggle}
           aria-label={isMobileMenuOpen ? "Close navigation" : "Open navigation"}
-          aria-expanded={isMobileMenuOpen}
           aria-controls="app-sidebar"
+          aria-expanded={isMobileMenuOpen}
         >
           {isMobileMenuOpen ? (
             <X className="size-5 text-foreground" aria-hidden="true" />
@@ -53,27 +47,24 @@ export default function Header({
         </Button>
         <div className="md:hidden">
           <BrandMark compact />
-        </div>
-        <p className="hidden truncate text-sm text-muted-foreground md:block">{titleForPath(pathname)}</p>
-        <div className="hidden md:block">
-          <CommandSearch />
-        </div>
+          </div>
+          <p className="hidden truncate text-sm text-muted-foreground md:block">{titleForPath(pathname)}</p>
       </div>
 
       <div className="flex items-center gap-1">
-        <div className="md:hidden">
           <CommandSearch />
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-11 rounded-full hover:bg-muted/50"
+          <Button
+            variant="ghost"
+            size="icon"
+          className="size-9 rounded-full hover:bg-muted/50"
           aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
           onClick={() => setTheme(dark ? "light" : "dark")}
         >
-          {mounted ? (dark ? <Sun className="size-4 text-foreground" aria-hidden="true" /> : <Moon className="size-4 text-foreground" aria-hidden="true" />) : <span className="size-4" />}
+          {mounted ? (dark ? <Sun className="size-4 text-foreground" /> : <Moon className="size-4 text-foreground" />) : <span className="size-4" />}
         </Button>
-        <NotificationsMenu />
+        <div className="hidden sm:block">
+          <NotificationsMenu />
+        </div>
         <ProfileMenu />
       </div>
     </header>

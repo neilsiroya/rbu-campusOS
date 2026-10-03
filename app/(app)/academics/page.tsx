@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   BookOpen,
@@ -15,6 +17,8 @@ import {
   ArrowUpRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { DemoNotice } from "@/components/os/DemoNotice";
 import { cn } from "@/lib/utils";
 
 // --- TYPES ---
@@ -164,7 +168,14 @@ const CourseCard = ({ course, index }: { course: Course; index: number }) => (
           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Syllabus Completion</span>
           <span className="text-xs font-mono font-bold text-foreground">{course.progress}%</span>
         </div>
-        <div className="h-1.5 bg-muted rounded-full overflow-hidden relative">
+        <div
+          role="progressbar"
+          aria-label={`${course.name} syllabus completion`}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={course.progress}
+          className="relative h-1.5 overflow-hidden rounded-full bg-muted"
+        >
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${course.progress}%` }}
@@ -179,9 +190,7 @@ const CourseCard = ({ course, index }: { course: Course; index: number }) => (
           <Clock className="size-3" />
           <span className="text-[10px] font-medium">{course.nextSession.time} &bull; {course.nextSession.room}</span>
         </div>
-        <Button size="icon" variant="ghost" className="size-7 rounded-lg hover:bg-primary/10 hover:text-primary transition-all">
-          <ArrowUpRight className="size-3" />
-        </Button>
+        <ArrowUpRight className="size-4 text-muted-foreground" aria-hidden="true" />
       </div>
     </div>
   </motion.div>
@@ -192,7 +201,7 @@ const DeadlineRow = ({ deadline, index }: { deadline: Deadline; index: number })
     initial={{ opacity: 0, x: -10 }}
     animate={{ opacity: 1, x: 0 }}
     transition={{ delay: index * 0.1 }}
-    className="flex items-center justify-between p-2 rounded-lg hover:bg-primary/5 transition-all motion-fast group cursor-pointer"
+    className="group flex items-center justify-between rounded-lg p-2"
   >
     <div className="flex items-center gap-3">
       <div className="size-1.5 rounded-full bg-border group-hover:bg-primary transition-colors" />
@@ -218,7 +227,7 @@ const ResourceLink = ({ resource, index }: { resource: Resource; index: number }
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.1 }}
-    className="flex items-center justify-between p-2 rounded-lg bg-background/40 border border-border/50 hover:border-primary/30 transition-all motion-fast group cursor-pointer"
+    className="group flex items-center justify-between rounded-lg border border-border/50 bg-background/40 p-2"
   >
     <div className="flex items-center gap-3">
       <div className="p-1.5 rounded-md bg-muted text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary transition-colors">
@@ -234,6 +243,16 @@ const ResourceLink = ({ resource, index }: { resource: Resource; index: number }
 );
 
 export default function AcademicsPage() {
+  const [courseQuery, setCourseQuery] = useState("");
+  const courses = useMemo(() => {
+    const query = courseQuery.trim().toLowerCase();
+    return DEMO_ACADEMIC_DATA.courses.filter((course) =>
+      `${course.code} ${course.name} ${course.instructor}`
+        .toLowerCase()
+        .includes(query)
+    );
+  }, [courseQuery]);
+
   return (
     <div className="space-y-8">
       {/* TOP: Academic Operational Header */}
@@ -254,6 +273,8 @@ export default function AcademicsPage() {
             Semester 5 &bull; B.Tech Computer Science &bull; 2026
           </p>
         </div>
+
+        <DemoNotice />
 
         <div className="grid w-full grid-cols-2 gap-4 xl:grid-cols-4">
           <AcademicStat
@@ -292,24 +313,33 @@ export default function AcademicsPage() {
 
         {/* Left Column: Course Control Center */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
               <BookOpen className="size-4 text-primary" /> Active Course Modules
             </h2>
-            <div className="relative w-64">
+            <div className="relative w-full sm:max-w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Filter modules..."
-                className="w-full bg-background/50 border border-border/50 rounded-full pl-9 pr-4 py-1.5 text-[10px] font-medium focus:outline-none focus:ring-1 ring-primary/50 transition-all"
+              <Input
+                id="course-filter"
+                type="search"
+                aria-label="Filter courses"
+                value={courseQuery}
+                onChange={(event) => setCourseQuery(event.target.value)}
+                placeholder="Filter courses..."
+                className="pl-9"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {DEMO_ACADEMIC_DATA.courses.map((course, i) => (
+            {courses.map((course, i) => (
               <CourseCard key={course.code} course={course} index={i} />
             ))}
+            {courses.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground md:col-span-2">
+                No courses match that search.
+              </p>
+            ) : null}
           </div>
         </div>
 
@@ -344,8 +374,13 @@ export default function AcademicsPage() {
               ))}
             </div>
             <div className="p-4 border-t border-border/50 bg-background/10">
-              <Button variant="ghost" className="w-full h-8 text-[10px] font-bold uppercase tracking-widest hover:bg-primary/10 hover:text-primary transition-all">
-                Access All Archives <ArrowUpRight className="ml-2 size-3" />
+              <Button
+                render={<Link href="/notes" />}
+                nativeButton={false}
+                variant="ghost"
+                className="min-h-11 w-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-primary/10 hover:text-primary"
+              >
+                Browse Study Hub <ArrowUpRight className="ml-2 size-3" />
               </Button>
             </div>
           </div>

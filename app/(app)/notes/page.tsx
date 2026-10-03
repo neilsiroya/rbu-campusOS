@@ -16,6 +16,7 @@ import {
 import { STUDY_RESOURCES, type StudyResource } from "@/lib/campus-data";
 import { useSessionItems } from "@/lib/session-store";
 import { DemoNotice } from "@/components/os/DemoNotice";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 import { EmptyState } from "@/components/os/EmptyState";
 import { PageIntro } from "@/components/os/PageIntro";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,7 @@ const BRANCHES = ["All", "CSE", "ECE", "ME", "EE", "Design"] as const;
 const YEARS = ["All", "1st", "2nd", "3rd", "4th"] as const;
 
 export default function NotesPage() {
-  const { items, prepend, update } = useSessionItems<StudyResource>(
+  const { items, prepend, update, storageError } = useSessionItems<StudyResource>(
     "campusos.study",
     STUDY_RESOURCES
   );
@@ -152,6 +153,7 @@ export default function NotesPage() {
       <DemoNotice>
         Study Hub records are demo materials. New resources are stored in your browser session; no external document upload is initiated.
       </DemoNotice>
+      <SessionStorageNotice message={storageError} />
 
       {/* NexDash-inspired Knowledge Command Surface */}
       <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8">
@@ -310,15 +312,10 @@ export default function NotesPage() {
             return (
               <article
                 key={item.id}
-                className="activity-surface group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
+                onClick={() => setSelectedResource(item)}
+                className="activity-surface group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 cursor-pointer"
               >
-                <button
-                  type="button"
-                  aria-label={`View resource: ${item.title}`}
-                  onClick={() => setSelectedResource(item)}
-                  className="absolute inset-0 z-10 cursor-pointer rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
-                />
-                <div className="pointer-events-none">
+                <div>
                   {/* Top Bar */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2">
@@ -373,7 +370,7 @@ export default function NotesPage() {
                       type="button"
                       onClick={(e) => handleUpvote(item.id, e)}
                       className={cn(
-                        "pointer-events-auto relative z-20 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition-all",
+                        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition-all",
                         hasVoted
                           ? "border-primary bg-primary/15 text-primary"
                           : "border-border/80 bg-background/50 text-muted-foreground hover:border-primary/40 hover:text-foreground"

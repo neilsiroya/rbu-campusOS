@@ -6,20 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Lock, Mail } from "lucide-react";
+
+type FormMessage = {
+  tone: "error";
+  text: string;
+};
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<FormMessage | null>(null);
   const router = useRouter();
+  const shouldReduceMotion = useReducedMotion();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
+    setMessage(null);
 
     try {
       const supabase = createClient();
@@ -29,8 +35,6 @@ export default function LoginPage() {
       });
 
       if (error) throw error;
-      setMessage("Authenticating...");
-
       // Check if we have a previous path to return to
       const searchParams = new URLSearchParams(window.location.search);
       const requestedPath = searchParams.get('from');
@@ -38,17 +42,18 @@ export default function LoginPage() {
       router.replace(fromPath);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
-      setMessage(errorMessage);
+      setMessage({ tone: "error", text: errorMessage });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
+    <div className="flex min-h-dvh items-center justify-center p-4">
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
         className="w-full max-w-md"
       >
         <div className="text-center mb-8 space-y-2">
@@ -64,12 +69,11 @@ export default function LoginPage() {
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
-                    id="login-email"
-                    name="email"
                     className="pl-10 bg-background/50 border-border/50 focus:ring-primary/20"
+                    id="login-email"
                     type="email"
-                    autoComplete="email"
                     placeholder="student@rbu.ac.in"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -81,12 +85,11 @@ export default function LoginPage() {
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
-                    id="login-password"
-                    name="password"
                     className="pl-10 bg-background/50 border-border/50 focus:ring-primary/20"
+                    id="login-password"
                     type="password"
-                    autoComplete="current-password"
                     placeholder="••••••••"
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -95,31 +98,25 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {message && (
-              <p className={cn(
-                "text-xs text-center font-medium p-2 rounded-lg border",
-                message.includes("Authenticating")
-                  ? "text-primary bg-primary/10 border-primary/20"
-                  : "text-danger bg-danger/10 border-danger/20"
-              )}>
-                {message}
+            {message ? (
+              <p
+                role="alert"
+                className="rounded-lg border border-danger/20 bg-danger/10 p-2 text-center text-xs font-medium text-danger"
+              >
+                {message.text}
               </p>
-            )}
+            ) : null}
 
             <Button
-              className="w-full h-12 text-sm font-bold uppercase tracking-widest rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95"
+              className="h-12 w-full rounded-xl text-sm font-bold uppercase tracking-widest shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
               type="submit"
               disabled={loading}
             >
-              {loading ? "Verifying..." : "Access System"}
+              {loading ? "Verifying…" : "Access System"}
             </Button>
           </form>
         </Card>
       </motion.div>
     </div>
   );
-}
-
-function cn(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
 }

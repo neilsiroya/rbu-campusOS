@@ -33,7 +33,7 @@ export default function LiquidCursor() {
 
     let width = window.innerWidth;
     let height = window.innerHeight;
-    let rafId: number | null = null;
+    let rafId = 0;
     let isRunning = true;
 
     // Pointer state
@@ -53,10 +53,6 @@ export default function LiquidCursor() {
     let lastSpawnTime = 0;
     let lastMoveTime = 0;
 
-    const scheduleFrame = () => {
-      if (isRunning && rafId === null) rafId = requestAnimationFrame(tick);
-    };
-
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
@@ -66,7 +62,6 @@ export default function LiquidCursor() {
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (pointer.fadeAlpha > 0.005 || ripples.length > 0) scheduleFrame();
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -80,21 +75,18 @@ export default function LiquidCursor() {
         pointer.visible = true;
       }
       lastMoveTime = performance.now();
-      scheduleFrame();
     };
 
     const onMouseLeave = () => {
       pointer.visible = false;
       pointer.moving = false;
-      pointer.targetX = pointer.x;
-      pointer.targetY = pointer.y;
-      scheduleFrame();
+      pointer.targetX = -9999;
+      pointer.targetY = -9999;
     };
 
     const isDarkMode = () => document.documentElement.classList.contains("dark");
 
     const tick = (time: number) => {
-      rafId = null;
       if (!isRunning) return;
 
       // Smooth interpolation
@@ -124,6 +116,12 @@ export default function LiquidCursor() {
 
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
+
+      // Nothing to draw if fully faded
+      if (pointer.fadeAlpha <= 0.005 && ripples.length === 0) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
 
       const dark = isDarkMode();
       const angle = Math.atan2(vy, vx);
@@ -205,28 +203,18 @@ export default function LiquidCursor() {
         ctx.fill();
       }
 
-      const pointerIsCatchingUp =
-        pointer.visible &&
-        Math.hypot(pointer.targetX - pointer.x, pointer.targetY - pointer.y) > 0.5;
-      if (
-        pointerIsCatchingUp ||
-        pointer.moving ||
-        pointer.fadeAlpha > 0.005 ||
-        ripples.length > 0
-      ) {
-        scheduleFrame();
-      }
+      rafId = requestAnimationFrame(tick);
     };
 
     resize();
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     window.addEventListener("mouseleave", onMouseLeave, { passive: true });
-    scheduleFrame();
+    rafId = requestAnimationFrame(tick);
 
     return () => {
       isRunning = false;
-      if (rafId !== null) cancelAnimationFrame(rafId);
+      cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseleave", onMouseLeave);

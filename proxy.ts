@@ -32,10 +32,34 @@ const protectedPrefixes = [
 ];
 
 export async function proxy(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const isProtectedRoute = protectedPrefixes.some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`)
+  );
+  const isAuthRoute = path === "/auth/login" || path === "/auth/signup";
+
+  if (!isProtectedRoute && !isAuthRoute) {
+    return NextResponse.next({ request });
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    if (isProtectedRoute) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/auth/login";
+      url.searchParams.set("from", `${path}${request.nextUrl.search}`);
+      return NextResponse.redirect(url);
+    }
+
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll: () => request.cookies.getAll(),
@@ -52,15 +76,14 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const path = request.nextUrl.pathname;
-  if (!user && protectedPrefixes.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))) {
+  if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     url.searchParams.set("from", `${path}${request.nextUrl.search}`);
     return NextResponse.redirect(url);
   }
 
-  if (user && (path === "/auth/login" || path === "/auth/signup")) {
+  if (user && isAuthRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

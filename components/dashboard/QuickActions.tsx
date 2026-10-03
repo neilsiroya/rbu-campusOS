@@ -14,7 +14,7 @@ interface QuickActionsProps {
 }
 
 export default function QuickActions({
-  opportunities = "3 summer internship positions posted.",
+  opportunities = "Explore sample internships and hackathons.",
 }: QuickActionsProps) {
   return (
     <section className="space-y-3">
@@ -28,7 +28,7 @@ export default function QuickActions({
         {/* Marketplace */}
         <Link
           href="/marketplace"
-          className="interactive-surface group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
+          className="group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 transition-all"
         >
           <div>
             <div className="flex size-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
@@ -43,14 +43,14 @@ export default function QuickActions({
           </div>
           <div className="mt-4 flex items-center justify-between text-xs font-semibold text-primary">
             <span>Explore Gear</span>
-            <ArrowRight className="size-3.5" />
+            <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>
 
         {/* Study Hub */}
         <Link
           href="/notes"
-          className="interactive-surface group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
+          className="group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 transition-all"
         >
           <div>
             <div className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary group-hover:scale-105 transition-transform">
@@ -65,14 +65,14 @@ export default function QuickActions({
           </div>
           <div className="mt-4 flex items-center justify-between text-xs font-semibold text-primary">
             <span>Access Notes</span>
-            <ArrowRight className="size-3.5" />
+            <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>
 
         {/* Campus Map */}
         <Link
           href="/map"
-          className="interactive-surface group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
+          className="group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 transition-all"
         >
           <div>
             <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
@@ -87,14 +87,14 @@ export default function QuickActions({
           </div>
           <div className="mt-4 flex items-center justify-between text-xs font-semibold text-primary">
             <span>Find Rooms</span>
-            <ArrowRight className="size-3.5" />
+            <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>
 
         {/* Opportunities / Internships */}
         <Link
           href="/internships"
-          className="interactive-surface group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
+          className="group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 transition-all"
         >
           <div>
             <div className="flex size-10 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 group-hover:scale-105 transition-transform">
@@ -109,7 +109,7 @@ export default function QuickActions({
           </div>
           <div className="mt-4 flex items-center justify-between text-xs font-semibold text-primary">
             <span>View Desks</span>
-            <ArrowRight className="size-3.5" />
+            <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
           </div>
         </Link>
       </div>
