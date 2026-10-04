@@ -41,7 +41,7 @@ export default function CampusPulse({ posts }: CampusPulseProps) {
           {posts.slice(0, 3).map((post) => (
             <div
               key={post.id}
-              className="rounded-2xl border border-border/70 bg-background/50 p-3.5 transition-colors hover:bg-muted/40"
+              className="interactive-card rounded-2xl p-3.5"
             >
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-foreground">

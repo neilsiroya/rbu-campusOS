@@ -16,6 +16,7 @@ interface WaterRipple {
  * Subtle Liquid Cursor — only active while moving, silent when still.
  * Renders a soft radial glow that fades out after the pointer stops,
  * plus gentle elliptical ripples while in motion. No idle animation.
+ * Adapts to light/dark themes via CSS variables.
  */
 export default function LiquidCursor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -53,6 +54,51 @@ export default function LiquidCursor() {
     let lastSpawnTime = 0;
     let lastMoveTime = 0;
 
+    // Read theme colors from CSS variables
+    const getThemeColors = () => {
+      const rootStyles = getComputedStyle(document.documentElement);
+      const isDark = document.documentElement.classList.contains("dark");
+      
+      if (isDark) {
+        return {
+          rippleColor: rootStyles.getPropertyValue("--primary").trim() || "oklch(0.72 0.10 160)",
+          glowColor: rootStyles.getPropertyValue("--primary").trim() || "oklch(0.72 0.10 160)",
+          rippleAlpha: 0.35,
+          glowAlpha: 0.15,
+        };
+      } else {
+        return {
+          rippleColor: rootStyles.getPropertyValue("--primary").trim() || "oklch(0.42 0.11 160)",
+          glowColor: rootStyles.getPropertyValue("--primary").trim() || "oklch(0.42 0.11 160)",
+          rippleAlpha: 0.25,
+          glowAlpha: 0.1,
+        };
+      }
+    };
+
+    // Parse OKLCH color string to RGB for canvas
+    const oklchToRgb = (oklch: string): [number, number, number] => {
+      // Simple fallback - extract hue and use HSL approximation
+      // For production, consider a proper OKLCH parser
+      const match = oklch.match(/oklch\([\d.]+\s+[\d.]+\s+(\d+)\)/);
+      const hue = match ? parseInt(match[1]) : 160;
+      // Convert HSL to RGB (simplified)
+      const h = hue / 360;
+      const s = 0.6;
+      const l = 0.5;
+      const c = (1 - Math.abs(2 * l - 1)) * s;
+      const x = c * (1 - Math.abs((h * 6) % 2 - 1));
+      const m = l - c / 2;
+      let r = 0, g = 0, b = 0;
+      if (h < 1/6) { r = c; g = x; b = 0; }
+      else if (h < 2/6) { r = x; g = c; b = 0; }
+      else if (h < 3/6) { r = 0; g = c; b = x; }
+      else if (h < 4/6) { r = 0; g = x; b = c; }
+      else if (h < 5/6) { r = x; g = 0; b = c; }
+      else { r = c; g = 0; b = x; }
+      return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+    };
+
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
@@ -83,8 +129,6 @@ export default function LiquidCursor() {
       pointer.targetX = -9999;
       pointer.targetY = -9999;
     };
-
-    const isDarkMode = () => document.documentElement.classList.contains("dark");
 
     const tick = (time: number) => {
       if (!isRunning) return;
@@ -123,7 +167,8 @@ export default function LiquidCursor() {
         return;
       }
 
-      const dark = isDarkMode();
+      const colors = getThemeColors();
+      const [r, g, b] = oklchToRgb(colors.glowColor);
       const angle = Math.atan2(vy, vx);
 
       // Spawn ripples only while actively moving
@@ -150,54 +195,38 @@ export default function LiquidCursor() {
 
       // Render ripples
       for (let i = ripples.length - 1; i >= 0; i--) {
-        const r = ripples[i];
-        r.life -= r.decay;
-        r.radius += (r.maxRadius - r.radius) * 0.1;
+        const rip = ripples[i];
+        rip.life -= rip.decay;
+        rip.radius += (rip.maxRadius - rip.radius) * 0.1;
 
-        if (r.life <= 0) {
+        if (rip.life <= 0) {
           ripples.splice(i, 1);
           continue;
         }
 
-        const alpha = r.life * 0.45;
+        const alpha = rip.life * colors.rippleAlpha;
 
-        if (dark) {
-          // Dark: single soft luminous ring (teal/green)
-          ctx.beginPath();
-          ctx.ellipse(r.x, r.y, r.radius, r.radius * 0.7, r.angle, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(120, 210, 180, ${alpha * 0.5})`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        } else {
-          // Light: single subtle shadow ring (teal/green)
-          ctx.beginPath();
-          ctx.ellipse(r.x, r.y, r.radius, r.radius * 0.7, r.angle, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(40, 120, 100, ${alpha * 0.35})`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
+        ctx.beginPath();
+        ctx.ellipse(rip.x, rip.y, rip.radius, rip.radius * 0.7, rip.angle, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
 
       // Cursor glow — only when alpha > 0
       if (pointer.fadeAlpha > 0.005 && pointer.x > 0 && pointer.y > 0) {
         const a = pointer.fadeAlpha;
         const glowRadius = 22;
-        const g = ctx.createRadialGradient(
+        const grad = ctx.createRadialGradient(
           pointer.x, pointer.y, 0,
           pointer.x, pointer.y, glowRadius
         );
 
-        if (dark) {
-          g.addColorStop(0, `rgba(140, 220, 190, ${0.18 * a})`);
-          g.addColorStop(0.4, `rgba(100, 190, 160, ${0.06 * a})`);
-          g.addColorStop(1, "rgba(0, 0, 0, 0)");
-        } else {
-          g.addColorStop(0, `rgba(50, 130, 110, ${0.12 * a})`);
-          g.addColorStop(0.4, `rgba(80, 150, 130, ${0.04 * a})`);
-          g.addColorStop(1, "rgba(255, 255, 255, 0)");
-        }
+        grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${colors.glowAlpha * a})`);
+        grad.addColorStop(0.4, `rgba(${r}, ${g}, ${b}, ${colors.glowAlpha * 0.3 * a})`);
+        grad.addColorStop(1, "rgba(0, 0, 0, 0)");
 
-        ctx.fillStyle = g;
+        ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(pointer.x, pointer.y, glowRadius, 0, Math.PI * 2);
         ctx.fill();

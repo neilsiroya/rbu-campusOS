@@ -165,7 +165,7 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-in">
       <PageIntro
         kicker="Campus Exchange"
         title="Campus Marketplace"
@@ -177,19 +177,19 @@ export default function MarketplacePage() {
       </DemoNotice>
 
       {/* NexDash-inspired Marketplace Command Surface */}
-      <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8">
+      <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8 stagger-in">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <span className="flex size-2 rounded-full bg-emerald-500 animate-pulse" />
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 Exchange Telemetry · Live Session
               </p>
             </div>
-            <h2 className="font-display text-2xl tracking-tight sm:text-3xl lg:text-4xl">
+            <h2 className="text-display-lg tracking-tight">
               What campus has to offer, right now.
             </h2>
-            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            <p className="max-w-2xl text-body leading-relaxed text-muted-foreground">
               Direct peer exchanges across hostels, lecture halls, and labs with zero platform fees.
             </p>
 
@@ -338,7 +338,7 @@ export default function MarketplacePage() {
                   setSelectedItem(item);
                   setContactSent(false);
                 }}
-                className="activity-surface group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 cursor-pointer"
+                className="interactive-card group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 cursor-pointer"
               >
                 <div>
                   {/* Top card visual bar */}

@@ -21,21 +21,21 @@ export default function ServicesPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-in">
       <PageIntro kicker="Campus" title="Services" description="Administration, support, transport, maintenance, library, and IT — as a directory, not a ticket system." />
       <DemoNotice />
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 stagger-in">
         <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search services" className="max-w-xs" />
         <FilterChips value={cat} onChange={setCat} options={CATS} />
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2 stagger-in">
         {list.map((s) => (
-          <article key={s.id} className="rounded-3xl border border-border p-5">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{s.category}</p>
-            <h2 className="mt-2 font-display text-2xl">{s.name}</h2>
-            <p className="mt-2 text-sm">{s.contact}</p>
-            <p className="text-xs text-muted-foreground">{s.hours}</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.note}</p>
+          <article key={s.id} className="surface rounded-3xl p-5">
+            <p className="text-meta text-muted-foreground">{s.category}</p>
+            <h2 className="mt-2 text-h3">{s.name}</h2>
+            <p className="mt-2 text-body-sm">{s.contact}</p>
+            <p className="text-caption text-muted-foreground">{s.hours}</p>
+            <p className="mt-3 text-body leading-relaxed text-muted-foreground">{s.note}</p>
           </article>
         ))}
       </div>

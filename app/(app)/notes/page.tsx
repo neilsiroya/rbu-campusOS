@@ -142,7 +142,7 @@ export default function NotesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-in">
       <PageIntro
         kicker="Academics & Knowledge"
         title="Study Hub"
@@ -154,19 +154,19 @@ export default function NotesPage() {
       </DemoNotice>
 
       {/* NexDash-inspired Knowledge Command Surface */}
-      <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8">
+      <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8 stagger-in">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <span className="flex size-2 rounded-full bg-primary animate-pulse" />
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 Knowledge Network · Active Academic Session
               </p>
             </div>
-            <h2 className="font-display text-2xl tracking-tight sm:text-3xl lg:text-4xl">
+            <h2 className="text-display-lg tracking-tight">
               High-yield campus materials, verified by peers.
             </h2>
-            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            <p className="max-w-2xl text-body leading-relaxed text-muted-foreground">
               Direct access to exam question patterns, lab step-by-steps, and curated notes from top semester scorers.
             </p>
 
@@ -311,7 +311,7 @@ export default function NotesPage() {
               <article
                 key={item.id}
                 onClick={() => setSelectedResource(item)}
-                className="activity-surface group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 cursor-pointer"
+                className="interactive-card group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 cursor-pointer"
               >
                 <div>
                   {/* Top Bar */}

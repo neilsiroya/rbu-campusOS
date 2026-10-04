@@ -29,7 +29,7 @@ export default function LostFoundPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-in">
       <PageIntro
         kicker="Community"
         title="Lost & Found"
@@ -38,8 +38,8 @@ export default function LostFoundPage() {
       <DemoNotice />
 
       <section className="glass rounded-3xl p-5">
-        <p className="text-sm font-medium">New listing</p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <p className="text-body font-medium">New listing</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 stagger-in">
           <select
             className="h-9 rounded-lg border border-input bg-background px-2 text-sm"
             value={form.kind}
@@ -90,10 +90,10 @@ export default function LostFoundPage() {
             List item
           </Button>
         </div>
-        {note ? <p className="mt-2 text-xs text-muted-foreground">{note}</p> : null}
+        {note ? <p className="mt-2 text-caption text-muted-foreground">{note}</p> : null}
       </section>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center stagger-in">
         <FilterChips value={kind} onChange={setKind} options={["All", "lost", "found"]} />
         <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search listings" className="sm:max-w-xs" />
       </div>
@@ -101,21 +101,21 @@ export default function LostFoundPage() {
       {list.length === 0 ? (
         <EmptyState title="No listings" body="Try another filter, or add a session listing above." />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2 stagger-in">
           {list.map((item) => (
-            <article key={item.id} className="overflow-hidden rounded-3xl border border-border">
+            <article key={item.id} className="interactive-card overflow-hidden rounded-3xl">
               <div className="flex h-32 items-end bg-muted px-5 py-4">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                <p className="text-meta text-muted-foreground">
                   {item.kind} · {item.category}
                 </p>
               </div>
               <div className="p-5">
-                <h2 className="font-display text-xl">{item.title}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <h2 className="text-h4">{item.title}</h2>
+                <p className="mt-2 text-body-sm text-muted-foreground">
                   {item.location} · {item.date} · {item.status}
                   {item.sessionLocal ? " · this session" : ""}
                 </p>
-                <p className="mt-3 text-sm leading-relaxed">{item.description}</p>
+                <p className="mt-3 text-body leading-relaxed">{item.description}</p>
                 <Button
                   variant="outline"
                   className="mt-4 rounded-full"

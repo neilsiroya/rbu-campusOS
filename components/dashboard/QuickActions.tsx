@@ -28,7 +28,7 @@ export default function QuickActions({
         {/* Marketplace */}
         <Link
           href="/marketplace"
-          className="group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 transition-all"
+          className="group activity-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
         >
           <div>
             <div className="flex size-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
@@ -50,7 +50,7 @@ export default function QuickActions({
         {/* Study Hub */}
         <Link
           href="/notes"
-          className="group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 transition-all"
+          className="group activity-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
         >
           <div>
             <div className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary group-hover:scale-105 transition-transform">
@@ -72,7 +72,7 @@ export default function QuickActions({
         {/* Campus Map */}
         <Link
           href="/map"
-          className="group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 transition-all"
+          className="group activity-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
         >
           <div>
             <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
@@ -94,7 +94,7 @@ export default function QuickActions({
         {/* Opportunities / Internships */}
         <Link
           href="/internships"
-          className="group command-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 transition-all"
+          className="group activity-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
         >
           <div>
             <div className="flex size-10 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 group-hover:scale-105 transition-transform">

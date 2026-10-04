@@ -55,7 +55,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-in">
       <PageIntro
         kicker="System"
         title="Settings"
@@ -63,9 +63,9 @@ export default function SettingsPage() {
       />
       <DemoNotice />
 
-      <section className="rounded-3xl border border-border bg-card p-6">
-        <h2 className="font-display text-2xl">Appearance</h2>
-        <p className="mt-1 text-sm text-muted-foreground">Choose the CampusOS color mode.</p>
+      <section className="surface rounded-3xl p-6">
+        <h2 className="text-h3">Appearance</h2>
+        <p className="mt-1 text-body text-muted-foreground">Choose the CampusOS color mode.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button
             variant={resolvedTheme === "light" ? "default" : "outline"}
@@ -91,8 +91,8 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-border bg-card p-6">
-        <h2 className="font-display text-2xl">Preferences</h2>
+      <section className="surface rounded-3xl p-6">
+        <h2 className="text-h3">Preferences</h2>
         <div className="mt-3 divide-y divide-border">
           {rows.map(([key, label, detail]) => (
             <label
@@ -101,7 +101,7 @@ export default function SettingsPage() {
             >
               <span>
                 <span className="block font-medium text-foreground">{label}</span>
-                <span className="block text-sm text-muted-foreground">{detail}</span>
+                <span className="block text-body-sm text-muted-foreground">{detail}</span>
               </span>
               <input
                 type="checkbox"
@@ -117,7 +117,7 @@ export default function SettingsPage() {
             Save preferences
           </Button>
           {saved && (
-            <p className="text-sm text-muted-foreground">Saved for this browser session.</p>
+            <p className="text-body-sm text-muted-foreground">Saved for this browser session.</p>
           )}
         </div>
       </section>

@@ -246,11 +246,11 @@ export default function ConfessionsPage() {
           body="Try another category or share an anonymous thought."
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 stagger-in">
           {list.map((c) => (
             <article
               key={c.id}
-              className="glass-surface flex flex-col justify-between rounded-3xl p-5 transition-colors hover:border-primary/30"
+              className="interactive-card glass-surface flex flex-col justify-between rounded-3xl p-5"
             >
               <div>
                 <div className="flex items-center justify-between">
@@ -259,8 +259,8 @@ export default function ConfessionsPage() {
                       🤫
                     </div>
                     <div>
-                      <p className="text-sm font-semibold leading-tight">{c.alias}</p>
-                      <p className="text-[10px] font-mono text-muted-foreground">
+                      <p className="font-medium leading-tight">{c.alias}</p>
+                      <p className="text-caption font-mono text-muted-foreground">
                         {c.category}
                         {c.sessionLocal ? " · this session" : " · demo"}
                       </p>
@@ -280,7 +280,7 @@ export default function ConfessionsPage() {
                   </Button>
                 </div>
 
-                <p className="mt-3 text-sm leading-relaxed">&ldquo;{c.body}&rdquo;</p>
+                <p className="mt-3 text-body leading-relaxed">&ldquo;{c.body}&rdquo;</p>
               </div>
 
               <div className="mt-4 pt-3 border-t border-border/50">
@@ -291,7 +291,7 @@ export default function ConfessionsPage() {
                         key={r}
                         variant="outline"
                         size="sm"
-                        className="rounded-full text-xs"
+                        className="rounded-full text-caption"
                         onClick={() =>
                           update((all) =>
                             all.map((x) =>
@@ -314,13 +314,13 @@ export default function ConfessionsPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="rounded-full text-xs"
+                      className="rounded-full text-caption"
                       onClick={() => respond(c.id)}
                     >
                       Reply ({c.replies.length})
                     </Button>
                   </div>
-                  <span className="flex items-center gap-1 text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
+                  <span className="flex items-center gap-1 text-caption font-mono text-emerald-600 dark:text-emerald-400">
                     <ShieldCheck className="size-3.5" />
                     100% Anon
                   </span>
@@ -331,7 +331,7 @@ export default function ConfessionsPage() {
                     {c.replies.map((r) => (
                       <p
                         key={r.id}
-                        className="border-l border-border pl-3 text-xs sm:text-sm"
+                        className="border-l border-border pl-3 text-body-sm"
                       >
                         <span className="font-medium">{r.alias}: </span>
                         {r.body}

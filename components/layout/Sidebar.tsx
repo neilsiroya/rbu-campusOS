@@ -26,11 +26,11 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     <aside
       id="app-sidebar"
       className={cn(
-        "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 glass-strong transition-transform duration-300 ease-out md:relative md:translate-x-0",
+        "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 surface-elevated transition-transform duration-300 ease-out md:relative md:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
-      <div className="flex items-center justify-between px-5 py-5">
+      <div className="flex items-center justify-between px-5 py-5 border-b border-border/50">
         <BrandMark />
         <Button
           variant="ghost"
@@ -46,7 +46,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       <nav className="custom-scrollbar flex-1 space-y-6 overflow-y-auto px-3 pb-8">
         {NAV_GROUPS.map((group) => (
           <div key={group.group} className="space-y-1">
-            <h2 className="px-3 pb-1 text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            <h2 className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
               {group.group}
             </h2>
             {group.items.map((item) => {
@@ -58,13 +58,13 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   href={item.href}
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors",
+                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
                     isActive
-                      ? "bg-primary text-primary-foreground font-medium"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      ? "bg-primary/10 text-primary border-l-3 border-primary"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                   )}
                 >
-                  <Icon className="size-4 shrink-0 text-foreground" />
+                  <Icon className="size-4 shrink-0" />
                   {item.name}
                 </Link>
               );
@@ -73,7 +73,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         ))}
       </nav>
 
-      <div className="border-t border-border/70 p-3">
+      <div className="border-t border-border/70 p-4">
         <Button
           variant="ghost"
           className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"

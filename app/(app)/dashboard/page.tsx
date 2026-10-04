@@ -29,17 +29,17 @@ export default function DashboardPage() {
   const event = EVENTS[0];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 stagger-in">
       {/* Hero Greeting with Telemetry */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-2">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
+          <p className="text-meta text-muted-foreground">
             Your campus environment
           </p>
-          <h1 className="font-display text-4xl tracking-tight md:text-5xl">
+          <h1 className="text-display-lg tracking-tight">
             {hello}, {CURRENT_STUDENT.name.split(" ")[0]}.
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-body text-muted-foreground">
             Community first. Peer exchange. Intelligence on demand.
           </p>
         </div>
@@ -49,16 +49,16 @@ export default function DashboardPage() {
       <DemoNotice>{DEMO_NOTICE}</DemoNotice>
 
       {/* Main Feed & Confessions Grid */}
-      <section className="grid gap-4 lg:grid-cols-12">
+      <section className="grid gap-4 lg:grid-cols-12 stagger-in">
         <CampusPulse posts={FEED_POSTS} />
 
-        <div className="flex flex-col gap-4 lg:col-span-5">
+        <div className="flex flex-col gap-4 lg:col-span-5 stagger-in">
           <ConfessionPreview confession={confession} />
 
           {/* Upcoming Event Card */}
-          <article className="activity-surface overflow-hidden rounded-3xl p-5">
+          <article className="featured-card overflow-hidden rounded-3xl p-5">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 Next Marquee Event
               </p>
               <Link
@@ -69,10 +69,10 @@ export default function DashboardPage() {
                 <ArrowRight className="size-3" />
               </Link>
             </div>
-            <h2 className="mt-3 font-display text-xl font-bold leading-tight text-foreground">
+            <h2 className="mt-3 text-h4 leading-tight text-foreground">
               {event.title}
             </h2>
-            <p className="mt-1.5 text-xs text-muted-foreground">
+            <p className="mt-1.5 text-caption text-muted-foreground">
               {event.date} · {event.time} · {event.location}
             </p>
           </article>
@@ -80,7 +80,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Marketplace & Study Hub Pulse Mini-Modules */}
-      <section className="grid gap-4 lg:grid-cols-2">
+      <section className="grid gap-4 lg:grid-cols-2 stagger-in">
         {/* Marketplace Pulse */}
         <div className="command-surface relative overflow-hidden rounded-3xl p-5">
           <div className="flex items-center justify-between">
@@ -89,10 +89,10 @@ export default function DashboardPage() {
                 <ShoppingBag className="size-4" />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                <p className="text-meta text-muted-foreground">
                   Campus Marketplace
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-caption text-muted-foreground">
                   {MARKETPLACE_LISTINGS.length} active listings
                 </p>
               </div>
@@ -106,14 +106,15 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 stagger-in">
             {MARKETPLACE_LISTINGS.slice(0, 4).map((item) => (
-              <div
+              <Link
                 key={item.id}
-                className="rounded-2xl border border-border/70 bg-background/50 p-2.5"
+                href="/marketplace"
+                className="interactive-card rounded-2xl p-2.5"
               >
-                <p className="text-xs font-semibold text-foreground truncate">{item.title}</p>
-                <div className="mt-1 flex items-center justify-between text-[10px] text-muted-foreground">
+                <p className="text-caption font-semibold text-foreground group-hover:text-primary transition-colors truncate">{item.title}</p>
+                <div className="mt-1 flex items-center justify-between text-caption text-muted-foreground">
                   <span className="rounded-md bg-muted px-1.5 py-0.5 font-medium">{item.type}</span>
                   {item.type === "Free" ? (
                     <span className="font-bold text-amber-600 dark:text-amber-400">Free</span>
@@ -121,7 +122,7 @@ export default function DashboardPage() {
                     <span className="font-bold text-foreground">₹{item.price}</span>
                   )}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -134,10 +135,10 @@ export default function DashboardPage() {
                 <BookOpen className="size-4" />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                <p className="text-meta text-muted-foreground">
                   Study Hub Activity
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-caption text-muted-foreground">
                   {STUDY_RESOURCES.length} resources · {STUDY_RESOURCES.filter((s) => s.popular).length} trending
                 </p>
               </div>
@@ -151,18 +152,19 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 stagger-in">
             {STUDY_RESOURCES.filter((s) => s.popular)
               .slice(0, 4)
               .map((note) => (
-                <div
+                <Link
                   key={note.id}
-                  className="rounded-2xl border border-border/70 bg-background/50 p-2.5"
+                  href="/notes"
+                  className="interactive-card rounded-2xl p-2.5"
                 >
-                  <p className="text-xs font-semibold text-foreground truncate">
+                  <p className="text-caption font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                     {note.title}
                   </p>
-                  <div className="mt-1 flex items-center justify-between text-[10px] text-muted-foreground">
+                  <div className="mt-1 flex items-center justify-between text-caption text-muted-foreground">
                     <span className="rounded-md bg-muted px-1.5 py-0.5 font-medium">
                       {note.subject}
                     </span>
@@ -171,7 +173,7 @@ export default function DashboardPage() {
                       {note.useful}
                     </span>
                   </div>
-                </div>
+                </Link>
               ))}
           </div>
         </div>

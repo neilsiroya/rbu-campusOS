@@ -31,7 +31,7 @@ export default function EventsPage() {
   const featured = EVENTS.find((e) => e.featured) ?? EVENTS[0];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-in">
       <PageIntro
         kicker="Community"
         title="Events"
@@ -39,13 +39,13 @@ export default function EventsPage() {
       />
       <DemoNotice />
 
-      <article className="overflow-hidden rounded-3xl border border-border">
+      <article className="overflow-hidden rounded-3xl border border-border stagger-in">
         <div className="grid md:grid-cols-2">
           <div className="bg-foreground p-8 text-background">
-            <p className="text-[11px] uppercase tracking-[0.22em] opacity-70">Featured</p>
-            <h2 className="mt-3 font-display text-4xl leading-tight">{featured.title}</h2>
-            <p className="mt-4 text-sm leading-relaxed opacity-80">{featured.description}</p>
-            <p className="mt-6 text-sm">
+            <p className="text-meta opacity-70">Featured</p>
+            <h2 className="mt-3 text-display-md leading-tight">{featured.title}</h2>
+            <p className="mt-4 text-body leading-relaxed opacity-80">{featured.description}</p>
+            <p className="mt-6 text-body">
               {featured.date} · {featured.time} · {featured.location}
             </p>
             <Button
@@ -65,11 +65,11 @@ export default function EventsPage() {
         </div>
       </article>
 
-      {note ? <p className="text-xs text-muted-foreground">{note}</p> : null}
+      {note ? <p className="text-caption text-muted-foreground">{note}</p> : null}
 
       <FilterChips value={filter} onChange={setFilter} options={FILTERS} />
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+      <div className="grid gap-4 lg:grid-cols-[1fr_320px] stagger-in">
         <div className="grid gap-4 sm:grid-cols-2">
           {list.length === 0 ? (
             <div className="sm:col-span-2">
@@ -81,11 +81,11 @@ export default function EventsPage() {
                 key={event.id}
                 type="button"
                 onClick={() => setSelected(event)}
-                className="rounded-2xl border border-border bg-card p-5 text-left hover:bg-muted/40"
+                className="interactive-card rounded-2xl p-5 text-left"
               >
-                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{event.category}</p>
-                <h3 className="mt-2 font-display text-xl leading-tight">{event.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="text-meta text-muted-foreground">{event.category}</p>
+                <h3 className="mt-2 text-h4 leading-tight">{event.title}</h3>
+                <p className="mt-2 text-body-sm text-muted-foreground">
                   {event.date} · {event.location}
                 </p>
               </button>
@@ -93,11 +93,11 @@ export default function EventsPage() {
           )}
         </div>
         {selected ? (
-          <aside className="glass h-fit rounded-3xl p-5">
-            <p className="text-xs text-muted-foreground">{selected.category}{selected.club ? ` · ${selected.club}` : ""}</p>
-            <h3 className="mt-2 font-display text-2xl">{selected.title}</h3>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{selected.description}</p>
-            <p className="mt-4 text-sm">
+          <aside className="glass h-fit rounded-3xl p-5 stagger-in">
+            <p className="text-caption text-muted-foreground">{selected.category}{selected.club ? ` · ${selected.club}` : ""}</p>
+            <h3 className="mt-2 text-h3">{selected.title}</h3>
+            <p className="mt-3 text-body leading-relaxed text-muted-foreground">{selected.description}</p>
+            <p className="mt-4 text-body">
               {selected.date} · {selected.time}
               <br />
               {selected.location}

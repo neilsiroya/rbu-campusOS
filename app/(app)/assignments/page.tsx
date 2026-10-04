@@ -11,14 +11,14 @@ export default function AssignmentsPage() {
   const [done, setDone] = useState<string[]>([]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-in">
       <PageIntro kicker="Academics" title="Assignments" description="A personal checklist. Completing a row only updates this browser session." />
       <DemoNotice />
-      <div className="space-y-3">
+      <div className="space-y-3 stagger-in">
         {ASSIGNMENTS.map((a) => (
-          <article key={a.id} className="flex flex-col gap-3 rounded-2xl border border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+          <article key={a.id} className="interactive-card flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs text-muted-foreground">{a.subject} · due {a.due}</p>
+              <p className="text-meta text-muted-foreground">{a.subject} · due {a.due}</p>
               <h2 className={cn("font-medium", done.includes(a.id) && "line-through text-muted-foreground")}>{a.title}</h2>
             </div>
             <Button

@@ -23,26 +23,26 @@ export default function ClubsPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 stagger-in">
       <PageIntro
         kicker="Community"
         title="Clubs"
         description="Communities with rooms, rituals, and a next gathering — not a table of rows."
       />
       <DemoNotice />
-      <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex flex-col gap-3 sm:flex-row stagger-in">
         <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search clubs" className="sm:max-w-xs" />
         <FilterChips value={cat} onChange={setCat} options={[...CATS]} />
       </div>
-      {note ? <p className="text-xs text-muted-foreground">{note}</p> : null}
-      <div className="grid gap-4 md:grid-cols-2">
+      {note ? <p className="text-caption text-muted-foreground">{note}</p> : null}
+      <div className="grid gap-4 md:grid-cols-2 stagger-in">
         {list.map((club) => (
-          <article key={club.id} className="flex flex-col rounded-3xl border border-border p-6">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{club.category}</p>
-            <h2 className="mt-2 font-display text-2xl">{club.name}</h2>
-            <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">{club.description}</p>
-            <p className="mt-4 text-sm">{club.members} members · {club.hall}</p>
-            <p className="text-xs text-muted-foreground">{club.nextEvent}</p>
+          <article key={club.id} className="surface flex flex-col rounded-3xl p-6">
+            <p className="text-meta text-muted-foreground">{club.category}</p>
+            <h2 className="mt-2 text-h3">{club.name}</h2>
+            <p className="mt-3 flex-1 text-body leading-relaxed text-muted-foreground">{club.description}</p>
+            <p className="mt-4 text-body-sm">{club.members} members · {club.hall}</p>
+            <p className="text-caption text-muted-foreground">{club.nextEvent}</p>
             <Button
               variant={joined.includes(club.id) ? "secondary" : "default"}
               className="mt-5 rounded-full"
