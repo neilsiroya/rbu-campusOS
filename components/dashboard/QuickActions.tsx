@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import * as React from "react";
 import {
   ShoppingBag,
   BookOpen,
@@ -8,6 +9,8 @@ import {
   ArrowRight,
   Briefcase,
 } from "lucide-react";
+import { StaggerContainer, StaggerItem, Reveal, HoverLift } from "@/components/motion";
+import { cn } from "@/lib/utils";
 
 interface QuickActionsProps {
   opportunities?: string;
@@ -16,103 +19,97 @@ interface QuickActionsProps {
 export default function QuickActions({
   opportunities = "Explore sample internships and hackathons.",
 }: QuickActionsProps) {
+  const actions = [
+    {
+      href: "/marketplace",
+      icon: ShoppingBag,
+      color: "amber",
+      title: "Marketplace",
+      description: "Buy, rent, or borrow cycles, calculators, books & gear.",
+      cta: "Explore Gear",
+    },
+    {
+      href: "/notes",
+      icon: BookOpen,
+      color: "primary",
+      title: "Study Hub",
+      description: "Peer lecture notes, PYQs, cheat sheets & lab manuals.",
+      cta: "Access Notes",
+    },
+    {
+      href: "/map",
+      icon: MapPin,
+      color: "emerald",
+      title: "Campus Map",
+      description: "Schematic spatial layout of blocks, labs, and quads.",
+      cta: "Find Rooms",
+    },
+    {
+      href: "/internships",
+      icon: Briefcase,
+      color: "purple",
+      title: "Opportunities",
+      description: opportunities,
+      cta: "View Desks",
+    },
+  ];
+
+  const colorStyles: Record<string, string> = {
+    amber: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    primary: "bg-primary/10 text-primary",
+    emerald: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    purple: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+  };
+
+  const getIcon = (icon: typeof ShoppingBag | typeof BookOpen | typeof MapPin | typeof Briefcase) => (
+    React.createElement(icon, { className: "size-5", "aria-hidden": "true" })
+  );
+
   return (
     <section className="space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-          Campus Subsystems & Exchange
-        </p>
-      </div>
+      <Reveal delay={0.1} y={16}>
+        <div className="flex items-center justify-between">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            Campus Subsystems & Exchange
+          </p>
+        </div>
+      </Reveal>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Marketplace */}
-        <Link
-          href="/marketplace"
-          className="group activity-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
-        >
-          <div>
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
-              <ShoppingBag className="size-5" />
-            </div>
-            <h4 className="mt-4 font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
-              Marketplace
-            </h4>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Buy, rent, or borrow cycles, calculators, books & gear.
-            </p>
-          </div>
-          <div className="mt-4 flex items-center justify-between text-xs font-semibold text-primary">
-            <span>Explore Gear</span>
-            <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-
-        {/* Study Hub */}
-        <Link
-          href="/notes"
-          className="group activity-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
-        >
-          <div>
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary group-hover:scale-105 transition-transform">
-              <BookOpen className="size-5" />
-            </div>
-            <h4 className="mt-4 font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
-              Study Hub
-            </h4>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Peer lecture notes, PYQs, cheat sheets & lab manuals.
-            </p>
-          </div>
-          <div className="mt-4 flex items-center justify-between text-xs font-semibold text-primary">
-            <span>Access Notes</span>
-            <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-
-        {/* Campus Map */}
-        <Link
-          href="/map"
-          className="group activity-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
-        >
-          <div>
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
-              <MapPin className="size-5" />
-            </div>
-            <h4 className="mt-4 font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
-              Campus Map
-            </h4>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Schematic spatial layout of blocks, labs, and quads.
-            </p>
-          </div>
-          <div className="mt-4 flex items-center justify-between text-xs font-semibold text-primary">
-            <span>Find Rooms</span>
-            <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-
-        {/* Opportunities / Internships */}
-        <Link
-          href="/internships"
-          className="group activity-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
-        >
-          <div>
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 group-hover:scale-105 transition-transform">
-              <Briefcase className="size-5" />
-            </div>
-            <h4 className="mt-4 font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
-              Opportunities
-            </h4>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              {opportunities}
-            </p>
-          </div>
-          <div className="mt-4 flex items-center justify-between text-xs font-semibold text-primary">
-            <span>View Desks</span>
-            <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </Link>
-      </div>
+      <StaggerContainer staggerDelay={0.08} delayChildren={0.15}>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {actions.map((action, index) => (
+            <StaggerItem key={action.href} delay={index * 0.02}>
+              <Reveal delay={index * 0.04} y={12}>
+                <HoverLift lift={4} shadow="md" borderGlow borderGlowColor="var(--primary)">
+                  <Link
+                    href={action.href}
+                    className="group activity-surface relative flex flex-col justify-between overflow-hidden rounded-3xl p-5"
+                  >
+                    <div>
+                      <div className={cn(
+                        "flex size-10 items-center justify-center rounded-2xl transition-transform group-hover:scale-105",
+                        colorStyles[action.color]
+                      )}>
+                        {getIcon(action.icon)}
+                      </div>
+                      <h4 className="mt-4 font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
+                        {action.title}
+                      </h4>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        {action.description}
+                      </p>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between text-xs font-semibold text-primary">
+                      <span>{action.cta}</span>
+                      <ArrowRight className="size-3.5 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </Link>
+                </HoverLift>
+              </Reveal>
+            </StaggerItem>
+          ))}
+        </div>
+      </StaggerContainer>
     </section>
   );
 }
