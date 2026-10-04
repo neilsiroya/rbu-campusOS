@@ -505,6 +505,99 @@
   }
 }
 
+/* View Transitions API Styles */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::view-transition-old(root) {
+  animation-name: vt-fade-out, vt-slide-out;
+}
+
+::view-transition-new(root) {
+  animation-name: vt-fade-in, vt-slide-in;
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes vt-slide-in {
+  from { transform: translateY(16px); }
+  to { transform: translateY(0); }
+}
+
+@keyframes vt-slide-out {
+  from { transform: translateY(0); }
+  to { transform: translateY(-16px); }
+}
+
+/* Forward navigation */
+::view-transition-old(root):where([data-vt-direction="forward"]) {
+  animation-name: vt-fade-out, vt-slide-out-back;
+}
+
+::view-transition-new(root):where([data-vt-direction="forward"]) {
+  animation-name: vt-fade-in, vt-slide-in-forward;
+}
+
+@keyframes vt-slide-in-forward {
+  from { transform: translateX(20px); }
+  to { transform: translateX(0); }
+}
+
+@keyframes vt-slide-out-back {
+  from { transform: translateX(0); }
+  to { transform: translateX(-20px); }
+}
+
+/* Back navigation */
+::view-transition-old(root):where([data-vt-direction="back"]) {
+  animation-name: vt-fade-out, vt-slide-out-forward;
+}
+
+::view-transition-new(root):where([data-vt-direction="back"]) {
+  animation-name: vt-fade-in, vt-slide-in-back;
+}
+
+@keyframes vt-slide-in-back {
+  from { transform: translateX(-20px); }
+  to { transform: translateX(0); }
+}
+
+@keyframes vt-slide-out-forward {
+  from { transform: translateX(0); }
+  to { transform: translateX(20px); }
+}
+
+/* Shared element transitions */
+::view-transition-group(app-sidebar),
+::view-transition-group(app-header),
+::view-transition-group(page-content) {
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-group(app-sidebar),
+  ::view-transition-group(app-header),
+  ::view-transition-group(page-content) {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 @keyframes toast-in {
   from {
     opacity: 0;
