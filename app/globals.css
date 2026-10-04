@@ -39,6 +39,34 @@
   --spacing-6: var(--spacing-6);
   --spacing-7: var(--spacing-7);
   --spacing-8: var(--spacing-8);
+
+  /* Motion Tokens — Unified Motion Language */
+  --motion-easing-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-easing-emphasized: cubic-bezier(0.05, 0.9, 0.1, 1);
+  --motion-easing-decelerated: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-accelerated: cubic-bezier(0.4, 0, 1, 1);
+  --motion-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  --motion-duration-instant: 50ms;
+  --motion-duration-fast: 100ms;
+  --motion-duration-micro: 150ms;
+  --motion-duration-interaction: 220ms;
+  --motion-duration-standard: 300ms;
+  --motion-duration-entrance: 450ms;
+  --motion-duration-exit: 250ms;
+  --motion-duration-state: 500ms;
+  --motion-duration-complex: 600ms;
+
+  --motion-stagger-delay: 60ms;
+  --motion-stagger-delay-tight: 30ms;
+  --motion-stagger-delay-loose: 100ms;
+
+  --motion-scale-press: 0.98;
+  --motion-scale-hover: 1.02;
+  --motion-scale-entrance: 0.96;
+  --motion-translate-micro: 4px;
+  --motion-translate-standard: 16px;
+  --motion-translate-large: 32px;
 }
 
 :root {
@@ -359,44 +387,90 @@
 
 /* Animation System — Coherent Motion Language */
 @layer utilities {
-  /* Micro: 120-220ms */
+  /* Duration Utilities */
+  .duration-instant { transition-duration: var(--motion-duration-instant); }
+  .duration-fast { transition-duration: var(--motion-duration-fast); }
+  .duration-micro { transition-duration: var(--motion-duration-micro); }
+  .duration-interaction { transition-duration: var(--motion-duration-interaction); }
+  .duration-standard { transition-duration: var(--motion-duration-standard); }
+  .duration-entrance { transition-duration: var(--motion-duration-entrance); }
+  .duration-exit { transition-duration: var(--motion-duration-exit); }
+  .duration-state { transition-duration: var(--motion-duration-state); }
+  .duration-complex { transition-duration: var(--motion-duration-complex); }
+
+  /* Easing Utilities */
+  .ease-standard { transition-timing-function: var(--motion-easing-standard); }
+  .ease-emphasized { transition-timing-function: var(--motion-easing-emphasized); }
+  .ease-decelerated { transition-timing-function: var(--motion-easing-decelerated); }
+  .ease-accelerated { transition-timing-function: var(--motion-easing-accelerated); }
+  .ease-spring { transition-timing-function: var(--motion-easing-spring); }
+
+  /* Motion Presets — Composed Duration + Easing */
+  .motion-instant {
+    transition-duration: var(--motion-duration-instant);
+    transition-timing-function: var(--motion-easing-decelerated);
+  }
   .motion-micro {
-    transition-duration: 150ms;
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    transition-duration: var(--motion-duration-micro);
+    transition-timing-function: var(--motion-easing-standard);
   }
-
-  /* Interaction: 180-320ms */
   .motion-interaction {
-    transition-duration: 220ms;
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    transition-duration: var(--motion-duration-interaction);
+    transition-timing-function: var(--motion-easing-standard);
   }
-
-  /* Content Entrance: 350-600ms */
+  .motion-standard {
+    transition-duration: var(--motion-duration-standard);
+    transition-timing-function: var(--motion-easing-standard);
+  }
   .motion-entrance {
-    transition-duration: 450ms;
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    transition-duration: var(--motion-duration-entrance);
+    transition-timing-function: var(--motion-easing-emphasized);
+  }
+  .motion-exit {
+    transition-duration: var(--motion-duration-exit);
+    transition-timing-function: var(--motion-easing-decelerated);
+  }
+  .motion-state {
+    transition-duration: var(--motion-duration-state);
+    transition-timing-function: var(--motion-easing-emphasized);
+  }
+  .motion-complex {
+    transition-duration: var(--motion-duration-complex);
+    transition-timing-function: var(--motion-easing-emphasized);
+  }
+  .motion-spring {
+    transition-timing-function: var(--motion-easing-spring);
   }
 
-  /* Large State Changes: 350-600ms */
-  .motion-state {
-    transition-duration: 500ms;
-    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  }
+  /* Transform Presets */
+  .scale-press { transform: scale(var(--motion-scale-press)); }
+  .scale-hover { transform: scale(var(--motion-scale-hover)); }
+  .scale-entrance { transform: scale(var(--motion-scale-entrance)); }
+  .translate-micro { transform: translateY(var(--motion-translate-micro)); }
+  .translate-standard { transform: translateY(var(--motion-translate-standard)); }
+  .translate-large { transform: translateY(var(--motion-translate-large)); }
+
+  /* Stagger Utilities */
+  .stagger-tight > * { animation-delay: calc(var(--motion-stagger-delay-tight) * var(--i)); }
+  .stagger-normal > * { animation-delay: calc(var(--motion-stagger-delay) * var(--i)); }
+  .stagger-loose > * { animation-delay: calc(var(--motion-stagger-delay-loose) * var(--i)); }
 
   /* Stagger Entrance Animations */
   .stagger-in > * {
     opacity: 0;
-    transform: translateY(16px) scale(0.98);
-    animation: stagger-in 450ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform: translateY(var(--motion-translate-standard)) scale(var(--motion-scale-entrance));
+    animation: stagger-in var(--motion-duration-entrance) var(--motion-easing-emphasized) forwards;
   }
-  .stagger-in > *:nth-child(1) { animation-delay: 0ms; }
-  .stagger-in > *:nth-child(2) { animation-delay: 60ms; }
-  .stagger-in > *:nth-child(3) { animation-delay: 120ms; }
-  .stagger-in > *:nth-child(4) { animation-delay: 180ms; }
-  .stagger-in > *:nth-child(5) { animation-delay: 240ms; }
-  .stagger-in > *:nth-child(6) { animation-delay: 300ms; }
-  .stagger-in > *:nth-child(7) { animation-delay: 360ms; }
-  .stagger-in > *:nth-child(8) { animation-delay: 420ms; }
+  .stagger-in > * { --i: 0; }
+  .stagger-in > *:nth-child(1) { --i: 0; }
+  .stagger-in > *:nth-child(2) { --i: 1; }
+  .stagger-in > *:nth-child(3) { --i: 2; }
+  .stagger-in > *:nth-child(4) { --i: 3; }
+  .stagger-in > *:nth-child(5) { --i: 4; }
+  .stagger-in > *:nth-child(5) { --i: 4; }
+  .stagger-in > *:nth-child(6) { --i: 5; }
+  .stagger-in > *:nth-child(7) { --i: 6; }
+  .stagger-in > *:nth-child(8) { --i: 7; }
 
   @keyframes stagger-in {
     to {
@@ -409,12 +483,13 @@
   .text-reveal > * {
     opacity: 0;
     transform: translateY(0.5em);
-    animation: text-reveal 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: text-reveal var(--motion-duration-state) var(--motion-easing-emphasized) forwards;
   }
-  .text-reveal > *:nth-child(1) { animation-delay: 0ms; }
-  .text-reveal > *:nth-child(2) { animation-delay: 80ms; }
-  .text-reveal > *:nth-child(3) { animation-delay: 160ms; }
-  .text-reveal > *:nth-child(4) { animation-delay: 240ms; }
+  .text-reveal > * { --i: 0; }
+  .text-reveal > *:nth-child(1) { --i: 0; }
+  .text-reveal > *:nth-child(2) { --i: 1; }
+  .text-reveal > *:nth-child(3) { --i: 2; }
+  .text-reveal > *:nth-child(4) { --i: 3; }
 
   @keyframes text-reveal {
     to {
@@ -430,7 +505,7 @@
   .clip-reveal > * {
     display: inline-block;
     transform: translateY(100%);
-    animation: clip-reveal 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: clip-reveal var(--motion-duration-complex) var(--motion-easing-emphasized) forwards;
   }
   @keyframes clip-reveal {
     to { transform: translateY(0); }
