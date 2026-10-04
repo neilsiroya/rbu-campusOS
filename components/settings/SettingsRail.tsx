@@ -38,10 +38,13 @@ export default function SettingsRail({ activeTab, setActiveTab }: SettingsRailPr
                 : "text-muted-foreground hover:bg-primary/5 hover:text-foreground border-l-2 border-transparent"
             )}
           >
-            <cat.icon className={cn(
-              "size-4 transition-colors",
-              activeTab === cat.id ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
-            )} />
+            {React.createElement(cat.icon, {
+              className: cn(
+                "size-4 transition-colors",
+                activeTab === cat.id ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+              ) as string,
+              "aria-hidden": "true"
+            })}
             <span className="text-xs font-bold uppercase tracking-widest">{cat.label}</span>
           </button>
         ))}

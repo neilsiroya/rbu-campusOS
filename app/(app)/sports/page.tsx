@@ -79,7 +79,7 @@ const ScoreTicker = ({ match }: { match: MatchScore }) => (
 );
 
 const FacilityCard = ({ facility, index }: { facility: Facility; index: number }) => {
-  const statusStyles = {
+  const statusStyles: Record<Facility["status"], string> = {
     Available: "text-success bg-success/10 border-success/20",
     Occupied: "text-orange-400 bg-orange-400/10 border-orange-400/20",
     Maintenance: "text-danger bg-danger/10 border-danger/20",
@@ -94,7 +94,7 @@ const FacilityCard = ({ facility, index }: { facility: Facility; index: number }
     >
       <div className="flex justify-between items-start mb-4">
         <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-          <facility.icon className="size-5" />
+          {React.createElement(facility.icon, { className: "size-5", "aria-hidden": "true" })}
         </div>
         <span className={cn(
           "text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border",

@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Users, Award } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface FootprintItem {
   label: string;
@@ -37,8 +38,8 @@ export default function CampusFootprint() {
             className="flex items-center justify-between p-3 rounded-xl bg-background/40 border border-border/50 group cursor-pointer transition-all motion-fast hover:border-primary/30"
           >
             <div className="flex items-center gap-3">
-              <div className={cn("p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors", item.color)}>
-                <item.icon className="size-4" />
+              <div className={cn("p-2 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors", item.color as string)}>
+                {React.createElement(item.icon, { className: "size-4", "aria-hidden": "true" })}
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-bold text-foreground">{item.label}</span>
@@ -55,6 +56,4 @@ export default function CampusFootprint() {
   );
 }
 
-function cn(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
+

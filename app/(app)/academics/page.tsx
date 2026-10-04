@@ -123,8 +123,8 @@ const AcademicStat = ({
   colorClass: string
 }) => (
   <div className="glass-surface p-4 rounded-xl border border-border/50 flex items-center gap-4 motion-fast">
-    <div className={cn("p-2 rounded-lg shadow-inner", colorClass)}>
-      <Icon className="size-4 text-white" />
+    <div className={cn("p-2 rounded-lg shadow-inner", colorClass as string)}>
+      {React.createElement(Icon, { className: "size-4 text-white", "aria-hidden": "true" })}
     </div>
     <div className="flex flex-col">
       <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</span>
