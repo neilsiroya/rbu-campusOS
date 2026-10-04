@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import LiquidCursor from "@/components/CursorSpotlight";
+import { CampusBackground } from "@/components/CampusBackground";
 import { ToastProvider } from "@/lib/toast-context";
 import { ToastViewport } from "@/components/ui/Toast";
 
@@ -19,8 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="min-h-full flex flex-col relative" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <div className="aurora-bg" />
-          <LiquidCursor />
+          <CampusBackground />
           <ToastProvider>
             {children}
             <ToastViewport />

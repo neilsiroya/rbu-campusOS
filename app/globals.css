@@ -334,28 +334,9 @@
     scrollbar-color: color-mix(in oklch, var(--foreground) 18%, transparent) transparent;
   }
 
-  .aurora-bg {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      radial-gradient(70% 50% at 8% 0%, color-mix(in oklch, var(--primary) 10%, transparent), transparent 60%),
-      radial-gradient(50% 40% at 100% 10%, color-mix(in oklch, var(--accent) 8%, transparent), transparent 55%),
-      var(--background);
-  }
-
-  .dark .aurora-bg {
-    background:
-      radial-gradient(60% 42% at 10% 0%, color-mix(in oklch, var(--primary) 14%, transparent), transparent 58%),
-      radial-gradient(50% 45% at 95% 8%, oklch(0.18 0.035 160 / 0.35), transparent 55%),
-      var(--background);
-  }
-
   /* Reduced Motion */
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .aurora-bg { animation: none; }
     .interactive-card,
     .featured-card,
     .activity-surface { transition: none; }

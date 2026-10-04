@@ -30,5 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "components/motion-primitives"]
+  "exclude": ["node_modules", "components/motion-primitives", "components/ui/3d-card.tsx", "components/ui/animated-modal.tsx", "components/ui/apple-cards-carousel.tsx", "components/ui/container-text-flip.tsx", "components/ui/floating-navbar.tsx", "components/ui/layout-grid.tsx"]
 }
