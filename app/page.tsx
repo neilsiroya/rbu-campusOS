@@ -14,6 +14,7 @@ import {
 import { motion, useReducedMotion } from "framer-motion";
 import { BrandMark } from "@/components/os/BrandMark";
 import { Button } from "@/components/ui/button";
+import { MagneticButton } from "@/components/motion";
 
 const lanes = [
   {
@@ -82,15 +83,15 @@ export default function Home() {
             — with useful academic tools tucked in when you need them.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button
-              render={<Link href="/auth/signup" />}
-              nativeButton={false}
+            <MagneticButton
+              as={Link}
+              href="/auth/signup"
               size="lg"
               className="min-h-11 rounded-full"
             >
               Create your identity
               <ArrowRight className="ml-2 size-4" aria-hidden="true" />
-            </Button>
+            </MagneticButton>
             <Button
               render={<Link href="/auth/login" />}
               nativeButton={false}
@@ -187,14 +188,14 @@ export default function Home() {
             <h2 className="max-w-xl font-display text-4xl leading-tight">
               One home for the life around your degree.
             </h2>
-            <Button
-              render={<Link href="/auth/signup" />}
-              nativeButton={false}
+            <MagneticButton
+              as={Link}
+              href="/auth/signup"
               className="min-h-11 rounded-full bg-background text-foreground hover:bg-background/90"
             >
               Join your campus
               <ArrowRight className="ml-2 size-4" aria-hidden="true" />
-            </Button>
+            </MagneticButton>
           </div>
         </div>
       </section>

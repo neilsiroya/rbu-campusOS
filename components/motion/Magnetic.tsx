@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useReducedMotion } from "framer-motion";
+import * as React from "react";
 
 interface MagneticProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface MagneticProps {
   radius?: number;
   disabled?: boolean;
   onClick?: () => void;
+  [key: string]: unknown;
 }
 
 export function Magnetic({
@@ -91,6 +93,10 @@ export function Magnetic({
 interface MagneticButtonProps extends MagneticProps {
   variant?: "default" | "outline" | "ghost" | "destructive";
   size?: "default" | "sm" | "lg" | "icon";
+  as?: React.ElementType;
+  type?: "button" | "submit" | "reset";
+  href?: string;
+  [key: string]: unknown;
 }
 
 export function MagneticButton({
@@ -100,6 +106,9 @@ export function MagneticButton({
   size = "default",
   strength = 0.3,
   maxDistance = 60,
+  as: Component = "button",
+  type = "button",
+  href,
   ...props
 }: MagneticButtonProps) {
   const baseStyles =
@@ -126,7 +135,16 @@ export function MagneticButton({
       className={cn(baseStyles, variantStyles[variant], sizeStyles[size], className)}
       {...props}
     >
-      {children}
+      {React.createElement(
+        Component,
+        {
+          className: cn(sizeStyles[size]),
+          type,
+          href,
+          ...props,
+        },
+        children
+      )}
     </Magnetic>
   );
 }

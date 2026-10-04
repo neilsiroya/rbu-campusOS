@@ -30,6 +30,7 @@ import { PageIntro } from "@/components/os/PageIntro";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { MagneticButton } from "@/components/motion";
 
 type StructuredCard = {
   type: "place" | "event" | "marketplace" | "notes" | "service" | "timetable" | "lost-found" | "club";
@@ -422,9 +423,9 @@ export default function CampusAIPage() {
                 placeholder="Ask about Lab-4, calculator listings, Signals notes, shuttle times, or events…"
                 className="h-12 rounded-2xl bg-card border-border/80 text-sm"
               />
-              <Button type="submit" size="icon" className="size-12 shrink-0 rounded-2xl">
+              <MagneticButton type="submit" size="icon" className="size-12 shrink-0 rounded-2xl" strength={0.4} maxDistance={80}>
                 <Send className="size-4" />
-              </Button>
+              </MagneticButton>
             </form>
           </div>
         </section>
