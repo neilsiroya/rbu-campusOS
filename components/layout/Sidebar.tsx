@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, X } from "lucide-react";
+import { LogOut, X, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase";
 import { NAV_GROUPS } from "@/lib/nav";
 import { BrandMark } from "@/components/os/BrandMark";
 import { Button } from "@/components/ui/button";
+import { useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -20,6 +22,18 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -46,13 +60,21 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      closeMobileMenu();
+    }
+  };
+
   return (
     <aside
       id="app-sidebar"
+      onKeyDown={handleKeyDown}
       className={cn(
         "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 surface-elevated transition-transform duration-300 ease-out md:relative md:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
+      aria-label="Main navigation"
     >
       <div className="flex items-center justify-between px-5 py-5 border-b border-border/50">
         <BrandMark />
@@ -67,10 +89,15 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </Button>
       </div>
 
-      <nav aria-label="Primary" className="custom-scrollbar flex-1 space-y-6 overflow-y-auto px-3 pb-8">
+      <nav
+        aria-label="Primary navigation"
+        className="custom-scrollbar flex-1 space-y-6 overflow-y-auto px-3 pb-8"
+        onKeyDown={handleKeyDown}
+      >
         {NAV_GROUPS.map((group) => (
           <div key={group.group} className="space-y-1">
-            <h2 className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            <h2 className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
+              <ChevronRight className="size-3.5 opacity-50" aria-hidden="true" />
               {group.group}
             </h2>
             {group.items.map((item) => {
@@ -84,14 +111,29 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   onClick={closeMobileMenu}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                    "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ease-out",
                     isActive
-                      ? "bg-primary/10 text-primary border-l-3 border-primary"
+                      ? "bg-primary/10 text-primary border-l-3 border-primary relative before:absolute before:inset-0 before:rounded-xl before:bg-primary/5"
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                   )}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      closeMobileMenu();
+                    }
+                  }}
                 >
-                  <Icon className="size-4 shrink-0" />
+                  <Icon className="size-4 shrink-0" aria-hidden="true" />
                   {item.name}
+                  {isActive && (
+                    <motion.div
+                      className="absolute right-0 top-1/2 -translate-y-1/2 size-1.5 rounded-full bg-primary"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 200 }}
+                      aria-hidden="true"
+                    />
+                  )}
                 </Link>
               );
             })}

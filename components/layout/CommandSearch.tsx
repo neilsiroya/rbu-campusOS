@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@base-ui/react/dialog";
 import { Search, X } from "lucide-react";
@@ -23,6 +23,10 @@ type Hit = {
   category: "Page" | "Marketplace" | "Study Hub" | "Event" | "People" | "Club" | "Facility";
 };
 
+function makeHint(...parts: (string | number)[]): string {
+  return parts.map(String).join(" - ");
+}
+
 const SEARCH_INDEX: Hit[] = [
   ...SEARCHABLE_ROUTES.map((route) => ({
     label: route.name,
@@ -33,20 +37,26 @@ const SEARCH_INDEX: Hit[] = [
   ...MARKETPLACE_LISTINGS.map((listing) => ({
     label: listing.title,
     href: "/marketplace",
-    hint: `${listing.type} · ₹${listing.price} (${listing.category})`,
+    hint: makeHint(listing.type, listing.price, listing.category),
     category: "Marketplace" as const,
   })),
   ...STUDY_RESOURCES.map((resource) => ({
     label: resource.title,
     href: "/notes",
-    hint: `${resource.subject} · ${resource.type}`,
+    hint: makeHint(resource.subject, resource.type),
     category: "Study Hub" as const,
   })),
   ...EVENTS.map((event) => ({
     label: event.title,
     href: "/events",
-    hint: `${event.date} · ${event.location}`,
+    hint: makeHint(event.date, event.location),
     category: "Event" as const,
+  })),
+  ...FACILITIES.map((facility) => ({
+    label: facility.name,
+    href: "/facilities",
+    hint: makeHint(facility.category, facility.location),
+    category: "Facility" as const,
   })),
   ...CLUBS.map((club) => ({
     label: club.name,
@@ -54,25 +64,25 @@ const SEARCH_INDEX: Hit[] = [
     hint: club.category,
     category: "Club" as const,
   })),
-  ...FACILITIES.map((facility) => ({
-    label: facility.name,
-    href: "/facilities",
-    hint: `${facility.category} · ${facility.location}`,
-    category: "Facility" as const,
-  })),
   ...PEOPLE.map((person) => ({
     label: person.name,
     href: "/people",
-    hint: `${person.branch} · ${person.year}`,
+    hint: makeHint(person.branch, person.year),
     category: "People" as const,
   })),
 ];
 
-export default function CommandSearch() {
+interface CommandSearchProps {
+  onOpen?: () => void;
+  onClose?: () => void;
+}
+
+export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -98,7 +108,31 @@ export default function CommandSearch() {
     setOpen(false);
     setQuery("");
     setActiveIndex(0);
+    onClose?.();
   };
+
+  useEffect(() => {
+    if (open) {
+      onOpen?.();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (open) {
+      inputRef.current?.focus();
+    }
+  }, [open]);
 
   const go = (href: string) => {
     close();
@@ -173,6 +207,7 @@ export default function CommandSearch() {
           <div className="flex shrink-0 items-center gap-3 border-b border-border/80 px-4 py-3">
             <Search className="size-5 shrink-0 text-primary" aria-hidden="true" />
             <input
+              ref={inputRef}
               autoFocus
               role="combobox"
               aria-label="Search CampusOS"
@@ -188,7 +223,7 @@ export default function CommandSearch() {
                 setActiveIndex(0);
               }}
               onKeyDown={handleKeyDown}
-              placeholder="Search pages, notes, events, clubs, facilities…"
+              placeholder="Search pages, notes, events, clubs, facilities..."
               className="h-10 min-w-0 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground"
               autoComplete="off"
               spellCheck={false}
@@ -222,12 +257,12 @@ export default function CommandSearch() {
                 role="none"
                 className="px-4 py-8 text-center text-sm text-muted-foreground"
               >
-                No matches found for &quot;{query}&quot;. Try &quot;notes&quot;,
-                &quot;events&quot;, or a page name.
+                No matches found for "{query}". Try "notes",
+                "events", or a page name.
               </li>
             ) : (
               hits.map((hit, index) => (
-                <li role="none" key={`${hit.category}-${hit.href}-${hit.label}`}>
+                <li role="none" key={`${hit.category}-${hit.href}-${hit.label}-${index}`}>
                   <button
                     id={`campus-search-result-${index}`}
                     type="button"
@@ -263,7 +298,7 @@ export default function CommandSearch() {
           </ul>
 
           <div className="flex shrink-0 items-center justify-between border-t border-border/80 bg-muted/20 px-4 py-2.5 text-[11px] text-muted-foreground">
-            <span>↑ ↓ navigate · Enter open</span>
+            <span>Up Down navigate - Enter open</span>
             <span>CampusOS Omnisearch</span>
           </div>
         </Dialog.Popup>
