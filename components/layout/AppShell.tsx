@@ -52,12 +52,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       </a>
       <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
 
-<<<<<<< HEAD
-      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
-        <Header onMenuToggle={() => setIsMobileMenuOpen((open) => !open)} />
-        <main className="custom-scrollbar relative flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-          <div className="mx-auto w-full max-w-7xl surface rounded-2xl p-6 md:p-8">
-=======
       <div
         className="relative flex min-w-0 flex-1 flex-col overflow-hidden"
         inert={isMobileMenuOpen ? true : undefined}
@@ -71,8 +65,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           tabIndex={-1}
           className="custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8"
         >
-          <div className="surface mx-auto w-full max-w-6xl rounded-2xl p-4 sm:p-6">
->>>>>>> origin/main
+          <div className="surface mx-auto w-full max-w-7xl rounded-2xl p-4 sm:p-6 md:p-8">
             {children}
           </div>
         </main>

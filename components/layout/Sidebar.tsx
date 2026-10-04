@@ -50,21 +50,12 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     <aside
       id="app-sidebar"
       className={cn(
-<<<<<<< HEAD
         "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 surface-elevated transition-transform duration-300 ease-out md:relative md:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
     >
       <div className="flex items-center justify-between px-5 py-5 border-b border-border/50">
         <BrandMark />
-=======
-        "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 glass-strong transition-transform duration-300 ease-out md:relative md:translate-x-0",
-        isOpen ? "visible translate-x-0" : "invisible -translate-x-full md:visible"
-      )}
-    >
-      <div className="flex items-center justify-between px-5 py-5">
-        <BrandMark onClick={closeMobileMenu} />
->>>>>>> origin/main
         <Button
           variant="ghost"
           size="icon"
@@ -93,11 +84,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   onClick={closeMobileMenu}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-<<<<<<< HEAD
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
-=======
-                    "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors",
->>>>>>> origin/main
+                    "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150",
                     isActive
                       ? "bg-primary/10 text-primary border-l-3 border-primary"
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -112,16 +99,12 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         ))}
       </nav>
 
-<<<<<<< HEAD
       <div className="border-t border-border/70 p-4">
-=======
-      <div className="border-t border-border/70 p-3">
         {logoutError ? (
           <p role="alert" className="mb-2 rounded-lg bg-danger/10 px-3 py-2 text-xs text-danger">
             {logoutError}
           </p>
         ) : null}
->>>>>>> origin/main
         <Button
           variant="ghost"
           className="min-h-11 w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
