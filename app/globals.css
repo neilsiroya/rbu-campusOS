@@ -42,6 +42,7 @@
 }
 
 :root {
+<<<<<<< HEAD
   /* Light Mode — Sophisticated Near-White Canvas with Contextual Tinting */
   --background: oklch(0.985 0.004 250);
   --foreground: oklch(0.15 0.025 260);
@@ -52,6 +53,18 @@
   --surface-elevated: oklch(1 0 0 / 0.98);
   --surface-elevated-foreground: oklch(0.15 0.025 260);
   --primary: oklch(0.42 0.11 160);
+=======
+  color-scheme: light;
+  --background: oklch(0.978 0.006 250);
+  --foreground: oklch(0.20 0.025 260);
+  --card: oklch(0.995 0.003 90);
+  --card-foreground: oklch(0.20 0.025 260);
+  --surface: oklch(0.995 0.003 90);
+  --surface-foreground: oklch(0.20 0.025 260);
+  --surface-elevated: oklch(0.998 0.002 90 / 0.95);
+  --surface-elevated-foreground: oklch(0.20 0.025 260);
+  --primary: oklch(0.48 0.12 160);
+>>>>>>> origin/main
   --primary-foreground: oklch(0.99 0.002 90);
   --secondary: oklch(0.955 0.008 250);
   --secondary-foreground: oklch(0.20 0.025 260);
@@ -89,6 +102,7 @@
 }
 
 .dark {
+<<<<<<< HEAD
   --background: oklch(0.095 0.028 240);
   --foreground: oklch(0.97 0.005 90);
   --card: oklch(0.13 0.028 240);
@@ -97,6 +111,17 @@
   --surface-foreground: oklch(0.97 0.005 90);
   --surface-elevated: oklch(0.155 0.026 240 / 0.94);
   --surface-elevated-foreground: oklch(0.97 0.005 90);
+=======
+  color-scheme: dark;
+  --background: oklch(0.10 0.03 240);
+  --foreground: oklch(0.965 0.006 90);
+  --card: oklch(0.14 0.03 240);
+  --card-foreground: oklch(0.965 0.006 90);
+  --surface: oklch(0.13 0.025 240);
+  --surface-foreground: oklch(0.965 0.006 90);
+  --surface-elevated: oklch(0.16 0.028 240 / 0.92);
+  --surface-elevated-foreground: oklch(0.965 0.006 90);
+>>>>>>> origin/main
   --primary: oklch(0.72 0.10 160);
   --primary-foreground: oklch(0.13 0.025 240);
   --secondary: oklch(0.21 0.02 240);
@@ -145,6 +170,20 @@
     ring-color: color-mix(in oklch, var(--ring) 55%, transparent);
     ring-offset: 2px;
     ring-offset-color: var(--background);
+  }
+
+  @media (pointer: coarse) {
+    :where(button) {
+      min-height: 44px;
+    }
+
+    :where(button[aria-label]) {
+      min-width: 44px;
+    }
+
+    :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+      min-height: 44px;
+    }
   }
 
   ::selection {

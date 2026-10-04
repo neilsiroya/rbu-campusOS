@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   Sparkles,
@@ -245,7 +245,7 @@ export default function CampusAIPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const handleSend = (text: string) => {
+  const handleSend = useCallback((text: string) => {
     const q = text.trim();
     if (!q) return;
 
@@ -275,7 +275,15 @@ export default function CampusAIPage() {
       setMessages((prev) => [...prev, assistantMsg]);
       setIsTyping(false);
     }, 1100);
-  };
+  }, []);
+
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search).get("q");
+    if (!query) return;
+
+    const timeoutId = window.setTimeout(() => handleSend(query), 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [handleSend]);
 
   return (
     <div className="space-y-6">
@@ -386,9 +394,9 @@ export default function CampusAIPage() {
                 <div className="rounded-2xl rounded-tl-none px-4 py-3.5 activity-surface shadow-xs">
                   <div className="flex items-center gap-2">
                     <span className="flex items-center gap-1">
-                      <span className="size-1.5 rounded-full bg-primary animate-bounce [animation-delay:0ms]" />
-                      <span className="size-1.5 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
-                      <span className="size-1.5 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
+                      <span className="size-1.5 rounded-full bg-primary motion-safe:animate-pulse [animation-delay:0ms]" />
+                      <span className="size-1.5 rounded-full bg-primary motion-safe:animate-pulse [animation-delay:150ms]" />
+                      <span className="size-1.5 rounded-full bg-primary motion-safe:animate-pulse [animation-delay:300ms]" />
                     </span>
                     <span className="text-[11px] text-muted-foreground">
                       Synthesizing campus knowledge…

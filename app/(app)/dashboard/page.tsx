@@ -181,7 +181,7 @@ export default function DashboardPage() {
 
       {/* OS Subsystem Quick Actions */}
       <QuickActions
-        opportunities={`${3} internship positions and ${2} hackathon registrations open.`}
+        opportunities="3 internship examples and 2 hackathon examples."
       />
 
       {/* Academics & Urgency Section */}

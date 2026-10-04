@@ -14,7 +14,7 @@ interface QuickActionsProps {
 }
 
 export default function QuickActions({
-  opportunities = "3 summer internship positions posted.",
+  opportunities = "Explore sample internships and hackathons.",
 }: QuickActionsProps) {
   return (
     <section className="space-y-3">

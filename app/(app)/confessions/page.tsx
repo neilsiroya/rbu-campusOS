@@ -20,6 +20,7 @@ import { useToast } from "@/lib/toast-context";
 import { DemoNotice } from "@/components/os/DemoNotice";
 import { EmptyState } from "@/components/os/EmptyState";
 import { PageIntro } from "@/components/os/PageIntro";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,7 +36,7 @@ const categories: Array<"All" | ConfessionCategory> = [
 ];
 
 export default function ConfessionsPage() {
-  const { items, prepend, update } = useSessionItems<Confession>(
+  const { items, prepend, update, storageError } = useSessionItems<Confession>(
     "campusos.confessions",
     CONFESSIONS
   );
@@ -44,6 +45,8 @@ export default function ConfessionsPage() {
   const [category, setCategory] = useState<(typeof categories)[number]>("All");
   const [body, setBody] = useState("");
   const [alias, setAlias] = useState(ALIASES[0]);
+  const [composerCategory, setComposerCategory] =
+    useState<ConfessionCategory>("Campus");
   const [open, setOpen] = useState(false);
 
   const list = useMemo(
@@ -80,11 +83,14 @@ export default function ConfessionsPage() {
   };
 
   const submitConfession = () => {
-    if (!body.trim()) return;
+    if (!body.trim()) {
+      toast("Write a confession before submitting.", "error");
+      return;
+    }
     prepend({
       id: crypto.randomUUID(),
       alias,
-      category: category === "All" ? "Campus" : category,
+      category: composerCategory,
       body: body.trim(),
       createdAt: new Date().toISOString(),
       reactions: { relate: 0, hug: 0, wild: 0 },
@@ -105,6 +111,7 @@ export default function ConfessionsPage() {
       />
 
       <DemoNotice />
+      <SessionStorageNotice message={storageError} />
 
       {/* Composer + Filters */}
       <div className="flex flex-col gap-3">
@@ -129,7 +136,8 @@ export default function ConfessionsPage() {
                     Whisper an Anonymous Confession
                   </Dialog.Title>
                   <Dialog.Description className="text-xs text-muted-foreground">
-                    No IP addresses, names, or roll numbers are linked.
+                    This demo keeps posts in your browser session; it does not send
+                    confession content to a moderation service.
                   </Dialog.Description>
                 </div>
               </div>
@@ -142,10 +150,11 @@ export default function ConfessionsPage() {
                 className="space-y-4"
               >
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <label htmlFor="confession-alias" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Choose Anonymous Alias
                   </label>
                   <select
+                    id="confession-alias"
                     value={alias}
                     onChange={(e) => setAlias(e.target.value)}
                     className="w-full h-9 rounded-xl border border-border/80 bg-background px-3 text-sm focus:outline-none"
@@ -159,17 +168,20 @@ export default function ConfessionsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Category
-                  </label>
+                  </span>
                   <div className="flex flex-wrap gap-1.5">
-                    {categories.slice(1).map((cat) => (
+                    {categories
+                      .filter((cat): cat is ConfessionCategory => cat !== "All")
+                      .map((cat) => (
                       <Button
                         key={cat}
                         type="button"
                         size="sm"
-                        variant={category === cat ? "default" : "outline"}
-                        onClick={() => setCategory(cat)}
+                        variant={composerCategory === cat ? "default" : "outline"}
+                        aria-pressed={composerCategory === cat}
+                        onClick={() => setComposerCategory(cat)}
                         className="rounded-full text-xs"
                       >
                         {cat}
@@ -179,14 +191,16 @@ export default function ConfessionsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <label htmlFor="confession-body" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Your Confession
                   </label>
                   <Textarea
+                    id="confession-body"
                     value={body}
                     onChange={(e) => setBody(e.target.value)}
                     placeholder="Keep it kind, specific, and safe…"
                     className="min-h-24 resize-none"
+                    required
                     autoFocus
                   />
                 </div>
@@ -194,8 +208,8 @@ export default function ConfessionsPage() {
                 <div className="flex items-start gap-2 rounded-xl bg-primary/10 border border-primary/20 px-3 py-2.5 text-[11px] text-muted-foreground">
                   <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
                   <span>
-                    CampusOS strictly isolates your profile. This submission is
-                    stored with zero user ID links.
+                    This demo stores the post in your browser session only. It is
+                    not sent to a moderation service.
                   </span>
                 </div>
 
@@ -228,6 +242,7 @@ export default function ConfessionsPage() {
                 key={c}
                 size="sm"
                 variant={category === c ? "default" : "outline"}
+                aria-pressed={category === c}
                 className="shrink-0 rounded-full"
                 onClick={() => setCategory(c)}
               >
@@ -322,7 +337,7 @@ export default function ConfessionsPage() {
                   </div>
                   <span className="flex items-center gap-1 text-caption font-mono text-emerald-600 dark:text-emerald-400">
                     <ShieldCheck className="size-3.5" />
-                    100% Anon
+                    Anonymous in this demo
                   </span>
                 </div>
 

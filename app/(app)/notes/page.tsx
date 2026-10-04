@@ -16,6 +16,7 @@ import {
 import { STUDY_RESOURCES, type StudyResource } from "@/lib/campus-data";
 import { useSessionItems } from "@/lib/session-store";
 import { DemoNotice } from "@/components/os/DemoNotice";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 import { EmptyState } from "@/components/os/EmptyState";
 import { PageIntro } from "@/components/os/PageIntro";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,7 @@ const BRANCHES = ["All", "CSE", "ECE", "ME", "EE", "Design"] as const;
 const YEARS = ["All", "1st", "2nd", "3rd", "4th"] as const;
 
 export default function NotesPage() {
-  const { items, prepend, update } = useSessionItems<StudyResource>(
+  const { items, prepend, update, storageError } = useSessionItems<StudyResource>(
     "campusos.study",
     STUDY_RESOURCES
   );
@@ -152,6 +153,7 @@ export default function NotesPage() {
       <DemoNotice>
         Study Hub records are demo materials. New resources are stored in your browser session; no external document upload is initiated.
       </DemoNotice>
+      <SessionStorageNotice message={storageError} />
 
       {/* NexDash-inspired Knowledge Command Surface */}
       <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8 stagger-in">
