@@ -32,6 +32,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { MagneticButton } from "@/components/motion";
 import { TypingEffect } from "@/components/motion/TypingEffect";
+import { CampusLiquidMetal } from "@/components/immersive/CampusLiquidMetal";
 
 type StructuredCard = {
   type: "place" | "event" | "marketplace" | "notes" | "service" | "timetable" | "lost-found" | "club";
@@ -375,6 +376,23 @@ export default function CampusAIPage() {
 
       {/* OS Quick Actions & Starters */}
       <aside className="space-y-4">
+        {/* Signature Liquid Material Core */}
+        <div className="rounded-3xl border border-border/80 bg-card p-4 space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
+              <span className={cn("size-2 rounded-full", isTyping ? "bg-amber-500 animate-ping" : "bg-emerald-500 animate-pulse")} />
+              {isTyping ? "Neural Reasoning Active" : "Resident Neural Surface"}
+            </span>
+            <span className="font-mono text-[10px] text-muted-foreground">GLSL V2</span>
+          </div>
+          <CampusLiquidMetal
+            className="h-28 w-full"
+            intensity={isTyping ? 1.8 : 0.9}
+            speed={isTyping ? 2.0 : 0.8}
+            interactive={true}
+          />
+        </div>
+
         <div className="rounded-3xl border border-border/80 bg-card p-5 space-y-3">
           <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <Sparkles className="size-3.5 text-primary" />

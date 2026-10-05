@@ -1,12 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { ViewTransitionWrapper, SharedElement } from "./ViewTransitionWrapper";
+import { ImmersiveModeOverlay } from "@/components/immersive/ImmersiveModeOverlay";
+import {
+  LayoutDashboard,
+  GraduationCap,
+  Map,
+  Sparkles,
+  Menu,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onResize = () => {
@@ -43,6 +55,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     };
   }, [isMobileMenuOpen]);
 
+  const mobileNavItems = [
+    { label: "Command", href: "/dashboard", icon: LayoutDashboard },
+    { label: "Academics", href: "/academics", icon: GraduationCap },
+    { label: "3D Map", href: "/map", icon: Map },
+    { label: "AI", href: "/campus-ai", icon: Sparkles },
+  ];
+
   return (
     <ViewTransitionWrapper>
       <div className="relative flex h-screen h-[100dvh] w-full overflow-hidden text-foreground">
@@ -52,7 +71,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         >
           Skip to main content
         </a>
-        
+
+        {/* Global Immersive Spatial Mode Overlay */}
+        <ImmersiveModeOverlay />
+
         <SharedElement id="app-sidebar">
           <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
         </SharedElement>
@@ -69,7 +91,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <main
               id="main-content"
               tabIndex={-1}
-              className="custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8"
+              className="custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3 pb-20 sm:p-4 md:pb-8 md:p-6 lg:p-8"
             >
               <SharedElement id="page-content">
                 <div className="surface mx-auto w-full max-w-7xl rounded-2xl p-4 sm:p-6 md:p-8">
@@ -77,6 +99,39 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 </div>
               </SharedElement>
             </main>
+
+            {/* Mobile Thumb-Accessible Dock */}
+            <nav
+              aria-label="Mobile Bottom Navigation"
+              className="fixed bottom-0 left-0 right-0 z-20 flex h-14 items-center justify-around border-t border-border/70 bg-background/90 px-2 backdrop-blur-lg md:hidden"
+            >
+              {mobileNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex flex-col items-center justify-center gap-0.5 px-3 py-1 text-[10px] font-medium transition-colors",
+                      isActive ? "text-primary font-bold" : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Icon className="size-4" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="flex flex-col items-center justify-center gap-0.5 px-3 py-1 text-[10px] font-medium text-muted-foreground hover:text-foreground"
+                aria-label="Open full menu"
+              >
+                <Menu className="size-4" />
+                <span>More</span>
+              </button>
+            </nav>
           </div>
         </SharedElement>
 

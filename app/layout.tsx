@@ -7,7 +7,11 @@ import { ToastViewport } from "@/components/ui/Toast";
 
 export const metadata: Metadata = {
   title: "RBU CampusOS",
-  description: "One campus. One identity. Every experience.",
+  description: "A social operating system for campus life, student community discovery, academics, peer exchange, and facilities.",
+  openGraph: {
+    title: "RBU CampusOS",
+    description: "A social operating system for campus life, student community discovery, academics, peer exchange, and facilities.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

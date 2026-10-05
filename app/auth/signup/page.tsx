@@ -32,6 +32,22 @@ export default function SignupPage() {
     setMessage(null);
 
     try {
+      const hasRealSupabase = Boolean(
+        process.env.NEXT_PUBLIC_SUPABASE_URL &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder")
+      );
+
+      const searchParams = new URLSearchParams(window.location.search);
+      const requestedPath = searchParams.get('from');
+      const fromPath = requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/dashboard';
+
+      if (!hasRealSupabase) {
+        // Fallback for preview/demo mode when Supabase is not configured
+        router.replace(fromPath);
+        return;
+      }
+
       const supabase = createClient();
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -54,10 +70,7 @@ export default function SignupPage() {
         return;
       }
 
-      // Check if we have a previous path to return to
-      const searchParams = new URLSearchParams(window.location.search);
-      const requestedPath = searchParams.get('from');
-      const fromPath = requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/dashboard';
+      // Return to previous path or dashboard
       router.replace(fromPath);
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";

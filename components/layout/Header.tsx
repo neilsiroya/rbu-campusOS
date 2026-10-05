@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { Menu, Moon, Sun, X, Sparkles, Layers, Eye } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { titleForPath } from "@/lib/nav";
@@ -10,8 +10,9 @@ import { BrandMark } from "@/components/os/BrandMark";
 import CommandSearch from "./CommandSearch";
 import NotificationsMenu from "./NotificationsMenu";
 import ProfileMenu from "./ProfileMenu";
-import { useReducedMotion } from "framer-motion";
-import { motion } from "framer-motion";
+import { useReducedMotion, motion } from "framer-motion";
+import { useOSStore } from "@/lib/os-store";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -24,6 +25,7 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
   const [mounted, setMounted] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const { mode, setMode } = useOSStore();
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
@@ -72,7 +74,14 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
         <div className="md:hidden">
           <BrandMark compact />
         </div>
-        <p className="hidden truncate text-sm text-muted-foreground md:block">{titleForPath(pathname)}</p>
+        <div className="hidden items-center gap-2 md:flex">
+          <p className="truncate text-sm font-semibold text-foreground">{titleForPath(pathname)}</p>
+          <span className="text-muted-foreground/40 font-mono text-xs">/</span>
+          <span className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
+            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            NODE-01 ACTIVE
+          </span>
+        </div>
 
         <div className="hidden md:block">
           <motion.div
@@ -87,7 +96,51 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
         </div>
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
+        {/* OS Mode Switcher (Normal | Focus | Immersive) */}
+        <div className="hidden lg:flex items-center rounded-xl bg-muted/40 p-0.5 border border-border/40 text-xs">
+          <button
+            type="button"
+            onClick={() => setMode("normal")}
+            className={cn(
+              "px-2.5 py-1 rounded-lg font-medium transition-colors",
+              mode === "normal"
+                ? "bg-background text-foreground shadow-sm font-semibold"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Standard
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("focus")}
+            className={cn(
+              "px-2.5 py-1 rounded-lg font-medium transition-colors flex items-center gap-1",
+              mode === "focus"
+                ? "bg-background text-foreground shadow-sm font-semibold"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+            title="Focus Mode: Minimalist academic runway"
+          >
+            <Eye className="size-3 text-primary" />
+            Focus
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("immersive")}
+            className={cn(
+              "px-2.5 py-1 rounded-lg font-medium transition-colors flex items-center gap-1",
+              mode === "immersive"
+                ? "bg-primary text-primary-foreground shadow-sm font-semibold"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+            title="Immersive Mode: 3D Spatial Theater"
+          >
+            <Sparkles className="size-3" />
+            Spatial 3D
+          </button>
+        </div>
+
         {searchOpen && (
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
@@ -107,7 +160,11 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
           aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
           onClick={() => setTheme(dark ? "light" : "dark")}
         >
-          {mounted ? (dark ? <Sun className="size-4 text-foreground" /> : <Moon className="size-4 text-foreground" />) : <span className="size-4" />}
+          {mounted ? (
+            dark ? <Sun className="size-4 text-foreground" /> : <Moon className="size-4 text-foreground" />
+          ) : (
+            <span className="size-4" />
+          )}
         </Button>
         <div className="hidden sm:block">
           <NotificationsMenu />

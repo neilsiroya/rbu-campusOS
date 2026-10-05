@@ -11,25 +11,14 @@ interface LoadingStateProps {
   fullScreen?: boolean;
 }
 
-export function LoadingState({
-  variant = "spinner",
-  size = "md",
-  title,
-  body,
-  className,
-  fullScreen = false,
-}: LoadingStateProps) {
-  const sizeStyles = {
-    spinner: { sm: "size-4", md: "size-8", lg: "size-12" },
-    dots: { sm: "size-1.5", md: "size-2", lg: "size-3" },
-    pulse: { sm: "h-4", md: "h-8", lg: "h-12" },
-  };
+const sizeStyles = {
+  spinner: { sm: "size-4", md: "size-8", lg: "size-12" },
+  dots: { sm: "size-1.5", md: "size-2", lg: "size-3" },
+  pulse: { sm: "h-4", md: "h-8", lg: "h-12" },
+};
 
-  const containerStyles = fullScreen
-    ? "fixed inset-0 z-50 flex items-center justify-center bg-background/90 backdrop-blur-sm"
-    : "flex items-center justify-center";
-
-  const Spinner = () => (
+function Spinner({ size }: { size: "sm" | "md" | "lg" }) {
+  return (
     <svg
       className={cn("animate-spin text-primary", sizeStyles.spinner[size])}
       viewBox="0 0 24 24"
@@ -42,8 +31,10 @@ export function LoadingState({
       <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
     </svg>
   );
+}
 
-  const Dots = () => (
+function Dots({ size }: { size: "sm" | "md" | "lg" }) {
+  return (
     <div className="flex items-center gap-1.5" aria-hidden="true">
       {[0, 1, 2].map((i) => (
         <span
@@ -57,8 +48,10 @@ export function LoadingState({
       ))}
     </div>
   );
+}
 
-  const Pulse = () => (
+function Pulse({ size }: { size: "sm" | "md" | "lg" }) {
+  return (
     <div
       className={cn(
         "animate-pulse bg-primary/10 rounded-xl",
@@ -67,13 +60,22 @@ export function LoadingState({
       aria-hidden="true"
     />
   );
+}
 
+export function LoadingState({
+  variant = "spinner",
+  size = "md",
+  title,
+  body,
+  className,
+  fullScreen = false,
+}: LoadingStateProps) {
   const content = (
     <div className={cn("flex flex-col items-center gap-4 text-center", className)}>
-      {variant === "spinner" && <Spinner />}
-      {variant === "dots" && <Dots />}
-      {variant === "pulse" && <Pulse />}
-      {variant === "skeleton" && <Pulse />}
+      {variant === "spinner" && <Spinner size={size} />}
+      {variant === "dots" && <Dots size={size} />}
+      {variant === "pulse" && <Pulse size={size} />}
+      {variant === "skeleton" && <Pulse size={size} />}
       {title && <p className="font-display text-lg text-foreground">{title}</p>}
       {body && <p className="text-sm text-muted-foreground max-w-md">{body}</p>}
     </div>
