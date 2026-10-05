@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, Moon, Sun, X, Sparkles, Layers, Eye } from "lucide-react";
+import { Menu, Moon, Sun, X, Sparkles, Layers, Eye, Search } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { titleForPath } from "@/lib/nav";
@@ -52,6 +52,19 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
       document.body.style.overflow = "";
     };
   }, [searchOpen]);
+
+  // Global OS spotlight: Cmd/Ctrl + K toggles the command center
+  // from anywhere inside the application shell.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setSearchOpen((open) => !open);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-border/70 px-3 glass-surface md:px-5">
@@ -155,6 +168,17 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
             aria-hidden="true"
           />
         )}
+
+        {/* Mobile Omnisearch entry — the desktop trigger is lg+ only */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-11 shrink-0 rounded-full hover:bg-muted/50 lg:hidden"
+          aria-label="Open Omnisearch (Cmd+K)"
+          onClick={handleSearchOpen}
+        >
+          <Search className="size-4" aria-hidden="true" />
+        </Button>
 
         <Button
           variant="ghost"

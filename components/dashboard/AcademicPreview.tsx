@@ -66,7 +66,7 @@ export default function AcademicPreview({ nextClass }: AcademicPreviewProps) {
                 <AlertTriangle className="size-4" />
               </div>
               <div>
-                <Link href="/assignments" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:underline">
+                <Link href="/assignments" className="inline-block py-1.5 -my-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:underline">
                   Assignment Due Soon
                 </Link>
                 <p className="mt-1 text-xs font-medium text-foreground">
@@ -82,7 +82,7 @@ export default function AcademicPreview({ nextClass }: AcademicPreviewProps) {
                 <GraduationCap className="size-4" />
               </div>
               <div>
-                <Link href="/exams" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:underline">
+                <Link href="/exams" className="inline-block py-1.5 -my-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:underline">
                   Upcoming Exam
                 </Link>
                 <p className="mt-1 text-xs font-medium text-foreground">
@@ -114,7 +114,7 @@ export default function AcademicPreview({ nextClass }: AcademicPreviewProps) {
                 <ClipboardList className="size-4" />
               </div>
               <div>
-                <Link href="/attendance" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:underline">
+                <Link href="/attendance" className="inline-block py-1.5 -my-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:underline">
                   Attendance Status
                 </Link>
                 <p className="mt-1 text-xs font-medium text-foreground">

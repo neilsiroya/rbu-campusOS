@@ -8,11 +8,32 @@ import { ToastViewport } from "@/components/ui/Toast";
 import LiquidCursor from "@/components/CursorSpotlight";
 
 export const metadata: Metadata = {
-  title: "RBU CampusOS",
-  description: "A social operating system for campus life, student community discovery, academics, peer exchange, and facilities.",
+  metadataBase: new URL("https://rbu-campus-os.vercel.app"),
+  title: {
+    default: "RBU CampusOS",
+    template: "%s · RBU CampusOS",
+  },
+  description:
+    "A social operating system for campus life, student community discovery, academics, peer exchange, and facilities.",
+  icons: { icon: "/icon.svg" },
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfa" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1216" },
+  ],
+  robots: { index: true, follow: true },
   openGraph: {
+    type: "website",
+    siteName: "RBU CampusOS",
     title: "RBU CampusOS",
-    description: "A social operating system for campus life, student community discovery, academics, peer exchange, and facilities.",
+    description:
+      "A social operating system for campus life, student community discovery, academics, peer exchange, and facilities.",
+    images: [],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RBU CampusOS",
+    description:
+      "A social operating system for campus life, student community discovery, academics, peer exchange, and facilities.",
   },
 };
 
