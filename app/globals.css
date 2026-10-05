@@ -1565,6 +1565,225 @@
     background-clip: text;
     color: transparent;
   }
+
+  /* Accessibility Utilities — WCAG 2.1 AA Compliance */
+
+  /* Screen Reader Only */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .not-sr-only {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Skip Links */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--background);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-weight: var(--font-weight-medium);
+    transition: top var(--motion-duration-micro) var(--motion-easing-standard);
+  }
+  .skip-link:focus {
+    top: var(--spacing-4);
+  }
+
+  /* Focus Visible — Enhanced */
+  .focus-visible-ring:focus-visible {
+    outline: none;
+    ring: 2px;
+    ring-offset: 2px;
+    ring-color: var(--focus-ring);
+    ring-offset-color: var(--focus-ring-offset);
+  }
+  .focus-visible-ring-inset:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--focus-ring);
+  }
+
+  /* Focus Trap — For Modals/Dialogs */
+  .focus-trap {
+    position: relative;
+  }
+  .focus-trap:focus-within {
+    outline: none;
+  }
+
+  /* Live Regions */
+  .live-polite {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .live-assertive {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Reduced Motion — Respect User Preference */
+  @media (prefers-reduced-motion: reduce) {
+    .respect-reduced-motion,
+    .respect-reduced-motion *,
+    .respect-reduced-motion *::before,
+    .respect-reduced-motion *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    .high-contrast {
+      border-width: 2px;
+    }
+    .high-contrast:focus-visible {
+      ring-width: 3px;
+      ring-offset-width: 3px;
+    }
+  }
+
+  /* Color Scheme Awareness */
+  @media (prefers-color-scheme: light) {
+    .light-only { display: block; }
+    .dark-only { display: none; }
+  }
+  @media (prefers-color-scheme: dark) {
+    .light-only { display: none; }
+    .dark-only { display: block; }
+  }
+
+  /* Touch Target Minimum — 44x44px */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .touch-target-sm {
+    min-height: 40px;
+    min-width: 40px;
+  }
+
+  /* Keyboard Navigation — Visible Focus */
+  .keyboard-navigable:focus-visible {
+    outline: none;
+    ring: 2px;
+    ring-offset: 2px;
+    ring-color: var(--focus-ring);
+    ring-offset-color: var(--focus-ring-offset);
+  }
+
+  /* ARIA Live Region Helpers */
+  [aria-live="polite"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  [aria-live="assertive"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  [aria-live="off"] { display: none; }
+
+  /* Reduced Motion — Animations */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-none {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* High Contrast Focus */
+  @media (prefers-contrast: more) {
+    :focus-visible {
+      outline-width: 3px !important;
+      outline-offset: 3px !important;
+    }
+  }
+
+  /* Focus Within — For Form Groups */
+  .focus-within-ring:focus-within {
+    ring: 2px;
+    ring-offset: 2px;
+    ring-color: var(--focus-ring);
+    ring-offset-color: var(--focus-ring-offset);
+  }
+
+  /* Text Size Adjust — Prevent Mobile Zoom */
+  html {
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Prevent Text Selection on Interactive Elements */
+  .select-none {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+  .select-text {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    user-select: text;
+  }
+  .select-all {
+    -webkit-user-select: all;
+    -moz-user-select: all;
+    user-select: all;
+  }
+  .select-auto {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    user-select: auto;
+  }
 }
 
 /* View Transitions API Styles */
