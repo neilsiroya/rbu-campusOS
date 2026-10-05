@@ -1100,6 +1100,236 @@
     background-color: var(--selection-bg);
     color: var(--selection-fg);
   }
+
+  /* Micro-Interaction Utilities — Comprehensive Hover/Focus/Press States */
+  /* Ripple Effect */
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+  .ripple::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, currentColor 0%, transparent 70%);
+    opacity: 0;
+    transform: scale(0);
+    transition: transform var(--motion-duration-interaction) var(--motion-easing-standard),
+                opacity var(--motion-duration-interaction) var(--motion-easing-standard);
+    pointer-events: none;
+  }
+  .ripple:active::before {
+    opacity: 0.15;
+    transform: scale(4);
+    transition-duration: 0ms;
+  }
+
+  /* Magnetic Hover — Subtle Attraction */
+  .magnetic-hover {
+    transition: transform var(--motion-duration-interaction) var(--motion-easing-standard);
+  }
+  .magnetic-hover:hover {
+    transform: translateY(calc(var(--motion-translate-micro) * -1)) scale(var(--motion-scale-hover));
+  }
+
+  /* Elevation Lift — Progressive Depth */
+  .elevate-1:hover { box-shadow: 0 4px 12px var(--glass-shadow); transform: translateY(-2px); }
+  .elevate-2:hover { box-shadow: 0 8px 24px var(--glass-shadow); transform: translateY(-4px); }
+  .elevate-3:hover { box-shadow: 0 16px 32px var(--glass-shadow); transform: translateY(-6px); }
+  .elevate-4:hover { box-shadow: 0 24px 48px var(--glass-shadow); transform: translateY(-8px); }
+  .elevate-1,
+  .elevate-2,
+  .elevate-3,
+  .elevate-4 {
+    transition: transform var(--motion-duration-interaction) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-interaction) var(--motion-easing-standard);
+  }
+
+  /* Border Glow — Subtle Highlight */
+  .border-glow {
+    transition: border-color var(--motion-duration-micro) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-micro) var(--motion-easing-standard);
+  }
+  .border-glow:hover {
+    border-color: color-mix(in oklch, var(--primary) 40%, var(--border));
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary) 40%, var(--border)),
+                0 4px 16px var(--glass-shadow);
+  }
+
+  /* Border Glow Variants */
+  .border-glow-success:hover {
+    border-color: color-mix(in oklch, var(--success) 40%, var(--border));
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--success) 40%, var(--border)),
+                0 4px 16px var(--glass-shadow);
+  }
+  .border-glow-warning:hover {
+    border-color: color-mix(in oklch, var(--warning) 40%, var(--border));
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--warning) 40%, var(--border)),
+                0 4px 16px var(--glass-shadow);
+  }
+  .border-glow-error:hover {
+    border-color: color-mix(in oklch, var(--error) 40%, var(--border));
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--error) 40%, var(--border)),
+                0 4px 16px var(--glass-shadow);
+  }
+
+  /* Shine Sweep — Premium Feel */
+  .shine-sweep {
+    position: relative;
+    overflow: hidden;
+  }
+  .shine-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      color-mix(in oklch, currentColor 15%, transparent) 50%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    transition: transform 600ms var(--motion-easing-emphasized);
+    pointer-events: none;
+  }
+  .shine-sweep:hover::after {
+    transform: translateX(100%);
+  }
+
+  /* Pulse on Hover — Subtle Attention */
+  .pulse-hover:hover {
+    animation: pulse-hover 1.5s var(--motion-easing-standard) infinite;
+  }
+  @keyframes pulse-hover {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--primary) 40%, transparent); }
+    50% { box-shadow: 0 0 0 8px color-mix(in oklch, var(--primary) 10%, transparent); }
+  }
+
+  /* Tilt Effect — 3D Interaction */
+  .tilt-hover {
+    transition: transform var(--motion-duration-interaction) var(--motion-easing-spring),
+                box-shadow var(--motion-duration-interaction) var(--motion-easing-standard);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+
+  /* Stagger Children on Parent Hover */
+  .stagger-children > * {
+    transition: transform var(--motion-duration-interaction) var(--motion-easing-standard),
+                opacity var(--motion-duration-interaction) var(--motion-easing-standard);
+  }
+  .stagger-children:hover > * {
+    animation: stagger-children-in var(--motion-duration-entrance) var(--motion-easing-emphasized) forwards;
+  }
+  @keyframes stagger-children-in {
+    from { opacity: 0; transform: translateY(var(--motion-translate-standard)) scale(var(--motion-scale-entrance)); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .stagger-children > *:nth-child(1) { animation-delay: calc(var(--motion-stagger-delay-tight) * 0); }
+  .stagger-children > *:nth-child(2) { animation-delay: calc(var(--motion-stagger-delay-tight) * 1); }
+  .stagger-children > *:nth-child(3) { animation-delay: calc(var(--motion-stagger-delay-tight) * 2); }
+  .stagger-children > *:nth-child(4) { animation-delay: calc(var(--motion-stagger-delay-tight) * 3); }
+  .stagger-children > *:nth-child(5) { animation-delay: calc(var(--motion-stagger-delay-tight) * 4); }
+  .stagger-children > *:nth-child(6) { animation-delay: calc(var(--motion-stagger-delay-tight) * 5); }
+
+  /* Drag Preview — Visual Feedback */
+  .drag-preview {
+    opacity: 0.9;
+    transform: rotate(3deg) scale(var(--motion-scale-hover));
+    box-shadow: 0 24px 48px var(--glass-shadow);
+    z-index: 100;
+  }
+  .drag-over {
+    border-color: color-mix(in oklch, var(--primary) 50%, var(--border)) !important;
+    background-color: color-mix(in oklch, var(--primary) 8%, var(--card)) !important;
+    box-shadow: 0 0 0 2px var(--primary), 0 8px 24px var(--glass-shadow);
+  }
+
+  /* Tooltip/Toast Micro Animations */
+  .tooltip-enter {
+    animation: tooltip-in var(--motion-duration-micro) var(--motion-easing-emphasized) forwards;
+  }
+  .tooltip-exit {
+    animation: tooltip-out var(--motion-duration-fast) var(--motion-easing-decelerated) forwards;
+  }
+  @keyframes tooltip-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes tooltip-out {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  }
+
+  /* Progress Micro Animations */
+  .progress-indeterminate {
+    background: linear-gradient(90deg,
+      color-mix(in oklch, var(--primary) 20%, transparent) 25%,
+      color-mix(in oklch, var(--primary) 40%, transparent) 50%,
+      color-mix(in oklch, var(--primary) 20%, transparent) 75%
+    );
+    background-size: 200% 100%;
+    animation: progress-shimmer 1.5s ease-in-out infinite;
+  }
+  @keyframes progress-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* Tab/Tab Panel Micro Animations */
+  .tab-indicator {
+    transition: transform var(--motion-duration-interaction) var(--motion-easing-standard),
+                width var(--motion-duration-interaction) var(--motion-easing-standard);
+  }
+
+  /* Accordion Micro Animations */
+  .accordion-content {
+    overflow: hidden;
+  }
+  .accordion-content[data-state="open"] {
+    animation: accordion-down var(--motion-duration-interaction) var(--motion-easing-standard);
+  }
+  .accordion-content[data-state="closed"] {
+    animation: accordion-up var(--motion-duration-interaction) var(--motion-easing-decelerated);
+  }
+  @keyframes accordion-down {
+    from { height: 0; opacity: 0; }
+    to { height: var(--radix-accordion-content-height); opacity: 1; }
+  }
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); opacity: 1; }
+    to { height: 0; opacity: 0; }
+  }
+
+  /* Modal/Dialog Micro Animations */
+  .modal-overlay-enter {
+    animation: modal-overlay-in var(--motion-duration-micro) var(--motion-easing-standard);
+  }
+  .modal-overlay-exit {
+    animation: modal-overlay-out var(--motion-duration-fast) var(--motion-easing-decelerated);
+  }
+  @keyframes modal-overlay-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes modal-overlay-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  .modal-content-enter {
+    animation: modal-content-in var(--motion-duration-interaction) var(--motion-easing-emphasized);
+  }
+  .modal-content-exit {
+    animation: modal-content-out var(--motion-duration-fast) var(--motion-easing-decelerated);
+  }
+  @keyframes modal-content-in {
+    from { opacity: 0; transform: scale(0.96) translateY(16px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes modal-content-out {
+    from { opacity: 1; transform: scale(1) translateY(0); }
+    to { opacity: 0; transform: scale(0.96) translateY(-16px); }
+  }
 }
 
 /* View Transitions API Styles */
