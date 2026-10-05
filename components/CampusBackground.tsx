@@ -1,3 +1,14 @@
+/**
+ * CampusBackground
+ * ----------------------------------------------------------------
+ * The three atmospheric layers that sit beneath the shell:
+ *   1. A soft aurora wash (CSS conic gradients, token-driven).
+ *   2. A dot grid etched into the surface.
+ *   3. A scrim that keeps contrast as the shell scrolls.
+ * All layers are pointer-events-none and light/dark aware; the aurora
+ * parallax is disabled under prefers-reduced-motion.
+ * Introduced in Phase 4 of the CampusOS redesign — cheap, CSS-only.
+ */
 "use client";
 
 import { useRef, useEffect, useState } from "react";
