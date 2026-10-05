@@ -2,7 +2,11 @@ import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // `output: "standalone"` is for self-hosted/Docker deployments only.
+  // Vercel performs its own file tracing and fails the build when
+  // standalone mode is on (`ENOENT ... .next/next-server.js.nft.json`),
+  // so it must stay off when VERCEL=1.
+  ...(process.env.VERCEL ? {} : { output: "standalone" as const }),
   // This project lives inside a parent Git repository, so Turbopack otherwise
   // resolves its root to C:\Users\ASUS and silently ignores the workspace
   // lockfile. Pinning the root keeps module resolution and `process.env`
