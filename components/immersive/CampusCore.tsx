@@ -139,10 +139,22 @@ function AtmosphericCloud({ isDark = true }: { isDark?: boolean }) {
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
 
+    // Deterministic PRNG (mulberry32): the particle field must be stable
+    // across re-renders and theme toggles, and React purity rules forbid
+    // Math.random() during render. Same seed => same constellation.
+    let seed = 0x9e3779b9;
+    const rand = () => {
+      seed |= 0;
+      seed = (seed + 0x6d2b79f5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+
     for (let i = 0; i < count; i++) {
-      const r = 1.6 + Math.random() * 2.2;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 1.6 + rand() * 2.2;
+      const theta = rand() * Math.PI * 2;
+      const phi = Math.acos(2 * rand() - 1);
 
       pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
       pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
@@ -208,7 +220,7 @@ function CoreScene({
   const sceneGroup = useRef<THREE.Group>(null);
   const pointerPos = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
 
-  useFrame((_, delta) => {
+  useFrame(() => {
     if (!sceneGroup.current) return;
 
     // Smooth inertia camera tilting

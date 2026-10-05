@@ -127,7 +127,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     <motion.div
                       layoutId="sidebar-active-pill"
                       className="absolute inset-0 rounded-xl bg-primary/10 border-l-2 border-primary"
-                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                      transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 350, damping: 30 }}
                       aria-hidden="true"
                     />
                   )}
@@ -136,9 +136,9 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   {isActive && (
                     <motion.div
                       className="relative z-10 ml-auto size-1.5 rounded-full bg-primary"
-                      initial={{ scale: 0 }}
+                      initial={shouldReduceMotion ? false : { scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                       aria-hidden="true"
                     />
                   )}

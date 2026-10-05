@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ArrowRight, Newspaper, MessageSquare, Flame } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { type FeedPost } from "@/lib/campus-data";
 import { formatRelativeTime } from "@/lib/utils";
 import { StaggerContainer, StaggerItem, Reveal } from "@/components/motion";

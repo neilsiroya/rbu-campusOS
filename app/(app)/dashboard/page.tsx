@@ -7,13 +7,8 @@ import {
   BookOpen,
   Flame,
   Sparkles,
-  Layers,
-  GraduationCap,
-  Calendar,
-  CheckCircle2,
   Clock,
   Eye,
-  Maximize2,
 } from "lucide-react";
 import {
   CURRENT_STUDENT,
@@ -32,7 +27,6 @@ import CampusPulse from "@/components/dashboard/CampusPulse";
 import ConfessionPreview from "@/components/dashboard/ConfessionPreview";
 import QuickActions from "@/components/dashboard/QuickActions";
 import AcademicPreview from "@/components/dashboard/AcademicPreview";
-import XPProgress from "@/components/dashboard/XPProgress";
 import CampusAIQuickAsk from "@/components/dashboard/CampusAIQuickAsk";
 import CampusAIPreview from "@/components/dashboard/CampusAIPreview";
 import { CampusCore } from "@/components/immersive/CampusCoreDynamic";

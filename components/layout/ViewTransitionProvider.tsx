@@ -71,5 +71,13 @@ export function ViewTransitionProvider({ children }: { children: React.ReactNode
     }
   }, [pathname, searchParams, shouldReduceMotion]);
 
-  return <>{children}</>;
+  return (
+    <span
+      data-transitioning={isTransitioning || undefined}
+      aria-busy={isTransitioning || undefined}
+      style={{ display: "contents" }}
+    >
+      {children}
+    </span>
+  );
 }

@@ -6,15 +6,8 @@ import { useOSStore } from "@/lib/os-store";
 import { CampusCore } from "@/components/immersive/CampusCoreDynamic";
 import { Button } from "@/components/ui/button";
 import {
-  X,
-  Compass,
-  Activity,
-  Layers,
   Sparkles,
-  Calendar,
-  Clock,
   ArrowRight,
-  Maximize2,
   Minimize2,
 } from "lucide-react";
 import Link from "next/link";

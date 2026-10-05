@@ -7,9 +7,8 @@ import { OrbitControls, Html } from "@react-three/drei";
 import { useTheme } from "next-themes";
 import { ImmersiveCanvas } from "@/components/webgl/ImmersiveCanvas";
 import { MAP_PLACES, type MapPlace } from "@/lib/campus-data";
-import { Building2, Navigation, Layers, RotateCcw, MapPin, Eye } from "lucide-react";
+import { Navigation, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 // Building positions in 3D world space mapped from MAP_PLACES percentage coords
 const BUILDING_COORDS: Record<string, { x: number; z: number; width: number; depth: number; height: number; color?: string }> = {

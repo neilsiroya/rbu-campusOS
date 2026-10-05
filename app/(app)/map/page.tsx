@@ -10,10 +10,7 @@ import { Button } from "@/components/ui/button";
 import { SpatialCampusMap } from "@/components/map/SpatialCampusMapDynamic";
 import {
   MapPin,
-  Building,
-  Navigation,
   Clock,
-  Sparkles,
   ArrowRight,
   Search,
 } from "lucide-react";

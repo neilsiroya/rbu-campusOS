@@ -14,6 +14,26 @@ const nextConfig: NextConfig = {
     "ais-dev-hee5jj6zdsrlptot636ivi-397509425928.asia-east1.run.app",
     "*.run.app",
   ],
+  // Baseline hardening headers. Deliberately no CSP: Next.js + Supabase
+  // auth rely on inline scripts/styles and cross-origin auth endpoints,
+  // so a strict CSP would break login. Revisit only with a nonce-based
+  // policy tested against the auth flow.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

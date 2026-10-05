@@ -45,6 +45,13 @@ export function Magnetic({
     const { width, height, left, top } = ref.current.getBoundingClientRect();
     const { clientX, clientY } = e;
 
+    // Outside the magnetic field radius the surface stays put.
+    const distFromCenter = Math.hypot(clientX - (left + width / 2), clientY - (top + height / 2));
+    if (distFromCenter > radius) {
+      setPosition({ x: 0, y: 0 });
+      return;
+    }
+
     let x = (clientX - (left + width / 2)) * strength;
     let y = (clientY - (top + height / 2)) * strength;
 

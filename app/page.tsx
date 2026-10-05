@@ -8,12 +8,8 @@ import {
   CalendarDays,
   Map,
   MessageCircleHeart,
-  Search,
-  UsersRound,
   Sparkles,
-  Layers,
   GraduationCap,
-  ShieldCheck,
   Compass,
 } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";

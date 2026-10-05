@@ -10,17 +10,22 @@ interface TypingEffectProps {
   className?: string;
 }
 
-export function TypingEffect({ 
-  text, 
-  speed = 30, 
+export function TypingEffect({
+  text,
+  speed = 30,
   onComplete,
-  className 
+  className
 }: TypingEffectProps) {
   const shouldReduceMotion = useReducedMotion();
   const [displayedText, setDisplayedText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const charIndexRef = useRef(0);
+  // onComplete identity must not restart the typing loop; mirror it in a ref.
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   const typeNextChar = useCallback(() => {
     if (charIndexRef.current < text.length) {
@@ -29,9 +34,9 @@ export function TypingEffect({
       timeoutRef.current = setTimeout(typeNextChar, 1000 / speed);
     } else {
       setIsComplete(true);
-      onComplete?.();
+      onCompleteRef.current?.();
     }
-  }, [text, speed, onComplete]);
+  }, [text, speed]);
 
   useEffect(() => {
     charIndexRef.current = 0;
@@ -41,7 +46,7 @@ export function TypingEffect({
     if (shouldReduceMotion) {
       setDisplayedText(text);
       setIsComplete(true);
-      onComplete?.();
+      onCompleteRef.current?.();
       return;
     }
 
@@ -52,7 +57,7 @@ export function TypingEffect({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [text, shouldReduceMotion, typeNextChar]);
+  }, [text, shouldReduceMotion, speed, typeNextChar]);
 
   return (
     <span className={className}>
@@ -84,6 +89,10 @@ export function TypingEffectWord({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const wordIndexRef = useRef(0);
   const wordsRef = useRef(text.split(/(\s+)/).filter(w => w.length > 0));
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   const typeNextWord = useCallback(() => {
     if (wordIndexRef.current < wordsRef.current.length) {
@@ -92,9 +101,9 @@ export function TypingEffectWord({
       timeoutRef.current = setTimeout(typeNextWord, 1000 / speed);
     } else {
       setIsComplete(true);
-      onComplete?.();
+      onCompleteRef.current?.();
     }
-  }, [speed, onComplete]);
+  }, [speed]);
 
   useEffect(() => {
     wordsRef.current = text.split(/(\s+)/).filter(w => w.length > 0);
@@ -105,7 +114,7 @@ export function TypingEffectWord({
     if (shouldReduceMotion) {
       setDisplayedWords(wordsRef.current);
       setIsComplete(true);
-      onComplete?.();
+      onCompleteRef.current?.();
       return;
     }
 
@@ -116,7 +125,7 @@ export function TypingEffectWord({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [text, shouldReduceMotion, typeNextWord]);
+  }, [text, shouldReduceMotion, speed, typeNextWord]);
 
   return (
     <span className={className}>

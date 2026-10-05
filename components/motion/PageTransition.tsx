@@ -61,7 +61,7 @@ export function PageTransition({
   return (
     <motion.div
       key={key}
-      initial={transition.initial}
+      initial={mounted ? transition.initial : false}
       animate={transition.animate}
       exit={transition.exit}
       transition={transition.transition}

@@ -9,8 +9,6 @@ interface ViewTransitionWrapperProps {
 }
 
 export function ViewTransitionWrapper({ children, className }: ViewTransitionWrapperProps) {
-  const shouldReduceMotion = useReducedMotion();
-
   // This component just provides the shared element transition context
   // The actual view transition is handled by ViewTransitionProvider
   return (

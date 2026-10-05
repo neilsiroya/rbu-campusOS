@@ -23,11 +23,9 @@ import {
   MAP_PLACES,
   MARKETPLACE_LISTINGS,
   STUDY_RESOURCES,
-  TIMETABLE,
 } from "@/lib/campus-data";
 import { DemoNotice } from "@/components/os/DemoNotice";
 import { PageIntro } from "@/components/os/PageIntro";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { MagneticButton } from "@/components/motion";

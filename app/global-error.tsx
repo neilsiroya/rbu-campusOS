@@ -6,7 +6,6 @@
  * itself throws (e.g. a provider failure).
  */
 export default function GlobalError({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, Moon, Sun, X, Sparkles, Layers, Eye, Search } from "lucide-react";
+import { Menu, Moon, Sun, X, Sparkles, Eye, Search } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { titleForPath } from "@/lib/nav";

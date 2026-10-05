@@ -145,11 +145,11 @@ export function GlareCard({
             ? `linear-gradient(${angle}deg, transparent 30%, ${color} 50%, transparent 70%)`
             : "transparent",
           backgroundSize: "200% 200%",
-          opacity: isHovering ? 1 : 0,
+          opacity: isHovering ? intensity : 0,
           transition: "opacity 0.4s ease-out, background-position 0.6s ease-out",
         }}
         animate={{
-          backgroundPosition: isHovering ? "200% 200%" : "0% 0%",
+          backgroundPosition: isHovering ? `${mousePos.x}px ${mousePos.y}px` : "0% 0%",
         }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       />
