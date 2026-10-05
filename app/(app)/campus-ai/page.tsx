@@ -32,7 +32,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { MagneticButton } from "@/components/motion";
 import { TypingEffect } from "@/components/motion/TypingEffect";
-import { CampusLiquidMetal } from "@/components/immersive/CampusLiquidMetal";
+import { CampusLiquidMetal } from "@/components/immersive/CampusLiquidMetalDynamic";
 
 type StructuredCard = {
   type: "place" | "event" | "marketplace" | "notes" | "service" | "timetable" | "lost-found" | "club";

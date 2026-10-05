@@ -20,7 +20,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { BrandMark } from "@/components/os/BrandMark";
 import { Button } from "@/components/ui/button";
 import { MagneticButton } from "@/components/motion";
-import { CampusCore } from "@/components/immersive/CampusCore";
+import { CampusCore } from "@/components/immersive/CampusCoreDynamic";
 
 const lanes = [
   {

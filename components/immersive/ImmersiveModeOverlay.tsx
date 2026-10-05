@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useOSStore } from "@/lib/os-store";
-import { CampusCore } from "@/components/immersive/CampusCore";
+import { CampusCore } from "@/components/immersive/CampusCoreDynamic";
 import { Button } from "@/components/ui/button";
 import {
   X,

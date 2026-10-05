@@ -35,7 +35,7 @@ import AcademicPreview from "@/components/dashboard/AcademicPreview";
 import XPProgress from "@/components/dashboard/XPProgress";
 import CampusAIQuickAsk from "@/components/dashboard/CampusAIQuickAsk";
 import CampusAIPreview from "@/components/dashboard/CampusAIPreview";
-import { CampusCore } from "@/components/immersive/CampusCore";
+import { CampusCore } from "@/components/immersive/CampusCoreDynamic";
 import { useOSStore } from "@/lib/os-store";
 import { Button } from "@/components/ui/button";
 
