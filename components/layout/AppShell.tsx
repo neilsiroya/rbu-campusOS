@@ -94,7 +94,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               className="custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3 pb-20 sm:p-4 md:pb-8 md:p-6 lg:p-8"
             >
               <SharedElement id="page-content">
-                <div className="surface mx-auto w-full max-w-7xl rounded-2xl p-4 sm:p-6 md:p-8">
+                <div className="mx-auto w-full max-w-7xl">
                   {children}
                 </div>
               </SharedElement>

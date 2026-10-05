@@ -111,9 +111,9 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   onClick={closeMobileMenu}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ease-out",
+                    "relative flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-150",
                     isActive
-                      ? "bg-primary/10 text-primary border-l-3 border-primary relative before:absolute before:inset-0 before:rounded-xl before:bg-primary/5"
+                      ? "text-primary font-semibold"
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                   )}
                   onKeyDown={(e) => {
@@ -123,14 +123,22 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     }
                   }}
                 >
-                  <Icon className="size-4 shrink-0" aria-hidden="true" />
-                  {item.name}
                   {isActive && (
                     <motion.div
-                      className="absolute right-0 top-1/2 -translate-y-1/2 size-1.5 rounded-full bg-primary"
+                      layoutId="sidebar-active-pill"
+                      className="absolute inset-0 rounded-xl bg-primary/10 border-l-2 border-primary"
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <Icon className="relative z-10 size-4 shrink-0" aria-hidden="true" />
+                  <span className="relative z-10">{item.name}</span>
+                  {isActive && (
+                    <motion.div
+                      className="relative z-10 ml-auto size-1.5 rounded-full bg-primary"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      transition={{ duration: 200 }}
+                      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                       aria-hidden="true"
                     />
                   )}

@@ -1,39 +1,49 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, type RefObject } from "react";
 
-export function useVisibilityPause(elementRef?: React.RefObject<HTMLElement | null>) {
+export function useVisibilityPause(containerRef: RefObject<HTMLElement | null>): boolean {
   const [isVisible, setIsVisible] = useState(true);
-  const isDocumentVisibleRef = useRef(true);
-  const isElementInViewRef = useRef(true);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let isDocumentVisible = !document.hidden;
+    let isIntersecting = true;
+
+    const updateVisibility = () => {
+      setIsVisible(isDocumentVisible && isIntersecting);
+    };
+
     const handleVisibilityChange = () => {
-      isDocumentVisibleRef.current = !document.hidden;
-      setIsVisible(isDocumentVisibleRef.current && isElementInViewRef.current);
+      isDocumentVisible = !document.hidden;
+      updateVisibility();
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
+    const element = containerRef.current;
     let observer: IntersectionObserver | null = null;
-    if (elementRef && elementRef.current) {
+
+    if (element && typeof IntersectionObserver !== "undefined") {
       observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0]) {
-            isElementInViewRef.current = entries[0].isIntersecting;
-            setIsVisible(isDocumentVisibleRef.current && isElementInViewRef.current);
-          }
+        ([entry]) => {
+          isIntersecting = entry.isIntersecting;
+          updateVisibility();
         },
         { threshold: 0.05 }
       );
-      observer.observe(elementRef.current);
+      observer.observe(element);
     }
 
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      if (observer) observer.disconnect();
+      if (observer && element) {
+        observer.unobserve(element);
+        observer.disconnect();
+      }
     };
-  }, [elementRef]);
+  }, [containerRef]);
 
   return isVisible;
 }

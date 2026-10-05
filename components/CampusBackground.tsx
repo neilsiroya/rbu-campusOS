@@ -9,327 +9,184 @@ interface CampusBackgroundProps {
   lightMode?: boolean;
 }
 
-export function CampusBackground({ className, lightMode = false }: CampusBackgroundProps) {
+export function CampusBackground({ className }: CampusBackgroundProps) {
   const shouldReduceMotion = useReducedMotion();
   const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Sync with next-themes
+  // Sync with next-themes and class changes on <html>
   useEffect(() => {
     const html = document.documentElement;
-    const isDark = html.classList.contains("dark");
-    setTheme(isDark ? "dark" : "light");
-    const observer = new MutationObserver(() => {
+    const updateTheme = () => {
       setTheme(html.classList.contains("dark") ? "dark" : "light");
-    });
+    };
+    updateTheme();
+    const observer = new MutationObserver(updateTheme);
     observer.observe(html, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, []);
 
-  if (shouldReduceMotion) {
-    return (
-      <div
-        className={cn(
-          "fixed inset-0 z-[-1] pointer-events-none",
-          theme === "dark" ? "bg-background" : "bg-background",
-          className
-        )}
-      />
-    );
-  }
-
-  return (
-    <div className={cn("fixed inset-0 z-[-1] pointer-events-none overflow-hidden", className)}>
-      {/* Layer 1: Semantic Canvas - Base gradient */}
-      <div
-        className={cn(
-          "absolute inset-0",
-          theme === "dark"
-            ? "bg-[radial-gradient(ellipse_at_center,_var(--background)_0%,_oklch(0.08_0.03_240)_100%)]"
-            : "bg-[radial-gradient(ellipse_at_center,_var(--background)_0%,_oklch(0.98_0.005_250)_100%)]"
-        )}
-      />
-
-      {/* Layer 2: Environmental Texture - Subtle noise + gradients */}
-      <EnvironmentalTexture theme={theme} />
-
-      {/* Layer 3: Interaction Layer - Aurora responds to cursor */}
-      {!lightMode && <AuroraLayer theme={theme} />}
-    </div>
-  );
-}
-
-function EnvironmentalTexture({ theme }: { theme: "light" | "dark" }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
+  // High performance GPU-accelerated atmospheric gradient mesh with visibility pause
   useEffect(() => {
+    if (shouldReduceMotion) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
-
-    const ctx = canvas.getContext("2d", { alpha: true, willReadFrequently: true });
-    if (!ctx) return;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    let frame = 0;
-
-    const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-      ctx.scale(dpr, dpr);
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      // Subtle gradient mesh
-      const gradient1 = ctx.createRadialGradient(
-        width * 0.2,
-        height * 0.1,
-        0,
-        width * 0.2,
-        height * 0.1,
-        Math.max(width, height) * 0.6
-      );
-      if (theme === "dark") {
-        gradient1.addColorStop(0, "rgba(82, 82, 255, 0.03)");
-        gradient1.addColorStop(0.5, "rgba(124, 255, 103, 0.015)");
-        gradient1.addColorStop(1, "transparent");
-      } else {
-        gradient1.addColorStop(0, "rgba(82, 82, 255, 0.02)");
-        gradient1.addColorStop(0.5, "rgba(124, 255, 103, 0.008)");
-        gradient1.addColorStop(1, "transparent");
-      }
-
-      ctx.fillStyle = gradient1;
-      ctx.fillRect(0, 0, width, height);
-
-      // Second gradient
-      const gradient2 = ctx.createRadialGradient(
-        width * 0.8,
-        height * 0.9,
-        0,
-        width * 0.8,
-        height * 0.9,
-        Math.max(width, height) * 0.5
-      );
-      if (theme === "dark") {
-        gradient2.addColorStop(0, "rgba(124, 255, 103, 0.02)");
-        gradient2.addColorStop(1, "transparent");
-      } else {
-        gradient2.addColorStop(0, "rgba(124, 255, 103, 0.015)");
-        gradient2.addColorStop(1, "transparent");
-      }
-
-      ctx.fillStyle = gradient2;
-      ctx.fillRect(0, 0, width, height);
-
-      // Very subtle noise overlay (every 3rd frame for performance)
-      frame++;
-      if (frame % 3 === 0) {
-        const imageData = ctx.createImageData(
-          Math.min(512, canvas.width),
-          Math.min(512, canvas.height)
-        );
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          const value = (Math.random() - 0.5) * 4;
-          data[i] = value;
-          data[i + 1] = value;
-          data[i + 2] = value;
-          data[i + 3] = theme === "dark" ? 3 : 2;
-        }
-        ctx.putImageData(imageData, 0, 0);
-        ctx.globalCompositeOperation = "overlay";
-        ctx.globalAlpha = 0.03;
-        ctx.drawImage(
-          canvas,
-          0,
-          0,
-          canvas.width,
-          canvas.height,
-          0,
-          0,
-          width,
-          height
-        );
-        ctx.globalCompositeOperation = "source-over";
-        ctx.globalAlpha = 1;
-      }
-    };
-
-    const loop = () => {
-      draw();
-      requestAnimationFrame(loop);
-    };
-
-    resize();
-    loop();
-
-    window.addEventListener("resize", resize);
-    return () => {
-      window.removeEventListener("resize", resize);
-    };
-  }, [theme]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
-      style={{ imageRendering: "crisp-edges" }}
-      aria-hidden="true"
-    />
-  );
-}
-
-function AuroraLayer({ theme }: { theme: "light" | "dark" }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: -9999, y: -9999 });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     let width = window.innerWidth;
     let height = window.innerHeight;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    let time = 0;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    let rafId = 0;
+    let isVisible = !document.hidden;
+
+    const pointer = {
+      x: width * 0.5,
+      y: height * 0.3,
+      targetX: width * 0.5,
+      targetY: height * 0.3,
+    };
 
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const mouseMove = (e: MouseEvent) => {
-      mouseRef.current.x = e.clientX;
-      mouseRef.current.y = e.clientY;
+    const onMouseMove = (e: MouseEvent) => {
+      pointer.targetX = e.clientX;
+      pointer.targetY = e.clientY;
     };
 
-    const loop = () => {
-      time += 0.008;
+    const onVisibilityChange = () => {
+      isVisible = !document.hidden;
+      if (isVisible) {
+        lastTime = performance.now();
+        rafId = requestAnimationFrame(render);
+      } else {
+        cancelAnimationFrame(rafId);
+      }
+    };
+
+    let time = 0;
+    let lastTime = performance.now();
+
+    const render = (now: number) => {
+      if (!isVisible) return;
+
+      const delta = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+      time += delta * 0.3;
+
+      // Eased pointer interpolation (smooth inertia)
+      pointer.x += (pointer.targetX - pointer.x) * 0.05;
+      pointer.y += (pointer.targetY - pointer.y) * 0.05;
 
       ctx.clearRect(0, 0, width, height);
 
-      // Aurora parameters based on theme
-      const amplitude = theme === "dark" ? 1.0 : 0.6;
-      const blend = theme === "dark" ? 0.5 : 0.35;
+      const isDark = theme === "dark";
 
-      // Color stops
-      const colors = theme === "dark"
-        ? [
-            [0.2, 0.2, 1.0],    // #3333ff
-            [0.48, 1.0, 0.4],   // #7cff67
-            [0.2, 0.2, 1.0],    // #3333ff
-          ]
-        : [
-            [0.32, 0.15, 1.0],  // lighter purple
-            [0.48, 1.0, 0.4],   // same green
-            [0.32, 0.15, 1.0],
-          ];
+      // Atmospheric Node 1: Floating primary emerald/cyan aura
+      const x1 = width * 0.25 + Math.sin(time * 0.8) * (width * 0.08) + (pointer.x - width * 0.5) * 0.08;
+      const y1 = height * 0.2 + Math.cos(time * 0.6) * (height * 0.06) + (pointer.y - height * 0.5) * 0.08;
+      const r1 = Math.max(width, height) * 0.45;
 
-      // Draw 3 overlapping aurora waves
-      for (let wave = 0; wave < 3; wave++) {
-        const waveOffset = wave * 0.33;
-        const phase = time * 0.5 + waveOffset;
-
-        const gradient = ctx.createLinearGradient(0, 0, 0, window.innerHeight);
-        colors.forEach((c, i) => {
-          const pos = i / (colors.length - 1);
-          gradient.addColorStop(
-            pos,
-            `rgba(${Math.round(c[0] * 255)}, ${Math.round(c[1] * 255)}, ${Math.round(c[2] * 255)}, ${0.15 * amplitude})`
-          );
-        });
-
-        ctx.fillStyle = gradient;
-
-        ctx.beginPath();
-        ctx.moveTo(0, window.innerHeight);
-
-        for (let x = 0; x <= window.innerWidth; x += 5) {
-          const uvX = (x / window.innerWidth) * 2 + phase * 0.1;
-          const uvY = time * 0.25;
-
-          // Simplex noise approximation
-          let height = 0;
-          for (let octave = 0; octave < 4; octave++) {
-            const freq = Math.pow(2, octave);
-            const amp = Math.pow(0.5, octave);
-            const nx = uvX * freq;
-            const ny = uvY * freq;
-            const n = Math.sin(nx * 12.9898 + ny * 78.233) * 43758.5453;
-            height += amp * (n - Math.floor(n)) * 2 - 1;
-          }
-
-          const mouseInfluence = Math.max(
-            0,
-            1 - Math.hypot(mouseRef.current.x - x, mouseRef.current.y - (window.innerHeight * 0.5)) / 400
-          );
-
-          height = Math.exp(height * 0.5 * amplitude + mouseInfluence * 0.3);
-          const y = window.innerHeight * 0.6 - height * window.innerHeight * 0.3;
-
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-
-        ctx.lineTo(window.innerWidth, window.innerHeight);
-        ctx.lineTo(0, window.innerHeight);
-        ctx.closePath();
-        ctx.fill();
+      const g1 = ctx.createRadialGradient(x1, y1, 0, x1, y1, r1);
+      if (isDark) {
+        g1.addColorStop(0, "rgba(16, 185, 129, 0.055)");
+        g1.addColorStop(0.5, "rgba(6, 95, 70, 0.02)");
+        g1.addColorStop(1, "transparent");
+      } else {
+        g1.addColorStop(0, "rgba(16, 185, 129, 0.035)");
+        g1.addColorStop(0.5, "rgba(5, 150, 105, 0.012)");
+        g1.addColorStop(1, "transparent");
       }
+      ctx.fillStyle = g1;
+      ctx.fillRect(0, 0, width, height);
 
-      // Mouse glow
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
-      if (mx > 0 && mx < width && my > 0 && my < height) {
-        const glow = ctx.createRadialGradient(mx, my, 0, mx, my, 200);
-        if (theme === "dark") {
-          glow.addColorStop(0, "rgba(82, 82, 255, 0.08)");
-          glow.addColorStop(0.5, "rgba(124, 255, 103, 0.03)");
-        } else {
-          glow.addColorStop(0, "rgba(82, 82, 255, 0.04)");
-          glow.addColorStop(0.5, "rgba(124, 255, 103, 0.015)");
-        }
-        glow.addColorStop(1, "transparent");
+      // Atmospheric Node 2: Secondary orbital indigo/blue pulse
+      const x2 = width * 0.78 + Math.cos(time * 0.7) * (width * 0.07) + (pointer.x - width * 0.5) * -0.05;
+      const y2 = height * 0.65 + Math.sin(time * 0.9) * (height * 0.08) + (pointer.y - height * 0.5) * -0.05;
+      const r2 = Math.max(width, height) * 0.5;
 
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(mx, my, 200, 0, Math.PI * 2);
-        ctx.fill();
+      const g2 = ctx.createRadialGradient(x2, y2, 0, x2, y2, r2);
+      if (isDark) {
+        g2.addColorStop(0, "rgba(99, 102, 241, 0.045)");
+        g2.addColorStop(0.6, "rgba(67, 56, 202, 0.015)");
+        g2.addColorStop(1, "transparent");
+      } else {
+        g2.addColorStop(0, "rgba(99, 102, 241, 0.028)");
+        g2.addColorStop(0.6, "rgba(79, 70, 229, 0.008)");
+        g2.addColorStop(1, "transparent");
       }
+      ctx.fillStyle = g2;
+      ctx.fillRect(0, 0, width, height);
 
-      requestAnimationFrame(loop);
+      // Atmospheric Node 3: Subtle pointer spotlight
+      const spotGrad = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, 240);
+      if (isDark) {
+        spotGrad.addColorStop(0, "rgba(52, 211, 153, 0.035)");
+        spotGrad.addColorStop(1, "transparent");
+      } else {
+        spotGrad.addColorStop(0, "rgba(16, 185, 129, 0.02)");
+        spotGrad.addColorStop(1, "transparent");
+      }
+      ctx.fillStyle = spotGrad;
+      ctx.beginPath();
+      ctx.arc(pointer.x, pointer.y, 240, 0, Math.PI * 2);
+      ctx.fill();
+
+      rafId = requestAnimationFrame(render);
     };
 
-    window.addEventListener("mousemove", mouseMove);
     resize();
-    requestAnimationFrame(loop);
+    window.addEventListener("resize", resize, { passive: true });
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    rafId = requestAnimationFrame(render);
 
     return () => {
-      window.removeEventListener("mousemove", mouseMove);
+      cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, []);
+  }, [theme, shouldReduceMotion]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
-      style={{ mixBlendMode: "screen" }}
-      aria-hidden="true"
-    />
+    <div className={cn("fixed inset-0 z-[-1] pointer-events-none overflow-hidden", className)}>
+      {/* Base Canvas Layer */}
+      <div
+        className={cn(
+          "absolute inset-0 transition-colors duration-500",
+          theme === "dark"
+            ? "bg-[radial-gradient(ellipse_at_top,_oklch(0.12_0.03_240)_0%,_var(--background)_70%,_oklch(0.07_0.025_240)_100%)]"
+            : "bg-[radial-gradient(ellipse_at_top,_oklch(0.995_0.006_160)_0%,_var(--background)_70%,_oklch(0.97_0.005_250)_100%)]"
+        )}
+      />
+
+      {/* Subtle architectural dot grid pattern for technical texture */}
+      <div
+        className={cn(
+          "absolute inset-0 opacity-[0.025] dark:opacity-[0.04]",
+          "bg-[radial-gradient(currentColor_1px,transparent_1px)] [background-size:24px_24px]"
+        )}
+        aria-hidden="true"
+      />
+
+      {/* Dynamic Ambient Canvas with zero-overhead loops */}
+      {!shouldReduceMotion && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full"
+          aria-hidden="true"
+        />
+      )}
+    </div>
   );
 }

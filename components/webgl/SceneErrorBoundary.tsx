@@ -1,13 +1,12 @@
 "use client";
 
-import React, { Component, type ReactNode } from "react";
-import { Sparkles, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
+import { Sparkles } from "lucide-react";
 
 interface Props {
   children: ReactNode;
-  fallbackTitle?: string;
-  fallbackMessage?: string;
+  fallback?: ReactNode;
+  sceneName?: string;
 }
 
 interface State {
@@ -16,7 +15,7 @@ interface State {
 }
 
 export class SceneErrorBoundary extends Component<Props, State> {
-  public override state: State = {
+  public state: State = {
     hasError: false,
   };
 
@@ -24,33 +23,42 @@ export class SceneErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  public override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.warn("[CampusOS WebGL Warning]:", error.message, errorInfo);
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`[3D Scene "${this.props.sceneName || "Unknown"}"] WebGL fallback activated:`, error, errorInfo);
+    }
   }
 
-  public override render() {
+  public render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
+      // Default high-grade 2D CSS atmospheric fallback
       return (
-        <div className="flex h-full w-full min-h-[240px] flex-col items-center justify-center rounded-2xl border border-border/40 bg-card/60 p-6 text-center backdrop-blur-md">
-          <div className="mb-3 flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Sparkles className="size-5" />
+        <div className="relative flex h-full min-h-[220px] w-full items-center justify-center overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-card/80 via-background/90 to-card/60 p-6 text-center backdrop-blur-md">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_color-mix(in_oklch,var(--primary)_12%,transparent)_0%,_transparent_70%)]" />
+          <div className="relative z-10 flex flex-col items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+              <Sparkles className="size-5" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                {this.props.sceneName || "CampusOS Spatial Engine"}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Spatial view running in 2D accelerated fallback mode.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => this.setState({ hasError: false })}
+              className="mt-2 rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+            >
+              Retry 3D Render
+            </button>
           </div>
-          <p className="font-display text-sm font-semibold text-foreground">
-            {this.props.fallbackTitle || "Spatial Canvas Offline"}
-          </p>
-          <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-            {this.props.fallbackMessage ||
-              "Running in high-compatibility 2D mode for optimal speed and battery life."}
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-4 gap-1.5 rounded-full text-xs"
-            onClick={() => this.setState({ hasError: false })}
-          >
-            <RefreshCw className="size-3" />
-            Retry Viewport
-          </Button>
         </div>
       );
     }

@@ -7,7 +7,7 @@ import { DemoNotice } from "@/components/os/DemoNotice";
 import { PageIntro } from "@/components/os/PageIntro";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SpatialCampusMap } from "@/components/immersive/SpatialCampusMap";
+import { SpatialCampusMap } from "@/components/map/SpatialCampusMap";
 import {
   MapPin,
   Building,
@@ -92,6 +92,7 @@ export default function CampusMapPage() {
           <SpatialCampusMap
             selectedPlace={selected}
             onSelectPlace={(place) => setSelected(place)}
+            filteredKind={kind}
           />
         </div>
 

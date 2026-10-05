@@ -30,7 +30,7 @@ interface SpatialCampusMapProps {
 
 export function SpatialCampusMap(props: SpatialCampusMapProps) {
   return (
-    <SceneErrorBoundary fallbackTitle="Spatial Map Standby">
+    <SceneErrorBoundary sceneName="Spatial Map Standby">
       <SpatialCampusMapCanvas {...props} />
     </SceneErrorBoundary>
   );
