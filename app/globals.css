@@ -95,6 +95,25 @@
   --input: oklch(0.91 0.008 160);
   --ring: oklch(0.42 0.11 160);
 
+  /* Semantic State Colors — Light Mode */
+  --error: oklch(0.52 0.18 25);
+  --error-foreground: oklch(0.99 0.002 90);
+  --success-foreground: oklch(0.99 0.002 90);
+  --warning-foreground: oklch(0.15 0.025 260);
+  --info: oklch(0.42 0.11 160);
+  --info-foreground: oklch(0.99 0.002 90);
+
+  /* Form & Interaction States */
+  --placeholder: oklch(0.42 0.018 160);
+  --disabled: oklch(0.90 0.008 160);
+  --disabled-foreground: oklch(0.42 0.018 160);
+  --focus-ring: oklch(0.42 0.11 160);
+  --focus-ring-offset: oklch(0.985 0.004 250);
+
+  /* Selection */
+  --selection-bg: color-mix(in oklch, var(--primary) 25%, transparent);
+  --selection-fg: var(--foreground);
+
   /* Liquid Glass — Light Mode: Subtle, Readable, Layered */
   --glass: oklch(1 0 0 / 0.55);
   --glass-strong: oklch(1 0 0 / 0.78);
@@ -154,6 +173,25 @@
   --glass-border: oklch(1 0 0 / 0.095);
   --glass-highlight: rgba(255, 255, 255, 0.08);
   --glass-shadow: oklch(0 0 0 / 0.48);
+
+  /* Semantic State Colors — Dark Mode */
+  --error: oklch(0.65 0.16 25);
+  --error-foreground: oklch(0.13 0.025 240);
+  --success-foreground: oklch(0.13 0.025 240);
+  --warning-foreground: oklch(0.14 0.02 170);
+  --info: oklch(0.72 0.10 160);
+  --info-foreground: oklch(0.13 0.025 240);
+
+  /* Form & Interaction States */
+  --placeholder: oklch(0.68 0.018 170);
+  --disabled: oklch(0.20 0.018 240);
+  --disabled-foreground: oklch(0.68 0.018 170);
+  --focus-ring: oklch(0.72 0.10 160);
+  --focus-ring-offset: oklch(0.095 0.028 240);
+
+  /* Selection */
+  --selection-bg: color-mix(in oklch, var(--primary) 35%, transparent);
+  --selection-fg: var(--foreground);
 
   /* Glass Elevation Scale — Dark Mode */
   --glass-l1: oklch(0.12 0.025 240 / 0.40);
@@ -943,17 +981,17 @@
 
   /* Button Press Feedback */
   .btn-press {
-    transition: transform 100ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform var(--motion-duration-fast) var(--motion-easing-decelerated);
   }
   .btn-press:active {
-    transform: scale(0.98);
+    transform: scale(var(--motion-scale-press));
   }
   .btn-press:focus-visible {
     outline: none;
     ring: 2px;
     ring-offset: 2px;
-    ring-color: var(--ring);
-    ring-offset-color: var(--background);
+    ring-color: var(--focus-ring);
+    ring-offset-color: var(--focus-ring-offset);
   }
 
   /* Loading State Preserving Dimensions */
@@ -1007,6 +1045,60 @@
   @keyframes slide-down {
     from { opacity: 1; transform: translateY(0); }
     to { opacity: 0; transform: translateY(12px); }
+  }
+
+  /* State Color Utilities — Semantic Feedback States */
+  .state-error {
+    color: var(--error);
+    background-color: color-mix(in oklch, var(--error) 12%, transparent);
+    border-color: color-mix(in oklch, var(--error) 30%, var(--border));
+  }
+  .state-success {
+    color: var(--success);
+    background-color: color-mix(in oklch, var(--success) 12%, transparent);
+    border-color: color-mix(in oklch, var(--success) 30%, var(--border));
+  }
+  .state-warning {
+    color: var(--warning);
+    background-color: color-mix(in oklch, var(--warning) 12%, transparent);
+    border-color: color-mix(in oklch, var(--warning) 30%, var(--border));
+  }
+  .state-info {
+    color: var(--info);
+    background-color: color-mix(in oklch, var(--info) 12%, transparent);
+    border-color: color-mix(in oklch, var(--info) 30%, var(--border));
+  }
+
+  /* Form State Utilities */
+  .input-error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 1px var(--error);
+  }
+  .input-success {
+    border-color: var(--success);
+    box-shadow: 0 0 0 1px var(--success);
+  }
+  .input-warning {
+    border-color: var(--warning);
+    box-shadow: 0 0 0 1px var(--warning);
+  }
+
+  .placeholder { color: var(--placeholder); }
+  .disabled { opacity: 0.5; pointer-events: none; color: var(--disabled-foreground); background-color: var(--disabled); }
+
+  /* Focus Ring Utility */
+  .focus-ring:focus-visible {
+    outline: none;
+    ring: 2px;
+    ring-offset: 2px;
+    ring-color: var(--focus-ring);
+    ring-offset-color: var(--focus-ring-offset);
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: var(--selection-bg);
+    color: var(--selection-fg);
   }
 }
 
