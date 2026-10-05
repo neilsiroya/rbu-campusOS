@@ -266,6 +266,43 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 ---
 
+## Phase 20 — 20-Phase Visual Redesign Summary
+
+The CampusOS redesign was rolled out in 20 phases. Highlights:
+
+- **Motion language** (P1–P3, P9): a single token set (`--motion-*`) drives every
+  component; `Reveal`, `Stagger`, `ViewTransition`, `Magnetic`, `Spotlight`,
+  `HoverLift`, `TypingEffect`, `CountUp`, and `BlurText` are the primitives.
+- **Glass system** (P4, P10): elevation scale L1–L5 (`glass-l1`…`glass-l5`), tints,
+  and interaction states wired into Header, Sidebar, dock, and cards.
+- **Navigation** (P6–P7, P16): sidebar + header upgrade, shared-element view
+  transitions, and an `lg`-collapsed sidebar so 768–1023px gets full-width content.
+- **Light/Dark parity** (P11): success/warning/error/info surfaces, focus ring,
+  selection, placeholder, and disabled tokens for both themes.
+- **States** (P12): unified `EmptyState`, `LoadingState`, `ErrorBoundary`.
+- **Micro-interactions** (P13): ripple, elevate, border-glow, shine sweep, tilt.
+- **Typography** (P14): display/h1–h6/body/meta/caption scale composed from base.
+- **Accessibility** (P15): skip link, focus trap helpers, live regions, high-contrast
+  paths, `.touch-target`, and reduced-motion coverage across every utility.
+- **Responsive audit** (P16): runtime overflow sweep at 390/393/412/768/1024/1280/1440,
+  bottom-dock targets at 44px+, fixed content-column collapse via `SharedElement` flex classes.
+- **Performance** (P17): three.js/@react-three/fiber split into on-demand dynamic islands.
+- **DX** (P18): `dev:clean` / `verify` scripts, file-level JSDoc on shared components.
+- **Cross-browser QA** (P19): repaired invalid rim/ring CSS that produced no focus
+  rings, added OKLCH → HSL fallbacks, and solid fills where `backdrop-filter` is absent.
+
+**Conventions** (P20):
+
+- Motion is tokenized — drive durations/eases from `--motion-*`, never inline magic numbers.
+- Glass surfaces always respect `prefers-reduced-contrast` / missing `backdrop-filter`.
+- Big WebGL islands (`CampusCore`, `CampusLiquidMetal`, `SpatialCampusMap`) are loaded
+  via `next/dynamic(ssr:false)` with a pump-primed skeleton and an aria-labeled status.
+- `SharedElement` needs explicit flex classes from its parent; never rely on an inner wrapper.
+- The Supabase session cookie is `base64-{base64url(JSON.stringify(session))}` —
+  see `lib/supabase.ts`; auth-gated routes run through `proxy.ts`.
+
+---
+
 ## License
 
 All rights reserved. This repository is publicly available for reference and viewing. The source code may not be copied, modified, redistributed, or used commercially without permission from the author.
