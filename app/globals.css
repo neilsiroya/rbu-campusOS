@@ -287,10 +287,8 @@
 
   :focus-visible {
     outline: none;
-    ring: 2px;
-    ring-color: color-mix(in oklch, var(--ring) 55%, transparent);
-    ring-offset: 2px;
-    ring-offset-color: var(--background);
+    box-shadow: 0 0 0 2px var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 55%, transparent);
   }
 
   @media (pointer: coarse) {
@@ -500,10 +498,7 @@
   }
   .interactive-card:focus-visible {
     outline: none;
-    ring: 2px;
-    ring-offset: 2px;
-    ring-color: var(--ring);
-    ring-offset-color: var(--background);
+    box-shadow: 0 0 0 2px var(--ring);
   }
   .interactive-card.disabled {
     opacity: 0.5;
@@ -566,10 +561,7 @@
 
   .glass-focus-ring:focus-visible {
     outline: none;
-    ring: 2px;
-    ring-offset: 2px;
-    ring-color: var(--ring);
-    ring-offset-color: var(--background);
+    box-shadow: 0 0 0 2px var(--ring);
   }
 
   /* Legacy Aliases */
@@ -754,10 +746,7 @@
   }
   .btn-press:focus-visible {
     outline: none;
-    ring: 2px;
-    ring-offset: 2px;
-    ring-color: var(--focus-ring);
-    ring-offset-color: var(--focus-ring-offset);
+    box-shadow: 0 0 0 2px var(--ring);
   }
 
   /* Loading State Preserving Dimensions */
@@ -855,10 +844,7 @@
   /* Focus Ring Utility */
   .focus-ring:focus-visible {
     outline: none;
-    ring: 2px;
-    ring-offset: 2px;
-    ring-color: var(--focus-ring);
-    ring-offset-color: var(--focus-ring-offset);
+    box-shadow: 0 0 0 2px var(--ring);
   }
 
   /* Selection */
@@ -1315,10 +1301,7 @@
   /* Focus Visible — Enhanced */
   .focus-visible-ring:focus-visible {
     outline: none;
-    ring: 2px;
-    ring-offset: 2px;
-    ring-color: var(--focus-ring);
-    ring-offset-color: var(--focus-ring-offset);
+    box-shadow: 0 0 0 2px var(--ring);
   }
   .focus-visible-ring-inset:focus-visible {
     outline: none;
@@ -1376,8 +1359,7 @@
       border-width: 2px;
     }
     .high-contrast:focus-visible {
-      ring-width: 3px;
-      ring-offset-width: 3px;
+      box-shadow: 0 0 0 3px var(--focus-ring);
     }
   }
 
@@ -1404,10 +1386,7 @@
   /* Keyboard Navigation — Visible Focus */
   .keyboard-navigable:focus-visible {
     outline: none;
-    ring: 2px;
-    ring-offset: 2px;
-    ring-color: var(--focus-ring);
-    ring-offset-color: var(--focus-ring-offset);
+    box-shadow: 0 0 0 2px var(--ring);
   }
 
   /* ARIA Live Region Helpers */
@@ -1453,10 +1432,7 @@
 
   /* Focus Within — For Form Groups */
   .focus-within-ring:focus-within {
-    ring: 2px;
-    ring-offset: 2px;
-    ring-color: var(--focus-ring);
-    ring-offset-color: var(--focus-ring-offset);
+    box-shadow: 0 0 0 2px var(--ring);
   }
 
   /* Text Size Adjust — Prevent Mobile Zoom */
@@ -1589,5 +1565,76 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* --------------------------------------------------------------- */
+/* P19 - Cross-browser compatibility                                */
+/* --------------------------------------------------------------- */
+
+/* OKLCH is a modern color space; fall back to high-contrast HSL values */
+/* for browsers that predate its support (Chrome < 111, Firefox < 113). */
+@supports not (color: oklch(0 0 0)) {
+  :root {
+    --background: hsl(228 20% 98%);
+    --foreground: hsl(230 20% 16%);
+    --card: hsl(0 0% 100%);
+    --surface: hsl(0 0% 100%);
+    --surface-elevated: hsl(0 0% 100%);
+    --primary: hsl(160 38% 44%);
+    --primary-foreground: hsl(90 10% 99%);
+    --muted: hsl(220 10% 96%);
+    --muted-foreground: hsl(168 10% 42%);
+    --accent: hsl(162 38% 55%);
+    --accent-foreground: hsl(90 10% 99%);
+    --border: hsl(160 8% 90%);
+    --input: hsl(160 8% 91%);
+    --ring: hsl(160 38% 44%);
+    --success: hsl(160 38% 45%);
+    --warning: hsl(40 98% 64%);
+    --error: hsl(0 64% 53%);
+    --danger: hsl(0 64% 53%);
+    --info: hsl(160 38% 44%);
+  }
+
+  .dark {
+    --background: hsl(228 40% 10%);
+    --foreground: hsl(90 10% 97%);
+    --card: hsl(228 40% 14%);
+    --surface: hsl(228 40% 13%);
+    --surface-elevated: hsl(228 35% 16%);
+    --primary: hsl(160 45% 70%);
+    --primary-foreground: hsl(228 40% 14%);
+    --muted: hsl(222 18% 20%);
+    --muted-foreground: hsl(168 10% 68%);
+    --accent: hsl(162 40% 70%);
+    --accent-foreground: hsl(150 30% 15%);
+    --border: hsl(0 0% 100% / 0.09);
+    --input: hsl(0 0% 100% / 0.09);
+    --ring: hsl(160 45% 70%);
+    --success: hsl(160 50% 68%);
+    --warning: hsl(42 98% 68%);
+    --error: hsl(0 70% 65%);
+    --danger: hsl(0 70% 65%);
+    --info: hsl(160 45% 70%);
+  }
+}
+
+/* backdrop-filter backs every glass surface; without it the app keeps */
+/* a solid, higher-contrast fill so content stays legible. Covers Firefox */
+/* < 103 and any environment with glass effects disabled. */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass-surface,
+  [class*="glass-l"],
+  .surface-elevated {
+    background-color: var(--card) !important;
+  }
+}
+
+/* Container queries are progressively enhanced; non-supporting */
+/* browsers fall back to the block-level defaults already in place. */
+@supports not (container-type: inline-size) {
+  [class*="@container"] {
+    width: 100%;
   }
 }
