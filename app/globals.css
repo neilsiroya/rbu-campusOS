@@ -89,6 +89,7 @@
   --accent-foreground: oklch(0.99 0.002 90);
   --destructive: oklch(0.52 0.18 25);
   --success: oklch(0.48 0.12 155);
+  --warning: oklch(0.78 0.15 75);
   --danger: oklch(0.52 0.18 25);
   --border: oklch(0.90 0.008 160);
   --input: oklch(0.91 0.008 160);
@@ -101,6 +102,13 @@
   --glass-border: oklch(0.86 0.012 160 / 0.85);
   --glass-highlight: rgba(255, 255, 255, 0.9);
   --glass-shadow: oklch(0.35 0.04 160 / 0.05);
+
+  /* Glass Elevation Scale — Light Mode */
+  --glass-l1: oklch(1 0 0 / 0.45);
+  --glass-l2: oklch(1 0 0 / 0.60);
+  --glass-l3: oklch(1 0 0 / 0.72);
+  --glass-l4: oklch(1 0 0 / 0.84);
+  --glass-l5: oklch(1 0 0 / 0.94);
 
   --radius: 0.9rem;
   --spacing-1: 0.25rem;
@@ -135,6 +143,7 @@
   --accent-foreground: oklch(0.14 0.02 170);
   --destructive: oklch(0.65 0.16 25);
   --success: oklch(0.70 0.11 155);
+  --warning: oklch(0.82 0.14 85);
   --danger: oklch(0.65 0.16 25);
   --border: oklch(1 0 0 / 0.085);
   --input: oklch(1 0 0 / 0.085);
@@ -145,6 +154,13 @@
   --glass-border: oklch(1 0 0 / 0.095);
   --glass-highlight: rgba(255, 255, 255, 0.08);
   --glass-shadow: oklch(0 0 0 / 0.48);
+
+  /* Glass Elevation Scale — Dark Mode */
+  --glass-l1: oklch(0.12 0.025 240 / 0.40);
+  --glass-l2: oklch(0.14 0.027 240 / 0.55);
+  --glass-l3: oklch(0.16 0.028 240 / 0.68);
+  --glass-l4: oklch(0.18 0.029 240 / 0.80);
+  --glass-l5: oklch(0.20 0.030 240 / 0.90);
 }
 
 @layer base {
@@ -237,42 +253,82 @@
   .text-meta { font-family: var(--font-mono); font-weight: 500; line-height: 1.5; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; }
   .text-caption { font-family: var(--font-sans); font-weight: 400; line-height: 1.5; font-size: 0.625rem; }
 
-  /* Liquid Glass & Surface System — Unified */
-  .glass,
+  /* Liquid Glass & Surface System — Unified Token System */
+  /* Glass Elevation Scale — L1 (subtle) through L5 (immersive) */
   .glass-l1,
-  .glass-surface,
-  .glass-panel {
-    background: var(--glass);
+  .glass {
+    background: var(--glass-l1);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    box-shadow: 0 4px 16px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    border-radius: var(--radius);
+  }
+
+  .glass-l2,
+  .glass-strong {
+    background: var(--glass-l2);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 24px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
     backdrop-filter: blur(16px) saturate(140%);
     -webkit-backdrop-filter: blur(16px) saturate(140%);
     border-radius: var(--radius);
   }
 
-  .glass-strong,
-  .glass-l2,
   .glass-l3,
-  .glass-elevated,
-  .glass-command,
-  .glass-active {
-    background: var(--glass-strong);
+  .glass-elevated {
+    background: var(--glass-l3);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 14px 44px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
-    backdrop-filter: blur(22px) saturate(150%);
-    -webkit-backdrop-filter: blur(22px) saturate(150%);
+    box-shadow: 0 16px 40px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
     border-radius: var(--radius);
   }
 
-  .glass-rich {
-    background: var(--glass-rich);
+  .glass-l4,
+  .glass-rich,
+  .glass-command {
+    background: var(--glass-l4);
     border: 1px solid var(--glass-border);
-    box-shadow: 0 20px 50px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
-    backdrop-filter: blur(28px) saturate(160%);
-    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    box-shadow: 0 24px 56px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(24px) saturate(155%);
+    -webkit-backdrop-filter: blur(24px) saturate(155%);
     border-radius: var(--radius);
   }
 
+  .glass-l5,
+  .glass-immersive {
+    background: var(--glass-l5);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 32px 72px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(32px) saturate(160%);
+    -webkit-backdrop-filter: blur(32px) saturate(160%);
+    border-radius: var(--radius);
+  }
+
+  /* Glass Tint Variants — Semantic Color Overlays */
+  .glass-tint-primary {
+    background: color-mix(in oklch, var(--glass-l2), var(--primary) 8%);
+    border-color: color-mix(in oklch, var(--glass-border), var(--primary) 25%);
+  }
+  .glass-tint-success {
+    background: color-mix(in oklch, var(--glass-l2), var(--success) 8%);
+    border-color: color-mix(in oklch, var(--glass-border), var(--success) 25%);
+  }
+  .glass-tint-warning {
+    background: color-mix(in oklch, var(--glass-l2), var(--warning) 8%);
+    border-color: color-mix(in oklch, var(--glass-border), var(--warning) 25%);
+  }
+  .glass-tint-danger {
+    background: color-mix(in oklch, var(--glass-l2), var(--danger) 8%);
+    border-color: color-mix(in oklch, var(--glass-border), var(--danger) 25%);
+  }
+  .glass-tint-neutral {
+    background: var(--glass-l2);
+    border-color: var(--glass-border);
+  }
+
+  /* Surface System — Solid Backgrounds with Consistent Depth */
   .surface {
     background: var(--card);
     border: 1px solid var(--border);
@@ -282,11 +338,16 @@
   .surface-elevated {
     background: var(--surface-elevated);
     border: 1px solid var(--border);
-    box-shadow: 0 10px 30px var(--glass-shadow);
+    box-shadow: 0 8px 24px var(--glass-shadow);
     border-radius: var(--radius);
   }
 
-  /* High-craft OS Surface Classes */
+  .surface-pressed {
+    background: color-mix(in oklch, var(--card), var(--foreground) 4%);
+    border-color: color-mix(in oklch, var(--border), var(--foreground) 20%);
+  }
+
+  /* Semantic Surface Variants */
   .intelligence-surface {
     background: linear-gradient(135deg, color-mix(in oklch, var(--primary) 6%, var(--card)), var(--card));
     border: 1px solid color-mix(in oklch, var(--primary) 20%, var(--border));
@@ -295,24 +356,45 @@
     border-radius: var(--radius);
   }
 
-  /* Card Interaction System — Coherent, Restrained */
+  .command-surface {
+    background: var(--glass-l3);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 16px 48px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border-radius: var(--radius);
+  }
+
+  .data-surface {
+    background: color-mix(in oklch, var(--muted) 35%, var(--card));
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 0.85);
+  }
+
+  .activity-surface {
+    background: color-mix(in oklch, var(--accent) 8%, var(--card));
+    border: 1px solid color-mix(in oklch, var(--border), var(--accent) 15%);
+    border-radius: var(--radius);
+  }
+
+  /* Card Interaction System — Coherent, Restrained, Motion Token Driven */
   .interactive-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 180ms ease;
+    transition: transform var(--motion-duration-micro) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-micro) var(--motion-easing-standard),
+                border-color var(--motion-duration-micro) var(--motion-easing-standard);
   }
   .interactive-card:hover {
     border-color: color-mix(in oklch, var(--primary) 35%, var(--border));
     box-shadow: 0 8px 24px var(--glass-shadow);
-    transform: translateY(-2px);
+    transform: translateY(var(--motion-translate-micro));
   }
   .interactive-card:active {
     transform: translateY(0);
     box-shadow: 0 4px 16px var(--glass-shadow);
-    transition-duration: 80ms;
+    transition-duration: var(--motion-duration-fast);
   }
   .interactive-card:focus-visible {
     outline: none;
@@ -333,21 +415,113 @@
     border: 1px solid var(--border);
     border-radius: calc(var(--radius) + 4px);
     box-shadow: 0 4px 16px var(--glass-shadow);
-    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 220ms ease;
+    transition: transform var(--motion-duration-interaction) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-interaction) var(--motion-easing-standard),
+                border-color var(--motion-duration-interaction) var(--motion-easing-standard);
   }
   .featured-card:hover {
     border-color: color-mix(in oklch, var(--primary) 40%, var(--border));
     box-shadow: 0 16px 40px var(--glass-shadow), 0 4px 8px var(--glass-shadow);
-    transform: translateY(-4px);
+    transform: translateY(calc(var(--motion-translate-micro) * 2));
+  }
+
+  /* Glass Interaction States — Consistent Across All Glass Surfaces */
+  .glass-hover-lift:hover {
+    transform: translateY(calc(var(--motion-translate-micro) * -1));
+    box-shadow: 0 12px 32px var(--glass-shadow);
+    transition: transform var(--motion-duration-micro) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-micro) var(--motion-easing-standard);
+  }
+  .glass-hover-lift:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 16px var(--glass-shadow);
+    transition-duration: var(--motion-duration-fast);
+  }
+
+  .glass-hover-glow:hover {
+    border-color: color-mix(in oklch, var(--primary) 40%, var(--glass-border));
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary) 40%, var(--glass-border)),
+                0 8px 24px var(--glass-shadow);
+    transition: border-color var(--motion-duration-micro) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-micro) var(--motion-easing-standard);
+  }
+
+  .glass-hover-scale:hover {
+    transform: scale(var(--motion-scale-hover));
+    transition: transform var(--motion-duration-micro) var(--motion-easing-spring);
+  }
+  .glass-hover-scale:active {
+    transform: scale(var(--motion-scale-press));
+    transition-duration: var(--motion-duration-fast);
+  }
+
+  .glass-press {
+    transition: transform var(--motion-duration-fast) var(--motion-easing-decelerated);
+  }
+  .glass-press:active {
+    transform: scale(var(--motion-scale-press));
+  }
+
+  .glass-focus-ring:focus-visible {
+    outline: none;
+    ring: 2px;
+    ring-offset: 2px;
+    ring-color: var(--ring);
+    ring-offset-color: var(--background);
+  }
+
+  /* Legacy Aliases — Deprecated, Use New Glass Scale */
+  .glass-surface,
+  .glass-panel {
+    background: var(--glass-l1);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 16px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    border-radius: var(--radius);
+  }
+  .glass-active {
+    background: var(--glass-l3);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 16px 40px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-radius: var(--radius);
+  }
+
+  .surface {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .surface-elevated {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px var(--glass-shadow);
+    border-radius: var(--radius);
+  }
+
+  .surface-pressed {
+    background: color-mix(in oklch, var(--card), var(--foreground) 4%);
+    border-color: color-mix(in oklch, var(--border), var(--foreground) 20%);
+  }
+
+  /* High-craft OS Surface Classes */
+  .intelligence-surface {
+    background: linear-gradient(135deg, color-mix(in oklch, var(--primary) 6%, var(--card)), var(--card));
+    border: 1px solid color-mix(in oklch, var(--primary) 20%, var(--border));
+    box-shadow: 0 12px 36px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(18px);
+    border-radius: var(--radius);
   }
 
   .command-surface {
-    background: var(--glass-strong);
+    background: var(--glass-l3);
     border: 1px solid var(--glass-border);
     box-shadow: 0 16px 48px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
-    backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
     border-radius: var(--radius);
   }
 
@@ -355,6 +529,262 @@
     background: color-mix(in oklch, var(--muted) 35%, var(--card));
     border: 1px solid var(--border);
     border-radius: calc(var(--radius) * 0.85);
+  }
+
+  .activity-surface {
+    background: color-mix(in oklch, var(--accent) 8%, var(--card));
+    border: 1px solid color-mix(in oklch, var(--border), var(--accent) 15%);
+    border-radius: var(--radius);
+  }
+
+  /* Card Interaction System — Motion Token Driven */
+  .interactive-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: transform var(--motion-duration-micro) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-micro) var(--motion-easing-standard),
+                border-color var(--motion-duration-micro) var(--motion-easing-standard);
+  }
+  .interactive-card:hover {
+    border-color: color-mix(in oklch, var(--primary) 35%, var(--border));
+    box-shadow: 0 8px 24px var(--glass-shadow);
+    transform: translateY(var(--motion-translate-micro));
+  }
+  .interactive-card:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 16px var(--glass-shadow);
+    transition-duration: var(--motion-duration-fast);
+  }
+  .interactive-card:focus-visible {
+    outline: none;
+    ring: 2px;
+    ring-offset: 2px;
+    ring-color: var(--ring);
+    ring-offset-color: var(--background);
+  }
+  .interactive-card.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    transform: none;
+  }
+
+  /* Featured/Hero Card — Slightly More Depth */
+  .featured-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 4px);
+    box-shadow: 0 4px 16px var(--glass-shadow);
+    transition: transform var(--motion-duration-interaction) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-interaction) var(--motion-easing-standard),
+                border-color var(--motion-duration-interaction) var(--motion-easing-standard);
+  }
+  .featured-card:hover {
+    border-color: color-mix(in oklch, var(--primary) 40%, var(--border));
+    box-shadow: 0 16px 40px var(--glass-shadow), 0 4px 8px var(--glass-shadow);
+    transform: translateY(calc(var(--motion-translate-micro) * 2));
+  }
+
+  .command-surface {
+    background: var(--glass-l3);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 16px 48px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border-radius: var(--radius);
+  }
+
+  .data-surface {
+    background: color-mix(in oklch, var(--muted) 35%, var(--card));
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 0.85);
+  }
+
+  .activity-surface {
+    background: color-mix(in oklch, var(--accent) 8%, var(--card));
+    border: 1px solid color-mix(in oklch, var(--border), var(--accent) 15%);
+    border-radius: var(--radius);
+  }
+
+  /* Card Interaction System — Motion Token Driven */
+  .interactive-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: transform var(--motion-duration-micro) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-micro) var(--motion-easing-standard),
+                border-color var(--motion-duration-micro) var(--motion-easing-standard);
+  }
+  .interactive-card:hover {
+    border-color: color-mix(in oklch, var(--primary) 35%, var(--border));
+    box-shadow: 0 8px 24px var(--glass-shadow);
+    transform: translateY(var(--motion-translate-micro));
+  }
+  .interactive-card:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 16px var(--glass-shadow);
+    transition-duration: var(--motion-duration-fast);
+  }
+  .interactive-card:focus-visible {
+    outline: none;
+    ring: 2px;
+    ring-offset: 2px;
+    ring-color: var(--ring);
+    ring-offset-color: var(--background);
+  }
+  .interactive-card.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    transform: none;
+  }
+
+  /* Featured/Hero Card — Slightly More Depth */
+  .featured-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 4px);
+    box-shadow: 0 4px 16px var(--glass-shadow);
+    transition: transform var(--motion-duration-interaction) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-interaction) var(--motion-easing-standard),
+                border-color var(--motion-duration-interaction) var(--motion-easing-standard);
+  }
+  .featured-card:hover {
+    border-color: color-mix(in oklch, var(--primary) 40%, var(--border));
+    box-shadow: 0 16px 40px var(--glass-shadow), 0 4px 8px var(--glass-shadow);
+    transform: translateY(calc(var(--motion-translate-micro) * 2));
+  }
+
+  .command-surface {
+    background: var(--glass-l3);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 16px 48px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border-radius: var(--radius);
+  }
+
+  .data-surface {
+    background: color-mix(in oklch, var(--muted) 35%, var(--card));
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 0.85);
+  }
+
+  .activity-surface {
+    background: color-mix(in oklch, var(--accent) 8%, var(--card));
+    border: 1px solid color-mix(in oklch, var(--border), var(--accent) 15%);
+    border-radius: var(--radius);
+  }
+
+  /* Glass Interaction States — Consistent Across All Glass Surfaces */
+  .glass-hover-lift:hover {
+    transform: translateY(calc(var(--motion-translate-micro) * -1));
+    box-shadow: 0 12px 32px var(--glass-shadow);
+    transition: transform var(--motion-duration-micro) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-micro) var(--motion-easing-standard);
+  }
+  .glass-hover-lift:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 16px var(--glass-shadow);
+    transition-duration: var(--motion-duration-fast);
+  }
+
+  .glass-hover-glow:hover {
+    border-color: color-mix(in oklch, var(--primary) 40%, var(--glass-border));
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary) 40%, var(--glass-border)),
+                0 8px 24px var(--glass-shadow);
+    transition: border-color var(--motion-duration-micro) var(--motion-easing-standard),
+                box-shadow var(--motion-duration-micro) var(--motion-easing-standard);
+  }
+
+  .glass-hover-scale:hover {
+    transform: scale(var(--motion-scale-hover));
+    transition: transform var(--motion-duration-micro) var(--motion-easing-spring);
+  }
+  .glass-hover-scale:active {
+    transform: scale(var(--motion-scale-press));
+    transition-duration: var(--motion-duration-fast);
+  }
+
+  .glass-press {
+    transition: transform var(--motion-duration-fast) var(--motion-easing-decelerated);
+  }
+  .glass-press:active {
+    transform: scale(var(--motion-scale-press));
+  }
+
+  .glass-focus-ring:focus-visible {
+    outline: none;
+    ring: 2px;
+    ring-offset: 2px;
+    ring-color: var(--ring);
+    ring-offset-color: var(--background);
+  }
+
+  /* Legacy Aliases — Deprecated, Use New Glass Scale */
+  .glass-surface,
+  .glass-panel {
+    background: var(--glass-l1);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 16px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    border-radius: var(--radius);
+  }
+  .glass-active {
+    background: var(--glass-l3);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 16px 40px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-radius: var(--radius);
+  }
+
+  .surface {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .surface-elevated {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px var(--glass-shadow);
+    border-radius: var(--radius);
+  }
+
+  .surface-pressed {
+    background: color-mix(in oklch, var(--card), var(--foreground) 4%);
+    border-color: color-mix(in oklch, var(--border), var(--foreground) 20%);
+  }
+
+  /* High-craft OS Surface Classes */
+  .intelligence-surface {
+    background: linear-gradient(135deg, color-mix(in oklch, var(--primary) 6%, var(--card)), var(--card));
+    border: 1px solid color-mix(in oklch, var(--primary) 20%, var(--border));
+    box-shadow: 0 12px 36px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(18px);
+    border-radius: var(--radius);
+  }
+
+  .command-surface {
+    background: var(--glass-l3);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 16px 48px var(--glass-shadow), inset 0 1px 1px 0 var(--glass-highlight);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border-radius: var(--radius);
+  }
+
+  .data-surface {
+    background: color-mix(in oklch, var(--muted) 35%, var(--card));
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) * 0.85);
+  }
+
+  .activity-surface {
+    background: color-mix(in oklch, var(--accent) 8%, var(--card));
+    border: 1px solid color-mix(in oklch, var(--border), var(--accent) 15%);
+    border-radius: var(--radius);
   }
 
   .custom-scrollbar {
