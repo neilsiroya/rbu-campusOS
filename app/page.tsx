@@ -123,7 +123,7 @@ export default function Home() {
           </div>
 
           {/* Quick Metrics Bar */}
-          <div className="mt-10 grid grid-cols-3 gap-3 border-t border-border/60 pt-6 max-w-lg">
+          <div className="mt-10 grid max-w-lg grid-cols-1 gap-4 border-t border-border/60 pt-6 sm:grid-cols-3 sm:gap-3">
             <div>
               <p className="font-display text-2xl font-black text-foreground">100%</p>
               <p className="text-[11px] text-muted-foreground">Digital Campus</p>

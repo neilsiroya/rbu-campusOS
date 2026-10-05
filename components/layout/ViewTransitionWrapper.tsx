@@ -20,7 +20,11 @@ export function ViewTransitionWrapper({ children, className }: ViewTransitionWra
   );
 }
 
-// Shared element transition component for elements that should animate between pages
+// Shared element transition component for elements that should animate between pages.
+//
+// The wrapper has to stay a real box for `view-transition-name` to apply, so
+// callers must pass the layout classes the wrapper needs. Defaults keep the
+// wrapper shrink-to-fit; AppShell opts into `flex-1` for the content column.
 export function SharedElement({
   children,
   id,

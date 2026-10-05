@@ -53,7 +53,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
   const closeMobileMenu = () => {
     setIsOpen(false);
-    if (window.matchMedia("(max-width: 767px)").matches) {
+    if (window.matchMedia("(max-width: 1023px)").matches) {
       window.requestAnimationFrame(() => {
         document.querySelector<HTMLButtonElement>('[aria-controls="app-sidebar"]')?.focus();
       });
@@ -71,7 +71,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       id="app-sidebar"
       onKeyDown={handleKeyDown}
       className={cn(
-        "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 surface-elevated transition-transform duration-300 ease-out md:relative md:translate-x-0",
+        "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 surface-elevated transition-transform duration-300 ease-out lg:relative lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}
       aria-label="Main navigation"
@@ -81,7 +81,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="size-9 md:hidden"
+          className="size-11 lg:hidden"
           onClick={closeMobileMenu}
           aria-label="Close navigation"
         >

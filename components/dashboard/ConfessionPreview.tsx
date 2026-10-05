@@ -27,7 +27,7 @@ export default function ConfessionPreview({ confession }: ConfessionPreviewProps
         </div>
         <Link
           href="/confessions"
-          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          className="inline-flex min-h-8 items-center gap-1 py-2 text-xs font-semibold text-primary hover:underline"
         >
           Board
           <ArrowRight className="size-3" />

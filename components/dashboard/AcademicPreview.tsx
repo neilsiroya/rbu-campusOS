@@ -32,7 +32,7 @@ export default function AcademicPreview({ nextClass }: AcademicPreviewProps) {
                 <p className="text-xs text-muted-foreground">{nextClass.time}</p>
               </div>
             </div>
-            <Link href="/timetable" className="text-xs font-medium text-primary hover:underline">
+            <Link href="/timetable" className="inline-flex min-h-8 items-center text-xs font-medium text-primary hover:underline">
               Full schedule
             </Link>
           </div>

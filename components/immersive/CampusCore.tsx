@@ -327,9 +327,9 @@ export function CampusCore({
           <Button
             variant="ghost"
             size="icon"
-            className="size-8 rounded-lg border border-border/70 hover:bg-muted"
+            className="size-10 rounded-lg border border-border/70 hover:bg-muted sm:size-8"
             onClick={handleReset}
-            aria-label="Reset 3D Core Camera"
+            aria-label="Reset 3D Core camera"
             title="Reset Orientation"
           >
             <RotateCcw className="size-3.5 text-foreground" />
@@ -338,9 +338,9 @@ export function CampusCore({
             <Button
               variant="ghost"
               size="icon"
-              className="size-8 rounded-lg border border-border/70 hover:bg-muted"
+              className="size-10 rounded-lg border border-border/70 hover:bg-muted sm:size-8"
               onClick={() => setExpanded((prev) => !prev)}
-              aria-label={expanded ? "Collapse Core View" : "Expand Core View"}
+              aria-label={expanded ? "Collapse core view" : "Expand core view"}
               title={expanded ? "Collapse View" : "Expand View"}
             >
               {expanded ? (

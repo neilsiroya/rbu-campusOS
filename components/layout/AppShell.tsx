@@ -22,7 +22,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const onResize = () => {
-      if (window.innerWidth >= 768) setIsMobileMenuOpen(false);
+      if (window.innerWidth >= 1024) setIsMobileMenuOpen(false);
     };
     window.addEventListener("resize", onResize);
 
@@ -32,7 +32,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isMobileMenuOpen || window.innerWidth >= 768) return;
+    if (!isMobileMenuOpen || window.innerWidth >= 1024) return;
 
     const previousOverflow = document.body.style.overflow;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -63,7 +63,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <ViewTransitionWrapper>
+    <ViewTransitionWrapper className="flex min-h-0 flex-1 flex-col">
       <div className="relative flex h-screen h-[100dvh] w-full overflow-hidden text-foreground">
         <a
           href="#main-content"
@@ -75,11 +75,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {/* Global Immersive Spatial Mode Overlay */}
         <ImmersiveModeOverlay />
 
-        <SharedElement id="app-sidebar">
+        <SharedElement id="app-sidebar" className="relative z-30 shrink-0">
           <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
         </SharedElement>
 
-        <SharedElement id="app-header">
+        <SharedElement id="app-header" className="relative flex min-w-0 flex-1">
           <div
             className="relative flex min-w-0 flex-1 flex-col overflow-hidden"
             inert={isMobileMenuOpen ? true : undefined}
@@ -91,7 +91,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <main
               id="main-content"
               tabIndex={-1}
-              className="custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3 pb-20 sm:p-4 md:pb-8 md:p-6 lg:p-8"
+              className="custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3 pb-20 sm:p-4 md:p-6 lg:pb-8 lg:p-8"
             >
               <SharedElement id="page-content">
                 <div className="mx-auto w-full max-w-7xl">
@@ -103,7 +103,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             {/* Mobile Thumb-Accessible Dock */}
             <nav
               aria-label="Mobile Bottom Navigation"
-              className="fixed bottom-0 left-0 right-0 z-20 flex h-14 items-center justify-around border-t border-border/70 bg-background/90 px-2 backdrop-blur-lg md:hidden"
+              className="fixed inset-x-0 bottom-0 z-20 flex h-16 items-stretch border-t border-border/70 bg-background/90 px-1 backdrop-blur-lg lg:hidden"
             >
               {mobileNavItems.map((item) => {
                 const Icon = item.icon;
@@ -112,12 +112,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   <Link
                     key={item.href}
                     href={item.href}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "flex flex-col items-center justify-center gap-0.5 px-3 py-1 text-[10px] font-medium transition-colors",
-                      isActive ? "text-primary font-bold" : "text-muted-foreground hover:text-foreground"
+                      "flex min-h-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium transition-colors",
+                      isActive ? "font-bold text-primary" : "text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    <Icon className="size-4" />
+                    <Icon className="size-4" aria-hidden="true" />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -125,10 +126,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(true)}
-                className="flex flex-col items-center justify-center gap-0.5 px-3 py-1 text-[10px] font-medium text-muted-foreground hover:text-foreground"
+                className="flex min-h-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground"
                 aria-label="Open full menu"
               >
-                <Menu className="size-4" />
+                <Menu className="size-4" aria-hidden="true" />
                 <span>More</span>
               </button>
             </nav>
@@ -138,7 +139,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {isMobileMenuOpen ? (
           <button
             type="button"
-            className="fixed inset-0 z-20 bg-foreground/20 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-20 bg-foreground/20 backdrop-blur-sm lg:hidden"
             aria-hidden="true"
             tabIndex={-1}
             onClick={() => setIsMobileMenuOpen(false)}

@@ -265,7 +265,7 @@ export default function DashboardPage() {
               </p>
               <Link
                 href="/events"
-                className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                className="inline-flex min-h-8 items-center gap-1 py-2 text-xs font-semibold text-primary hover:underline"
               >
                 More events
                 <ArrowRight className="size-3" />
@@ -301,7 +301,7 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/marketplace"
-              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+              className="inline-flex min-h-8 items-center gap-1 py-2 text-xs font-semibold text-primary hover:underline"
             >
               Browse
               <ArrowRight className="size-3" />
@@ -349,7 +349,7 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/notes"
-              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+              className="inline-flex min-h-8 items-center gap-1 py-2 text-xs font-semibold text-primary hover:underline"
             >
               Open Hub
               <ArrowRight className="size-3" />

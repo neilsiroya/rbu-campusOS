@@ -59,7 +59,7 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
         <Button
           variant="ghost"
           size="icon"
-          className="size-9 shrink-0 hover:bg-muted/50 md:hidden"
+          className="size-11 shrink-0 hover:bg-muted/50 lg:hidden"
           onClick={onMenuToggle}
           aria-label={isMobileMenuOpen ? "Close navigation" : "Open navigation"}
           aria-controls="app-sidebar"
@@ -71,10 +71,10 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
             <Menu className="size-5 text-foreground" aria-hidden="true" />
           )}
         </Button>
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <BrandMark compact />
         </div>
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           <p className="truncate text-sm font-semibold text-foreground">{titleForPath(pathname)}</p>
           <span className="text-muted-foreground/40 font-mono text-xs">/</span>
           <span className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
@@ -83,7 +83,7 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
           </span>
         </div>
 
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0, width: 0, x: 20 }}
             animate={{ opacity: 1, width: "100%", x: 0 }}
@@ -98,12 +98,13 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
 
       <div className="flex items-center gap-1.5">
         {/* OS Mode Switcher (Normal | Focus | Immersive) */}
-        <div className="hidden lg:flex items-center rounded-xl bg-muted/40 p-0.5 border border-border/40 text-xs">
+        <div className="hidden lg:flex items-center rounded-xl bg-muted/40 p-0.5 border border-border/40 text-xs" role="group" aria-label="CampusOS display mode">
           <button
             type="button"
+            aria-pressed={mode === "normal"}
             onClick={() => setMode("normal")}
             className={cn(
-              "px-2.5 py-1 rounded-lg font-medium transition-colors",
+              "min-h-8 px-2.5 py-1 rounded-lg font-medium transition-colors",
               mode === "normal"
                 ? "bg-background text-foreground shadow-sm font-semibold"
                 : "text-muted-foreground hover:text-foreground"
@@ -113,9 +114,10 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
           </button>
           <button
             type="button"
+            aria-pressed={mode === "focus"}
             onClick={() => setMode("focus")}
             className={cn(
-              "px-2.5 py-1 rounded-lg font-medium transition-colors flex items-center gap-1",
+              "min-h-8 px-2.5 py-1 rounded-lg font-medium transition-colors flex items-center gap-1",
               mode === "focus"
                 ? "bg-background text-foreground shadow-sm font-semibold"
                 : "text-muted-foreground hover:text-foreground"
@@ -127,9 +129,10 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
           </button>
           <button
             type="button"
+            aria-pressed={mode === "immersive"}
             onClick={() => setMode("immersive")}
             className={cn(
-              "px-2.5 py-1 rounded-lg font-medium transition-colors flex items-center gap-1",
+              "min-h-8 px-2.5 py-1 rounded-lg font-medium transition-colors flex items-center gap-1",
               mode === "immersive"
                 ? "bg-primary text-primary-foreground shadow-sm font-semibold"
                 : "text-muted-foreground hover:text-foreground"
@@ -147,7 +150,7 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
             animate={{ opacity: 1, scale: 1 }}
             exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-10 md:hidden bg-background/80 backdrop-blur-sm"
+            className="fixed inset-0 z-10 lg:hidden bg-background/80 backdrop-blur-sm"
             onClick={handleSearchClose}
             aria-hidden="true"
           />
@@ -173,7 +176,7 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
       </div>
 
       {searchOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
           <CommandSearch onOpen={handleSearchOpen} onClose={handleSearchClose} />
         </div>
       )}

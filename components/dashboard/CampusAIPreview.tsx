@@ -46,7 +46,7 @@ export default function CampusAIPreview({ suggestions = DEFAULT_SUGGESTIONS }: C
           </div>
           <Link
             href="/campus-ai"
-            className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+            className="inline-flex min-h-8 items-center gap-1 py-2 text-xs font-semibold text-primary hover:underline"
           >
             Launch Console
             <ArrowRight className="size-3" />
