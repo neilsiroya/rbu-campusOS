@@ -176,7 +176,7 @@ export default function DashboardPage() {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full text-xs font-semibold gap-1.5"
+            className="min-h-11 rounded-full px-5 text-xs font-semibold gap-1.5"
             onClick={() => setMode("focus")}
           >
             <Eye className="size-3.5 text-primary" />
@@ -185,7 +185,7 @@ export default function DashboardPage() {
 
           <Button
             size="sm"
-            className="rounded-full text-xs font-semibold gap-1.5 shadow-md shadow-primary/20"
+            className="min-h-11 rounded-full px-5 text-xs font-semibold gap-1.5 shadow-md shadow-primary/20"
             onClick={() => setMode("immersive")}
           >
             <Sparkles className="size-3.5" />

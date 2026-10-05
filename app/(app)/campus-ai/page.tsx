@@ -23,6 +23,7 @@ import {
   MAP_PLACES,
   MARKETPLACE_LISTINGS,
   STUDY_RESOURCES,
+  TIMETABLE,
 } from "@/lib/campus-data";
 import { DemoNotice } from "@/components/os/DemoNotice";
 import { PageIntro } from "@/components/os/PageIntro";
@@ -161,16 +162,18 @@ function resolveCampusQuery(query: string): { text: string; card?: StructuredCar
     };
   }
 
-  // 6. Timetable query
+  // 6. Timetable query — built from the same TIMETABLE source as /timetable
   if (q.includes("timetable") || q.includes("schedule") || q.includes("class")) {
+    const monday = TIMETABLE.filter((t) => t.day === "Mon");
+    const summary = monday.map((t) => `${t.title} (${t.time}, ${t.room})`).join(" · ");
     return {
-      text: `Your timetable for this semester is available in the Academics section. Here's a quick summary: Monday - Signals & Systems (9-10), Tuesday - Robotics Lab (2-5), Wednesday - Free slot for projects, Thursday - AI/ML (11-1), Friday - Embedded Systems (9-11).`,
+      text: `Here is Monday from the live timetable: ${summary}. The full week lives in Academics.`,
       card: {
         type: "timetable",
         title: "Semester Timetable",
         subtitle: "Current semester schedule",
-        meta: "Mon-Fri · 9AM-5PM",
-        href: "/academics",
+        meta: "Mon–Fri · see /timetable",
+        href: "/timetable",
         actionText: "View Full Timetable",
       },
     };
@@ -198,11 +201,35 @@ function resolveCampusQuery(query: string): { text: string; card?: StructuredCar
   };
 }
 
+type AIPhase = "idle" | "thinking" | "retrieving" | "composing";
+
+const PHASE_COPY: Record<Exclude<AIPhase, "idle">, string> = {
+  thinking: "Reasoning across campus knowledge…",
+  retrieving: "Searching 1,204 campus resources…",
+  composing: "Composing a structured answer…",
+};
+
 export default function CampusAIPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const [phase, setPhase] = useState<AIPhase>("idle");
+  const [aiError, setAiError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const timersRef = useRef<number[]>([]);
+
+  const isTyping = phase !== "idle";
+
+  useEffect(() => {
+    const timers = timersRef.current;
+    return () => {
+      timers.forEach((t) => window.clearTimeout(t));
+      timersRef.current = [];
+    };
+  }, []);
+
+  const later = (ms: number, fn: () => void) => {
+    timersRef.current.push(window.setTimeout(fn, ms));
+  };
 
   const handleSend = useCallback((text: string) => {
     if (!text.trim()) return;
@@ -216,10 +243,22 @@ export default function CampusAIPage() {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setIsTyping(true);
+    setAiError(null);
+    setPhase("thinking");
 
-    // Simulate AI thinking delay
-    setTimeout(() => {
+    // Demo pipeline: thinking → retrieving → composing → completed.
+    // A query about failure surfaces the error state instead.
+    later(550, () => setPhase("retrieving"));
+    later(1200, () => setPhase("composing"));
+    later(1750, () => {
+      const q = text.toLowerCase();
+      if (q.includes("error") || q.includes("fail") || q.includes("broken")) {
+        setAiError(
+          "Campus AI had trouble reaching the knowledge layer. Your conversation is safe. Try again in a moment or use Omnisearch above."
+        );
+        setPhase("idle");
+        return;
+      }
       const response = resolveCampusQuery(text);
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
@@ -230,8 +269,8 @@ export default function CampusAIPage() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
-      setIsTyping(false);
-    }, 800 + Math.random() * 400);
+      setPhase("idle");
+    });
   }, []);
 
   const scrollToBottom = useCallback(() => {
@@ -348,6 +387,35 @@ export default function CampusAIPage() {
                 </div>
               );
             })}
+            {isTyping ? (
+              <div
+                role="status"
+                aria-live="polite"
+                className="mr-auto flex max-w-[88%] items-center gap-3 rounded-2xl rounded-tl-none border border-border/60 bg-muted/40 px-4 py-3"
+              >
+                <span className="flex gap-1" aria-hidden="true">
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className="size-1.5 animate-bounce rounded-full bg-primary"
+                      style={{ animationDelay: `${i * 150}ms` }}
+                    />
+                  ))}
+                </span>
+                <p className="text-xs font-medium text-muted-foreground">
+                  {PHASE_COPY[phase as Exclude<AIPhase, "idle">]}
+                </p>
+              </div>
+            ) : null}
+            {aiError && !isTyping ? (
+              <div
+                role="alert"
+                className="mr-auto max-w-[88%] rounded-2xl rounded-tl-none border border-danger/40 bg-danger/10 px-4 py-3"
+              >
+                <p className="text-sm font-semibold text-foreground">Something interrupted the lookup.</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{aiError}</p>
+              </div>
+            ) : null}
           </div>
 
         {/* Input Box Form */}
@@ -402,7 +470,7 @@ export default function CampusAIPage() {
                 key={starter}
                 type="button"
                 onClick={() => handleSend(starter)}
-                className="w-full text-left rounded-2xl border border-border/70 bg-background/50 hover:bg-primary/10 hover:border-primary/40 p-3 text-xs font-medium text-foreground transition-all flex items-center justify-between group"
+                className="w-full min-h-11 text-left rounded-2xl border border-border/70 bg-background/50 hover:bg-primary/10 hover:border-primary/40 p-3 text-xs font-medium text-foreground transition-all flex items-center justify-between group"
               >
                 <span className="line-clamp-1">{starter}</span>
                 <ArrowRight className="size-3 text-muted-foreground group-hover:text-primary shrink-0 transition-transform group-hover:translate-x-0.5" />

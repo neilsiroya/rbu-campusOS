@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase";
 import { NAV_GROUPS } from "@/lib/nav";
 import { BrandMark } from "@/components/os/BrandMark";
 import { Button } from "@/components/ui/button";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion, LayoutGroup } from "framer-motion";
 import { motion } from "framer-motion";
 
 interface SidebarProps {
@@ -94,6 +94,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         className="custom-scrollbar flex-1 space-y-6 overflow-y-auto px-3 pb-8"
         onKeyDown={handleKeyDown}
       >
+        <LayoutGroup id="sidebar-nav" inherit>
         {NAV_GROUPS.map((group) => (
           <div key={group.group} className="space-y-1">
             <h2 className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
@@ -147,6 +148,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             })}
           </div>
         ))}
+        </LayoutGroup>
       </nav>
 
       <div className="border-t border-border/70 p-4">

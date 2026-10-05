@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useReducedMotion } from "framer-motion";
 
 export function ViewTransitionProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const shouldReduceMotion = useReducedMotion();
   const [isTransitioning, setIsTransitioning] = useState(false);
   const viewTransitionRef = useRef<ViewTransition | null>(null);
@@ -16,7 +15,11 @@ export function ViewTransitionProvider({ children }: { children: React.ReactNode
   const currentIndexRef = useRef(-1);
 
   useEffect(() => {
-    const key = pathname + (searchParams?.toString() || "");
+    // NOTE: intentionally NOT using useSearchParams() here. That hook forces
+    // the entire app shell into a Suspense bailout, which hung hydration in
+    // dev (blank page behind a never-resolving S:0 boundary). The query
+    // string is only needed client-side, so read it from window instead.
+    const key = pathname + window.location.search;
     
     // On first load, initialize history
     if (currentIndexRef.current === -1) {
@@ -69,7 +72,7 @@ export function ViewTransitionProvider({ children }: { children: React.ReactNode
         document.documentElement.removeAttribute("data-vt-direction");
       });
     }
-  }, [pathname, searchParams, shouldReduceMotion]);
+  }, [pathname, shouldReduceMotion]);
 
   return (
     <span

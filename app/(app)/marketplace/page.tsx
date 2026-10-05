@@ -210,7 +210,7 @@ export default function MarketplacePage() {
                 <strong>{stats.free}</strong> Free on Campus
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-background/60 px-3 py-1.5 text-xs font-medium backdrop-blur-md">
-                <Radio className="size-3.5 text-purple-500" />
+                <Radio className="size-3.5 text-sky-500" />
                 <strong>{stats.lend}</strong> Lend / Borrow
               </span>
             </div>
@@ -330,7 +330,7 @@ export default function MarketplacePage() {
               "For Sale": "bg-primary/10 text-primary border-primary/20",
               "For Rent": "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
               Free: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-              "Lend / Borrow": "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+              "Lend / Borrow": "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20",
             }[item.type];
 
             return (
@@ -385,7 +385,7 @@ export default function MarketplacePage() {
                           FREE
                         </span>
                       ) : item.type === "Lend / Borrow" ? (
-                        <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                        <span className="text-sm font-semibold text-sky-600 dark:text-sky-400">
                           {item.pricingUnit}
                         </span>
                       ) : (
@@ -471,7 +471,7 @@ export default function MarketplacePage() {
                 {selectedItem.type === "Free" ? (
                   <p className="font-display text-2xl font-bold text-amber-500">Free to Claim</p>
                 ) : selectedItem.type === "Lend / Borrow" ? (
-                  <p className="font-display text-xl font-bold text-purple-500">
+                  <p className="font-display text-xl font-bold text-sky-500">
                     Lend Duration: {selectedItem.pricingUnit}
                   </p>
                 ) : (

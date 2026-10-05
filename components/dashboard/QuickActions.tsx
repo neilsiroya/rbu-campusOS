@@ -47,7 +47,7 @@ export default function QuickActions({
     {
       href: "/internships",
       icon: Briefcase,
-      color: "purple",
+      color: "sky",
       title: "Opportunities",
       description: opportunities,
       cta: "View Desks",
@@ -58,7 +58,7 @@ export default function QuickActions({
     amber: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
     primary: "bg-primary/10 text-primary",
     emerald: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-    purple: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+    sky: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
   };
 
   const getIcon = (icon: typeof ShoppingBag | typeof BookOpen | typeof MapPin | typeof Briefcase) => (

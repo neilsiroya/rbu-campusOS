@@ -668,6 +668,36 @@
     transition-timing-function: var(--motion-easing-spring);
   }
 
+  /* CampusOS 7-Tier Motion Semantics */
+  .motion-tier-micro {
+    transition-duration: var(--motion-duration-instant);
+    transition-timing-function: var(--motion-easing-standard);
+  }
+  .motion-tier-hover {
+    transition-duration: var(--motion-duration-micro);
+    transition-timing-function: var(--motion-easing-standard);
+  }
+  .motion-tier-interaction {
+    transition-duration: var(--motion-duration-interaction);
+    transition-timing-function: var(--motion-easing-standard);
+  }
+  .motion-tier-standard {
+    transition-duration: var(--motion-duration-standard);
+    transition-timing-function: var(--motion-easing-standard);
+  }
+  .motion-tier-emphasis {
+    transition-duration: var(--motion-duration-state);
+    transition-timing-function: var(--motion-easing-emphasized);
+  }
+  .motion-tier-page {
+    transition-duration: var(--motion-duration-entrance);
+    transition-timing-function: var(--motion-easing-emphasized);
+  }
+  .motion-tier-cinematic {
+    transition-duration: var(--motion-duration-complex);
+    transition-timing-function: var(--motion-easing-emphasized);
+  }
+
   /* Transform Presets */
   .scale-press { transform: scale(var(--motion-scale-press)); }
   .scale-hover { transform: scale(var(--motion-scale-hover)); }

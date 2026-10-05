@@ -557,7 +557,7 @@ export const MARKETPLACE_LISTINGS: MarketplaceListing[] = [
     availability: "Return by Sunday 6pm",
     posted: "3h ago",
     description: "Sturdy travel tripod for project demo video filming, club walks or symposium presentation setups.",
-    accent: "from-purple-600/80 to-violet-400/40",
+    accent: "from-teal-600/80 to-emerald-400/40",
   },
   {
     id: "m5",
@@ -721,3 +721,62 @@ export const STUDY_RESOURCES: StudyResource[] = [
     useful: 41,
   },
 ];
+
+// --- Academic course catalog (single source; consumed by /academics) ---
+export type Course = {
+  code: string;
+  name: string;
+  instructor: string;
+  progress: number;
+  nextSession: {
+    time: string;
+    room: string;
+  };
+  status: "On Track" | "Behind" | "Completed";
+  credits: number;
+};
+
+export const COURSES: Course[] = [
+  {
+    code: "CS301",
+    name: "Advanced Operating Systems",
+    instructor: "Dr. Sarah Chen",
+    progress: 65,
+    nextSession: { time: "Tomorrow, 10:00", room: "LT-204" },
+    status: "On Track",
+    credits: 4,
+  },
+  {
+    code: "CS302",
+    name: "Distributed Systems",
+    instructor: "Prof. Marcus Thorne",
+    progress: 42,
+    nextSession: { time: "Wednesday, 14:00", room: "Lab-3" },
+    status: "Behind",
+    credits: 4,
+  },
+  {
+    code: "MA204",
+    name: "Discrete Mathematics",
+    instructor: "Dr. Elena Rossi",
+    progress: 88,
+    nextSession: { time: "Friday, 09:00", room: "LT-101" },
+    status: "On Track",
+    credits: 3,
+  },
+  {
+    code: "HU101",
+    name: "Technical Communication",
+    instructor: "Prof. Liam O'Neil",
+    progress: 30,
+    nextSession: { time: "Monday, 11:00", room: "Room 402" },
+    status: "On Track",
+    credits: 2,
+  },
+];
+
+export const ACADEMIC_STATS = {
+  gpa: "8.42",
+  creditsEarned: "64 / 120",
+  semesterRank: "14 / 180",
+} as const;

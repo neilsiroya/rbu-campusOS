@@ -21,38 +21,56 @@ interface ImmersiveCanvasProps {
   sceneName?: string;
 }
 
+const DEFAULT_CAMERA: Required<NonNullable<ImmersiveCanvasProps["camera"]>> = {
+  position: [0, 0, 5],
+  fov: 45,
+  near: 0.1,
+  far: 1000,
+};
+
 export function ImmersiveCanvas({
   children,
   className,
   style,
-  camera = { position: [0, 0, 5], fov: 45, near: 0.1, far: 1000 },
+  camera = DEFAULT_CAMERA,
   fallback,
   sceneName = "CampusOS Spatial Scene",
 }: ImmersiveCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
-  const { dpr, tier, reducedMotion, hasWebGL2 } = useAdaptiveQuality();
-  const isVisible = useVisibilityPause(containerRef);
+  const { dpr, tier, webglSupported, reducedMotion, postprocessingEnabled } = useAdaptiveQuality();
+  const { isPaused } = useVisibilityPause(containerRef);
 
   useEffect(() => {
-    setMounted(true);
+    const id = window.requestAnimationFrame(() => setMounted(true));
+    return () => window.cancelAnimationFrame(id);
   }, []);
+
+  const showFallback = tier === "fallback" || !webglSupported;
 
   if (!mounted) {
     return (
       <div
         ref={containerRef}
         style={style}
-        className={cn("relative w-full h-full min-h-[200px] overflow-hidden rounded-3xl bg-card/40 animate-pulse", className)}
+        className={cn(
+          "relative w-full h-full min-h-[200px] overflow-hidden rounded-3xl bg-card/40 loading-preserve",
+          className
+        )}
         aria-hidden="true"
       />
     );
   }
 
-  // If user prefers reduced motion or device lacks WebGL2, render accessible fallback
-  if (tier === "fallback" || reducedMotion || !hasWebGL2) {
+  if (showFallback) {
     return (
-      <div ref={containerRef} style={style} className={cn("relative w-full h-full", className)}>
+      <div
+        ref={containerRef}
+        style={style}
+        className={cn("relative w-full h-full", className)}
+        role="img"
+        aria-label={`${sceneName}: 2D fallback presentation`}
+      >
         {fallback || (
           <div className="flex h-full min-h-[220px] w-full items-center justify-center rounded-3xl border border-border/80 bg-gradient-to-br from-card/80 via-background to-card/60 p-6 text-center">
             <div>
@@ -68,20 +86,27 @@ export function ImmersiveCanvas({
   }
 
   return (
-    <div ref={containerRef} style={style} className={cn("relative w-full h-full overflow-hidden", className)}>
+    <div
+      ref={containerRef}
+      style={style}
+      className={cn("relative w-full h-full overflow-hidden", className)}
+    >
       <SceneErrorBoundary fallback={fallback} sceneName={sceneName}>
         <Canvas
-          camera={camera}
+          key={`${sceneName}-${tier}-${reducedMotion ? "rm" : "std"}`}
+          camera={{ ...DEFAULT_CAMERA, ...camera }}
           dpr={dpr}
-          frameloop={isVisible ? "always" : "never"}
+          frameloop={isPaused ? "never" : "always"}
           gl={{
             antialias: tier !== "low",
             alpha: true,
-            powerPreference: "high-performance",
+            powerPreference: reducedMotion ? "default" : "high-performance",
             depth: true,
             stencil: false,
+            preserveDrawingBuffer: false,
           }}
-          className="w-full h-full"
+          flat={!postprocessingEnabled}
+          className="w-full h-full touch-none"
         >
           {children}
         </Canvas>

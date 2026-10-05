@@ -129,10 +129,10 @@ export function MagneticButton({
   };
 
   const sizeStyles = {
-    default: "h-10 px-4 py-2",
-    sm: "h-9 rounded-md px-3",
-    lg: "h-11 rounded-md px-8",
-    icon: "h-10 w-10",
+    default: "min-h-11 px-5 py-2",
+    sm: "min-h-9 rounded-md px-3",
+    lg: "min-h-12 rounded-md px-8",
+    icon: "min-h-11 min-w-11",
   };
 
   return (
@@ -145,7 +145,7 @@ export function MagneticButton({
       {React.createElement(
         Component,
         {
-          className: cn(sizeStyles[size]),
+          className: cn(sizeStyles[size], className),
           type,
           href,
           ...props,

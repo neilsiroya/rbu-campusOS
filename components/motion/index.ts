@@ -1,15 +1,16 @@
-/**
- * The CampusOS motion primitive barrel.
- * Template for each export: a React client component that respects
- * `prefers-reduced-motion`, uses the shared motion tokens from
- * `app/globals.css`, and stays composable (consumer-first props).
- *
- * TypingEffect / CountUp / BlurText are exported from their own files
- * because they wrap different DOM roots; import them directly.
- */
+"use client";
+
 export * from "./Reveal";
 export * from "./Stagger";
 export * from "./PageTransition";
 export * from "./Magnetic";
 export * from "./Spotlight";
 export * from "./HoverLift";
+export * from "./CampusAnimatedBackground";
+
+export { Reveal as CampusReveal } from "./Reveal";
+export { StaggerContainer as CampusStagger, StaggerItem as CampusStaggerItem } from "./Stagger";
+export { PageTransition as CampusPageTransition } from "./PageTransition";
+export { SpotlightCard as CampusSpotlight, GlareCard as CampusGlare } from "./Spotlight";
+export { Magnetic as CampusMagnetic, MagneticButton as CampusMagneticButton } from "./Magnetic";
+export { HoverLift as CampusHoverLift, InteractiveCard as CampusInteractiveCard } from "./HoverLift";

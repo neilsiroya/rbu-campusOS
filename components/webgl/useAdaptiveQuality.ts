@@ -12,71 +12,122 @@ export interface QualityConfig {
   isMobile: boolean;
   reducedMotion: boolean;
   hasWebGL2: boolean;
-  /** True when either WebGL1 or WebGL2 contexts can be created. */
   webglSupported: boolean;
-  /** True when the device looks weak (few cores / low memory / coarse pointer). */
   isLowPower: boolean;
 }
 
+function detectReducedMotion(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function detectMobile(width: number): boolean {
+  if (typeof window === "undefined") return false;
+  return width < 768 || window.matchMedia("(pointer: coarse)").matches;
+}
+
+function detectLowPower(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const cores = navigator.hardwareConcurrency || 4;
+  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
+  return cores <= 4 || memory <= 4;
+}
+
+function detectWebGL(): { hasWebGL2: boolean; webglSupported: boolean } {
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return { hasWebGL2: false, webglSupported: false };
+  }
+  let hasWebGL2 = false;
+  let webglSupported = false;
+  try {
+    const testCanvas = document.createElement("canvas");
+    hasWebGL2 = !!(window.WebGL2RenderingContext && testCanvas.getContext("webgl2"));
+    webglSupported = hasWebGL2 || !!testCanvas.getContext("webgl");
+  } catch {
+    hasWebGL2 = false;
+    webglSupported = false;
+  }
+  return { hasWebGL2, webglSupported };
+}
+
+function deriveBaseTier(width: number, isMobile: boolean, hasWebGL2: boolean, webglSupported: boolean, isLowPower: boolean): QualityTier {
+  if (!webglSupported) return "fallback";
+  if (isMobile || width < 1024 || !hasWebGL2) return "low";
+  const cores = typeof navigator !== "undefined" ? navigator.hardwareConcurrency || 4 : 4;
+  return cores >= 6 && !isLowPower ? "high" : "medium";
+}
+
+function demoteForReducedMotion(baseTier: QualityTier, reducedMotion: boolean): QualityTier {
+  if (!reducedMotion) return baseTier;
+  if (baseTier === "high") return "medium";
+  if (baseTier === "medium") return "low";
+  if (baseTier === "low") return "low";
+  return "fallback";
+}
+
+export function computeQuality(width: number | null): QualityConfig {
+  const w = width ?? (typeof window !== "undefined" ? window.innerWidth : 1440);
+  const reducedMotion = detectReducedMotion();
+  const isMobile = detectMobile(w);
+  const isLowPower = detectLowPower();
+  const { hasWebGL2, webglSupported } = detectWebGL();
+
+  const baseTier = deriveBaseTier(w, isMobile, hasWebGL2, webglSupported, isLowPower);
+  const tier = demoteForReducedMotion(baseTier, reducedMotion);
+
+  const dpr =
+    tier === "high" ? Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 2) :
+    tier === "medium" ? Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 1.5) :
+    1;
+
+  const postprocessingEnabled = tier === "high" && !isMobile && !reducedMotion;
+  const particleCount =
+    tier === "high" ? 160 :
+    tier === "medium" ? 80 :
+    tier === "low" ? 30 :
+    0;
+
+  return {
+    tier,
+    dpr,
+    postprocessingEnabled,
+    particleCount,
+    isMobile,
+    reducedMotion,
+    hasWebGL2,
+    webglSupported,
+    isLowPower,
+  };
+}
+
 export function useAdaptiveQuality(): QualityConfig {
-  const [config, setConfig] = useState<QualityConfig>({
-    tier: "medium",
-    dpr: 1,
-    postprocessingEnabled: false,
-    particleCount: 60,
-    isMobile: false,
-    reducedMotion: false,
-    hasWebGL2: true,
-    webglSupported: true,
-    isLowPower: false,
-  });
+  const [config, setConfig] = useState<QualityConfig>(() => computeQuality(null));
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isMobile = window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches;
-    const cores = navigator.hardwareConcurrency || 4;
-    const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-    const isLowPower = cores <= 4 || memory <= 4;
+    const update = () => setConfig(computeQuality(window.innerWidth));
+    update();
 
-    // Check WebGL2 support (WebGL1 is still enough for the fallback tiers)
-    let hasWebGL2 = false;
-    let webglSupported = false;
-    try {
-      const testCanvas = document.createElement("canvas");
-      hasWebGL2 = !!(window.WebGL2RenderingContext && testCanvas.getContext("webgl2"));
-      webglSupported = hasWebGL2 || !!testCanvas.getContext("webgl");
-    } catch {
-      hasWebGL2 = false;
-      webglSupported = false;
-    }
+    const handleResize = () => update();
+    window.addEventListener("resize", handleResize, { passive: true });
 
-    // Determine tier
-    let tier: QualityTier = "high";
-    if (!webglSupported || reducedMotion) {
-      tier = "fallback";
-    } else if (!hasWebGL2 || isMobile || window.innerWidth < 1024) {
-      tier = "low";
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handleMotionPreference = () => update();
+    if (mq.addEventListener) {
+      mq.addEventListener("change", handleMotionPreference);
     } else {
-      tier = cores >= 6 && !isLowPower ? "high" : "medium";
+      mq.addListener(handleMotionPreference);
     }
 
-    const dpr = tier === "high" ? Math.min(window.devicePixelRatio || 1, 2) : tier === "medium" ? 1.5 : 1;
-    const postprocessingEnabled = tier === "high" && !isMobile;
-    const particleCount = tier === "high" ? 160 : tier === "medium" ? 80 : 30;
-
-    setConfig({
-      tier,
-      dpr,
-      postprocessingEnabled,
-      particleCount,
-      isMobile,
-      reducedMotion,
-      hasWebGL2,
-      webglSupported,
-      isLowPower,
-    });
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (mq.removeEventListener) {
+        mq.removeEventListener("change", handleMotionPreference);
+      } else {
+        mq.removeListener(handleMotionPreference);
+      }
+    };
   }, []);
 
   return config;

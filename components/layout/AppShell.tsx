@@ -14,6 +14,7 @@ import {
   Sparkles,
   Menu,
 } from "lucide-react";
+import { motion, LayoutGroup } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -103,35 +104,50 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             {/* Mobile Thumb-Accessible Dock */}
             <nav
               aria-label="Mobile Bottom Navigation"
-              className="fixed inset-x-0 bottom-0 z-20 flex h-16 items-stretch border-t border-border/70 bg-background/90 px-1 backdrop-blur-lg lg:hidden"
+              className={cn(
+                "fixed inset-x-0 bottom-0 z-20 flex items-stretch border-t border-border/70 bg-background/90 backdrop-blur-lg lg:hidden",
+                "h-16 pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
+              )}
             >
-              {mobileNavItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    aria-current={isActive ? "page" : undefined}
-                    className={cn(
-                      "flex min-h-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium transition-colors",
-                      isActive ? "font-bold text-primary" : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    <Icon className="size-4" aria-hidden="true" />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="flex min-h-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Open full menu"
-              >
-                <Menu className="size-4" aria-hidden="true" />
-                <span>More</span>
-              </button>
+              <LayoutGroup id="mobile-dock-nav" inherit>
+                {mobileNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={cn(
+                        "relative flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                        isActive
+                          ? "font-bold text-primary"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {isActive && (
+                        <motion.div
+                          layoutId="mobile-dock-active"
+                          className="absolute inset-1 rounded-2xl bg-primary/10 border-t-2 border-primary"
+                          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                          aria-hidden="true"
+                        />
+                      )}
+                      <Icon className="relative z-10 size-4" aria-hidden="true" />
+                      <span className="relative z-10">{item.label}</span>
+                    </Link>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen(true)}
+                  className="relative flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                  aria-label="Open full menu"
+                >
+                  <Menu className="relative z-10 size-4" aria-hidden="true" />
+                  <span className="relative z-10">More</span>
+                </button>
+              </LayoutGroup>
             </nav>
           </div>
         </SharedElement>

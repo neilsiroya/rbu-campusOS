@@ -54,7 +54,7 @@ function BuildingMesh({
       case "Lab":
         return isDark ? "#10b981" : "#059669";
       case "Facility":
-        return isDark ? "#8b5cf6" : "#7c3aed";
+        return isDark ? "#06b6d4" : "#0891b2";
       case "Service":
         return isDark ? "#f59e0b" : "#d97706";
       case "Social":

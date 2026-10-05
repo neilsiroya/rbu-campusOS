@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -15,15 +15,18 @@ export function PageTransition({
   mode?: "fade" | "slide" | "fade-slide" | "scale" | "none";
 }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const shouldReduceMotion = useReducedMotion();
   const [mounted, setMounted] = useState(false);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     setMounted(true);
+    // Client-side query string (see ViewTransitionProvider note on
+    // avoiding useSearchParams suspense bailouts).
+    setSearch(window.location.search);
   }, []);
 
-  const key = pathname + (searchParams?.toString() || "");
+  const key = pathname + search;
 
   if (shouldReduceMotion || mode === "none") {
     return <div className={cn(className)}>{children}</div>;

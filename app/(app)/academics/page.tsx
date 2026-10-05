@@ -19,22 +19,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DemoNotice } from "@/components/os/DemoNotice";
+import { EmptyState } from "@/components/os/EmptyState";
 import { cn } from "@/lib/utils";
+import {
+  COURSES,
+  ACADEMIC_STATS,
+  ATTENDANCE,
+  ASSIGNMENTS,
+  type Assignment,
+  type Course,
+} from "@/lib/campus-data";
 
 // --- TYPES ---
-type Course = {
-  code: string;
-  name: string;
-  instructor: string;
-  progress: number;
-  nextSession: {
-    time: string;
-    room: string;
-  };
-  status: "On Track" | "Behind" | "Completed";
-  credits: number;
-};
-
 type Resource = {
   label: string;
   type: "PYQ" | "Syllabus" | "Notes" | "Assignment";
@@ -48,64 +44,28 @@ type Deadline = {
   status: "pending" | "urgent" | "completed";
 };
 
-// --- DEMO DATA ---
-const DEMO_ACADEMIC_DATA = {
-  stats: {
-    gpa: "8.42",
-    creditsEarned: "64 / 120",
-    semesterRank: "14 / 180",
-    attendance: "88%",
-  },
-  courses: [
-    {
-      code: "CS301",
-      name: "Advanced Operating Systems",
-      instructor: "Dr. Sarah Chen",
-      progress: 65,
-      nextSession: { time: "Tomorrow, 10:00", room: "LT-204" },
-      status: "On Track" as const,
-      credits: 4,
-    },
-    {
-      code: "CS302",
-      name: "Distributed Systems",
-      instructor: "Prof. Marcus Thorne",
-      progress: 42,
-      nextSession: { time: "Wednesday, 14:00", room: "Lab-3" },
-      status: "Behind" as const,
-      credits: 4,
-    },
-    {
-      code: "MA204",
-      name: "Discrete Mathematics",
-      instructor: "Dr. Elena Rossi",
-      progress: 88,
-      nextSession: { time: "Friday, 09:00", room: "LT-101" },
-      status: "On Track" as const,
-      credits: 3,
-    },
-    {
-      code: "HU101",
-      name: "Technical Communication",
-      instructor: "Prof. Liam O'Neil",
-      progress: 30,
-      nextSession: { time: "Monday, 11:00", room: "Room 402" },
-      status: "On Track" as const,
-      credits: 2,
-    },
-  ],
-  deadlines: [
-    { subject: "OS", task: "Kernel Implementation", dueDate: "Sept 12", status: "urgent" as const },
-    { subject: "DistSys", task: "Paxos Protocol Paper", dueDate: "Sept 15", status: "pending" as const },
-    { subject: "Maths", task: "Graph Theory Set", dueDate: "Sept 18", status: "pending" as const },
-  ],
-  resources: [
-    { label: " Semester Syllabus 2026", type: "Syllabus" as const, updated: "2mo ago" },
-    { label: " OS Final Exam 2025", type: "PYQ" as const, updated: "1mo ago" },
-    { label: " Distributed Systems L3", type: "Notes" as const, updated: "3 days ago" },
-    { label: " Lab Manual - Network Sec", type: "Assignment" as const, updated: "1 week ago" },
-  ]
-} as const;
+// Attendance + deadlines derive from the single campus-data source so the
+// numbers here can never drift from /attendance, /assignments, or the
+// landing status bar.
+const MEAN_ATTENDANCE = Math.round(
+  ATTENDANCE.reduce((sum, a) => sum + a.percent, 0) / ATTENDANCE.length
+);
+
+const DEADLINES: Deadline[] = ASSIGNMENTS.map((a: Assignment) => ({
+  subject: a.subject,
+  task: a.title,
+  dueDate: a.due,
+  status: a.status,
+}));
+
+// --- DEMO DATA (local: resource-nexus links only; everything academic
+// comes from lib/campus-data.ts) ---
+const RESOURCES: Resource[] = [
+  { label: " Semester Syllabus 2026", type: "Syllabus" as const, updated: "2mo ago" },
+  { label: " OS Final Exam 2025", type: "PYQ" as const, updated: "1mo ago" },
+  { label: " Distributed Systems L3", type: "Notes" as const, updated: "3 days ago" },
+  { label: " Lab Manual - Network Sec", type: "Assignment" as const, updated: "1 week ago" },
+];
 
 // --- SUB-COMPONENTS ---
 
@@ -129,7 +89,7 @@ const AcademicStat = ({
     <div className="flex flex-col">
       <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</span>
       <div className="flex items-baseline gap-2">
-        <span className="text-lg font-black text-foreground leading-none">{value}</span>
+        <span className="text-2xl font-black tabular-nums text-foreground leading-none">{value}</span>
         {subValue && <span className="text-[10px] text-muted-foreground font-medium">{subValue}</span>}
       </div>
     </div>
@@ -244,14 +204,21 @@ const ResourceLink = ({ resource, index }: { resource: Resource; index: number }
 
 export default function AcademicsPage() {
   const [courseQuery, setCourseQuery] = useState("");
+  const [sortDir, setSortDir] = useState<"desc" | "asc">("desc");
   const courses = useMemo(() => {
     const query = courseQuery.trim().toLowerCase();
-    return DEMO_ACADEMIC_DATA.courses.filter((course) =>
+    return COURSES.filter((course) =>
       `${course.code} ${course.name} ${course.instructor}`
         .toLowerCase()
         .includes(query)
     );
   }, [courseQuery]);
+
+  const attendanceRows = useMemo(() => {
+    const rows = [...ATTENDANCE];
+    rows.sort((a, b) => (sortDir === "desc" ? b.percent - a.percent : a.percent - b.percent));
+    return rows;
+  }, [sortDir]);
 
   return (
     <div className="space-y-8">
@@ -279,28 +246,28 @@ export default function AcademicsPage() {
         <div className="grid w-full grid-cols-2 gap-4 xl:grid-cols-4">
           <AcademicStat
             label="Current GPA"
-            value={DEMO_ACADEMIC_DATA.stats.gpa}
+            value={ACADEMIC_STATS.gpa}
             subValue="Top 10%"
             icon={Trophy}
             colorClass="bg-blue-500"
           />
           <AcademicStat
             label="Credits"
-            value={DEMO_ACADEMIC_DATA.stats.creditsEarned}
+            value={ACADEMIC_STATS.creditsEarned}
             subValue="Earned"
             icon={GraduationCap}
             colorClass="bg-green-500"
           />
           <AcademicStat
             label="Rank"
-            value={DEMO_ACADEMIC_DATA.stats.semesterRank}
+            value={ACADEMIC_STATS.semesterRank}
             subValue="Dept."
             icon={TrendingUp}
-            colorClass="bg-purple-500"
+            colorClass="bg-amber-500"
           />
           <AcademicStat
             label="Attendance"
-            value={DEMO_ACADEMIC_DATA.stats.attendance}
+            value={`${MEAN_ATTENDANCE}%`}
             subValue="Overall"
             icon={Clock}
             colorClass="bg-orange-500"
@@ -336,9 +303,12 @@ export default function AcademicsPage() {
               <CourseCard key={course.code} course={course} index={i} />
             ))}
             {courses.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground md:col-span-2">
-                No courses match that search.
-              </p>
+              <div className="md:col-span-2">
+                <EmptyState
+                  title="No courses match that search"
+                  body="Try a course code like CS301 — every active module is listed here."
+                />
+              </div>
             ) : null}
           </div>
         </div>
@@ -355,7 +325,7 @@ export default function AcademicsPage() {
               <span className="text-[10px] font-bold text-muted-foreground uppercase">Urgent First</span>
             </div>
             <div className="p-4 space-y-1">
-              {DEMO_ACADEMIC_DATA.deadlines.map((d, i) => (
+              {DEADLINES.map((d, i) => (
                 <DeadlineRow key={i} deadline={d} index={i} />
               ))}
             </div>
@@ -369,7 +339,7 @@ export default function AcademicsPage() {
               </h2>
             </div>
             <div className="p-4 space-y-2">
-              {DEMO_ACADEMIC_DATA.resources.map((res, i) => (
+              {RESOURCES.map((res, i) => (
                 <ResourceLink key={i} resource={res} index={i} />
               ))}
             </div>
@@ -386,6 +356,122 @@ export default function AcademicsPage() {
           </div>
         </div>
       </div>
+
+      {/* Attendance Ledger — sortable on desktop, stacked cards on mobile */}
+      <section aria-labelledby="attendance-ledger-heading" className="glass-panel overflow-hidden rounded-2xl border border-border/50">
+        <div className="flex items-center justify-between border-b border-border/50 bg-background/20 p-4">
+          <h2 id="attendance-ledger-heading" className="text-xs font-black uppercase tracking-widest">
+            Attendance Ledger
+          </h2>
+          <span className="text-[10px] font-bold uppercase text-muted-foreground">
+            Mean {MEAN_ATTENDANCE}%
+          </span>
+        </div>
+
+        <table className="hidden w-full text-left text-sm sm:table">
+          <caption className="sr-only">
+            Course attendance sorted by percentage
+          </caption>
+          <thead>
+            <tr className="border-b border-border/50 text-[10px] uppercase tracking-widest text-muted-foreground">
+              <th scope="col" className="px-4 py-3 font-bold">Course</th>
+              <th scope="col" className="px-4 py-3 text-right font-bold">Attended</th>
+              <th
+                scope="col"
+                aria-sort={sortDir === "desc" ? "descending" : "ascending"}
+                className="px-4 py-3 text-right font-bold"
+              >
+                <button
+                  type="button"
+                  onClick={() => setSortDir((d) => (d === "desc" ? "asc" : "desc"))}
+                  className="ml-auto flex min-h-8 items-center gap-1 rounded-lg px-2 hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label={`Sort by attendance percentage, currently ${sortDir === "desc" ? "highest first" : "lowest first"}`}
+                >
+                  Percent
+                  <span aria-hidden="true">{sortDir === "desc" ? "↓" : "↑"}</span>
+                </button>
+              </th>
+              <th scope="col" className="px-4 py-3 text-right font-bold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {attendanceRows.map((row) => (
+              <tr key={row.code} className="border-b border-border/40 transition-colors last:border-0 hover:bg-muted/40">
+                <td className="px-4 py-3">
+                  <span className="mr-2 rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] font-bold text-primary">
+                    {row.code}
+                  </span>
+                  <span className="text-xs font-semibold text-foreground">{row.name}</span>
+                </td>
+                <td className="px-4 py-3 text-right font-mono text-xs text-muted-foreground">
+                  {row.present}/{row.total}
+                </td>
+                <td className="px-4 py-3">
+                  <span className="flex items-center justify-end gap-2">
+                    <span className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+                      <span className="block h-full rounded-full bg-primary" style={{ width: `${row.percent}%` }} />
+                    </span>
+                    <span className="w-10 text-right font-mono text-xs font-bold tabular-nums text-foreground">
+                      {row.percent}%
+                    </span>
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <span
+                    className={cn(
+                      "rounded-full border px-2 py-0.5 text-[9px] font-black uppercase",
+                      row.percent >= 75
+                        ? "border-success/30 bg-success/10 text-success"
+                        : "border-danger/30 bg-danger/10 text-danger"
+                    )}
+                  >
+                    {row.percent >= 75 ? "Safe" : "At risk"}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <ul className="space-y-3 p-4 sm:hidden">
+          {attendanceRows.map((row) => (
+            <li
+              key={row.code}
+              className="rounded-2xl border border-border/50 bg-background/40 p-4"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-bold text-foreground">
+                  <span className="mr-2 rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] text-primary">
+                    {row.code}
+                  </span>
+                  {row.name}
+                </p>
+                <span className="font-display text-xl font-black tabular-nums text-foreground">
+                  {row.percent}%
+                </span>
+              </div>
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-primary" style={{ width: `${row.percent}%` }} />
+              </div>
+              <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
+                <span className="font-mono">
+                  {row.present}/{row.total} sessions
+                </span>
+                <span
+                  className={cn(
+                    "rounded-full border px-2 py-0.5 text-[9px] font-black uppercase",
+                    row.percent >= 75
+                      ? "border-success/30 bg-success/10 text-success"
+                      : "border-danger/30 bg-danger/10 text-danger"
+                  )}
+                >
+                  {row.percent >= 75 ? "Safe" : "At risk"}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

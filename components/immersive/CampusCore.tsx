@@ -5,93 +5,61 @@ import * as THREE from "three";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { useTheme } from "next-themes";
 import { ImmersiveCanvas } from "@/components/webgl/ImmersiveCanvas";
-import { RotateCcw, Maximize2, Minimize2, Sparkles, Activity, Layers, ShieldCheck } from "lucide-react";
+import { useAdaptiveQuality } from "@/components/webgl/useAdaptiveQuality";
+import { useSceneCleanup, disposeObject3D } from "@/lib/webgl";
+import { useOSStore } from "@/lib/os-store";
+import {
+  RotateCcw,
+  Maximize2,
+  Minimize2,
+  Sparkles,
+  Activity,
+  Layers,
+  ShieldCheck,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CampusLiquidMetalCore } from "@/components/immersive/CampusLiquidMetal";
 
-// --- CORE PROCEDURAL 3D ELEMENTS ---
-
-function InnerTopologyCore({
-  intensity = 1.0,
-  isDark = true,
-}: {
-  intensity?: number;
-  isDark?: boolean;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const originalPositions = useRef<Float32Array | null>(null);
-
-  const geometry = useMemo(() => {
-    return new THREE.IcosahedronGeometry(1.2, 5);
-  }, []);
-
-  useEffect(() => {
-    originalPositions.current = geometry.attributes.position.array.slice() as Float32Array;
-  }, [geometry]);
-
-  useFrame(({ clock }) => {
-    if (!meshRef.current || !originalPositions.current) return;
-    const t = clock.getElapsedTime() * 0.9;
-    const pos = meshRef.current.geometry.attributes.position;
-    const orig = originalPositions.current;
-
-    for (let i = 0; i < pos.count; i++) {
-      const u = i * 3;
-      const ox = orig[u];
-      const oy = orig[u + 1];
-      const oz = orig[u + 2];
-
-      const noise =
-        Math.sin(ox * 2.2 + t) *
-        Math.cos(oy * 2.2 + t * 0.8) *
-        Math.sin(oz * 2.2 + t * 1.2) *
-        0.18 *
-        intensity;
-
-      pos.setXYZ(i, ox + ox * noise, oy + oy * noise, oz + oz * noise);
-    }
-    pos.needsUpdate = true;
-
-    meshRef.current.rotation.y = t * 0.2;
-    meshRef.current.rotation.x = Math.sin(t * 0.15) * 0.2;
-  });
-
-  return (
-    <mesh ref={meshRef} geometry={geometry}>
-      <meshStandardMaterial
-        color={isDark ? "#11221b" : "#e6f4ee"}
-        metalness={0.92}
-        roughness={0.2}
-        emissive={isDark ? "#064e3b" : "#10b981"}
-        emissiveIntensity={isDark ? 0.35 : 0.15}
-        wireframe={false}
-      />
-    </mesh>
-  );
+function ease(current: number, target: number, lambda: number, dt: number): number {
+  return current + (target - current) * (1 - Math.exp(-lambda * dt));
 }
 
 function OrbitalRing({
   radius = 2.1,
   rotation = [0, 0, 0],
   speed = 0.4,
+  intensity = 1.0,
   isDark = true,
   nodeCount = 4,
 }: {
   radius?: number;
   rotation?: [number, number, number];
   speed?: number;
+  intensity?: number;
   isDark?: boolean;
   nodeCount?: number;
 }) {
   const groupRef = useRef<THREE.Group>(null);
+  const torusGeom = useMemo(() => new THREE.TorusGeometry(radius, 0.016, 16, 100), [radius]);
+  const cleanup = useSceneCleanup();
 
-  useFrame(({ clock }) => {
-    if (!groupRef.current) return;
-    groupRef.current.rotation.z = clock.getElapsedTime() * speed;
-  });
+  useEffect(() => {
+    cleanup.track(torusGeom);
+    cleanup.addCleanup(() => {
+      if (groupRef.current) disposeObject3D(groupRef.current);
+    });
+  }, [torusGeom, cleanup]);
+
+  const effectiveSpeed = useMemo(() => speed * Math.max(0.4, intensity), [speed, intensity]);
+
+  const nodeGeom = useMemo(() => new THREE.SphereGeometry(0.075, 16, 16), []);
+  useEffect(() => {
+    cleanup.track(nodeGeom);
+  }, [nodeGeom, cleanup]);
 
   const nodes = useMemo(() => {
-    const list = [];
+    const list: Array<{ x: number; y: number }> = [];
     for (let i = 0; i < nodeCount; i++) {
       const angle = (i / nodeCount) * Math.PI * 2;
       list.push({
@@ -102,27 +70,27 @@ function OrbitalRing({
     return list;
   }, [radius, nodeCount]);
 
+  useFrame(({ clock }) => {
+    if (!groupRef.current) return;
+    groupRef.current.rotation.z = clock.getElapsedTime() * effectiveSpeed;
+  });
+
+  const ringColor = isDark ? 0x34d399 : 0x059669;
+  const nodeEmissive = isDark ? 0x34d399 : 0x059669;
+  const nodeColor = isDark ? 0x6ee7b7 : 0x047857;
+
   return (
     <group rotation={rotation}>
-      {/* Structural Thin Torus Ring */}
-      <mesh>
-        <torusGeometry args={[radius, 0.016, 16, 100]} />
-        <meshBasicMaterial
-          color={isDark ? "#34d399" : "#059669"}
-          transparent
-          opacity={isDark ? 0.35 : 0.45}
-        />
+      <mesh geometry={torusGeom}>
+        <meshBasicMaterial color={ringColor} transparent opacity={isDark ? 0.35 : 0.45} />
       </mesh>
-
-      {/* Orbiting Spatial Data Nodes */}
       <group ref={groupRef}>
         {nodes.map((node, i) => (
-          <mesh key={i} position={[node.x, node.y, 0]}>
-            <sphereGeometry args={[0.075, 16, 16]} />
+          <mesh key={i} position={[node.x, node.y, 0]} geometry={nodeGeom}>
             <meshStandardMaterial
-              color={isDark ? "#6ee7b7" : "#047857"}
-              emissive={isDark ? "#34d399" : "#059669"}
-              emissiveIntensity={0.8}
+              color={nodeColor}
+              emissive={nodeEmissive}
+              emissiveIntensity={0.6 + intensity * 0.3}
             />
           </mesh>
         ))}
@@ -131,17 +99,21 @@ function OrbitalRing({
   );
 }
 
-function AtmosphericCloud({ isDark = true }: { isDark?: boolean }) {
+function AtmosphericCloud({
+  isDark = true,
+  intensity = 1.0,
+}: {
+  isDark?: boolean;
+  intensity?: number;
+}) {
   const pointsRef = useRef<THREE.Points>(null);
+  const cleanup = useSceneCleanup();
+  const { particleCount } = useAdaptiveQuality();
+  const count = particleCount > 0 ? particleCount : 120;
 
   const [positions, colors] = useMemo(() => {
-    const count = 120;
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
-
-    // Deterministic PRNG (mulberry32): the particle field must be stable
-    // across re-renders and theme toggles, and React purity rules forbid
-    // Math.random() during render. Same seed => same constellation.
     let seed = 0x9e3779b9;
     const rand = () => {
       seed |= 0;
@@ -150,60 +122,65 @@ function AtmosphericCloud({ isDark = true }: { isDark?: boolean }) {
       t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
-
     for (let i = 0; i < count; i++) {
       const r = 1.6 + rand() * 2.2;
       const theta = rand() * Math.PI * 2;
       const phi = Math.acos(2 * rand() - 1);
-
       pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
       pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       pos[i * 3 + 2] = r * Math.cos(phi);
-
-      // Emerald to Cyan gradient
       col[i * 3] = isDark ? 0.2 : 0.05;
       col[i * 3 + 1] = isDark ? 0.8 : 0.6;
       col[i * 3 + 2] = isDark ? 0.6 : 0.45;
     }
     return [pos, col];
-  }, [isDark]);
+  }, [count, isDark]);
+
+  const bufferGeom = useMemo(() => {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    g.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    return g;
+  }, [positions, colors]);
+
+  useEffect(() => {
+    cleanup.track(bufferGeom);
+    cleanup.addCleanup(() => {
+      if (pointsRef.current) disposeObject3D(pointsRef.current);
+    });
+  }, [bufferGeom, cleanup]);
 
   useFrame(({ clock }) => {
     if (!pointsRef.current) return;
-    pointsRef.current.rotation.y = clock.getElapsedTime() * 0.08;
-    pointsRef.current.rotation.x = clock.getElapsedTime() * 0.04;
+    const spin = 0.08 * Math.max(0.4, intensity);
+    pointsRef.current.rotation.y = clock.getElapsedTime() * spin;
+    pointsRef.current.rotation.x = clock.getElapsedTime() * spin * 0.5;
   });
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[positions, 3]}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          args={[colors, 3]}
-        />
-      </bufferGeometry>
+    <points ref={pointsRef} geometry={bufferGeom}>
       <pointsMaterial
         size={0.065}
         vertexColors
         transparent
         opacity={isDark ? 0.65 : 0.55}
         blending={THREE.AdditiveBlending}
+        depthWrite={false}
       />
     </points>
   );
 }
 
-function SceneLights({ isDark = true }: { isDark?: boolean }) {
+function SceneLights({ isDark = true, intensity = 1.0 }: { isDark?: boolean; intensity?: number }) {
+  const ambient = isDark ? 0.7 : 1.1;
+  const directional = (isDark ? 1.4 : 1.6) * (0.8 + intensity * 0.4);
+  const point = (0.9) * (0.8 + intensity * 0.3);
   return (
     <>
-      <ambientLight intensity={isDark ? 0.7 : 1.1} />
-      <directionalLight position={[5, 8, 5]} intensity={isDark ? 1.4 : 1.6} />
-      <pointLight position={[-4, -3, -4]} intensity={0.9} color={isDark ? "#34d399" : "#10b981"} />
-      <pointLight position={[3, -4, 2]} intensity={0.7} color="#6366f1" />
+      <ambientLight intensity={ambient} />
+      <directionalLight position={[5, 8, 5]} intensity={directional} />
+      <pointLight position={[-4, -3, -4]} intensity={point} color={isDark ? 0x34d399 : 0x10b981} />
+      <pointLight position={[3, -4, 2]} intensity={0.7 * (0.8 + intensity * 0.2)} color={0x6366f1} />
     </>
   );
 }
@@ -211,22 +188,29 @@ function SceneLights({ isDark = true }: { isDark?: boolean }) {
 function CoreScene({
   isDark,
   intensity,
+  speed,
   isInteracting,
+  spatialResetTrigger,
 }: {
   isDark: boolean;
   intensity: number;
+  speed: number;
   isInteracting: boolean;
+  spatialResetTrigger: number;
 }) {
   const sceneGroup = useRef<THREE.Group>(null);
   const pointerPos = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 });
 
-  useFrame(() => {
+  useEffect(() => {
+    pointerPos.current.targetX = 0;
+    pointerPos.current.targetY = 0;
+  }, [spatialResetTrigger]);
+
+  useFrame((_, deltaRaw) => {
     if (!sceneGroup.current) return;
-
-    // Smooth inertia camera tilting
-    pointerPos.current.x += (pointerPos.current.targetX - pointerPos.current.x) * 0.08;
-    pointerPos.current.y += (pointerPos.current.targetY - pointerPos.current.y) * 0.08;
-
+    const dt = Math.min(deltaRaw, 1 / 30);
+    pointerPos.current.x = ease(pointerPos.current.x, pointerPos.current.targetX, 6, dt);
+    pointerPos.current.y = ease(pointerPos.current.y, pointerPos.current.targetY, 6, dt);
     sceneGroup.current.rotation.y = pointerPos.current.x * 0.6;
     sceneGroup.current.rotation.x = -pointerPos.current.y * 0.4;
   });
@@ -237,20 +221,25 @@ function CoreScene({
     pointerPos.current.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
   };
 
+  const liquidSpeed = 0.7 + speed * 0.6;
+
   return (
     <group ref={sceneGroup} onPointerMove={handlePointerMove}>
-      <SceneLights isDark={isDark} />
-      <InnerTopologyCore intensity={intensity} isDark={isDark} />
-      {/* 3 Orthogonal Orbital Layers */}
-      <OrbitalRing radius={1.9} rotation={[0.4, 0.3, 0]} speed={0.3} isDark={isDark} nodeCount={3} />
-      <OrbitalRing radius={2.4} rotation={[-0.5, 0.4, 0.8]} speed={-0.22} isDark={isDark} nodeCount={4} />
-      <OrbitalRing radius={2.8} rotation={[0.8, -0.6, 0.2]} speed={0.16} isDark={isDark} nodeCount={5} />
-      <AtmosphericCloud isDark={isDark} />
+      <SceneLights isDark={isDark} intensity={intensity} />
+      <CampusLiquidMetalCore
+        radius={1.2}
+        detail={5}
+        intensity={intensity}
+        speed={liquidSpeed}
+        interactive={isInteracting}
+      />
+      <OrbitalRing radius={1.9} rotation={[0.4, 0.3, 0]} speed={0.3} intensity={speed} isDark={isDark} nodeCount={3} />
+      <OrbitalRing radius={2.4} rotation={[-0.5, 0.4, 0.8]} speed={-0.22} intensity={speed} isDark={isDark} nodeCount={4} />
+      <OrbitalRing radius={2.8} rotation={[0.8, -0.6, 0.2]} speed={0.16} intensity={speed} isDark={isDark} nodeCount={5} />
+      <AtmosphericCloud isDark={isDark} intensity={speed} />
     </group>
   );
 }
-
-// --- MAIN EXPORTED COMPONENT ---
 
 export type CampusCoreSize = "sm" | "md" | "lg" | "compact" | "default" | "hero";
 
@@ -261,9 +250,7 @@ export interface CampusCoreProps {
   upcomingEvents?: number;
   xpPoints?: number;
   compact?: boolean;
-  /** Enables pointer parallax on the core. Defaults to `false` (static framing). */
   interactive?: boolean;
-  /** Initial presentation size. `sm|compact` → compact, `md|default` → standard, `lg|hero` → expanded. */
   size?: CampusCoreSize;
   metricLabel?: string;
   metricValue?: string;
@@ -287,23 +274,48 @@ export function CampusCore({
   const isDark = resolvedTheme === "dark";
   const [expanded, setExpanded] = useState(size === "lg" || size === "hero");
   const [resetKey, setResetKey] = useState(0);
+  const spatialViewResetTrigger = useOSStore((s) => s.spatialViewResetTrigger);
+  const activeMetric = useOSStore((s) => s.activeCoreDataMetric);
 
-  // Compute derived visual intensity from academic metrics
-  const visualIntensity = useMemo(() => {
+  const { visualIntensity, orbitalSpeed } = useMemo(() => {
     const attRatio = Math.min(attendancePercent / 100, 1.0);
     const loadBonus = Math.min(activeAssignments * 0.05, 0.25);
-    return 0.8 + attRatio * 0.4 + loadBonus;
-  }, [attendancePercent, activeAssignments]);
+    const eventBonus = Math.min(upcomingEvents * 0.015, 0.15);
+
+    let multiplier = 1.0;
+    switch (activeMetric) {
+      case "workload":
+        multiplier = 1.15 + loadBonus;
+        break;
+      case "events":
+        multiplier = 0.95 + eventBonus + Math.min(upcomingEvents * 0.02, 0.2);
+        break;
+      case "connectivity":
+        multiplier = 0.9 + eventBonus * 0.8;
+        break;
+      case "academic":
+      default:
+        multiplier = 0.85 + attRatio * 0.5;
+        break;
+    }
+
+    const intensity = Math.max(0.55, Math.min(1.8, multiplier));
+    const speed = 0.55 + (intensity - 0.55) * 0.9;
+    return { visualIntensity: intensity, orbitalSpeed: speed };
+  }, [attendancePercent, activeAssignments, upcomingEvents, activeMetric]);
 
   const handleReset = () => {
     setResetKey((k) => k + 1);
+    useOSStore.getState().triggerSpatialReset();
   };
+
+  const spatialReset = resetKey + spatialViewResetTrigger;
 
   return (
     <article
       aria-label="Campus Core 3D Living Telemetry System"
       className={cn(
-        "relative flex flex-col justify-between overflow-hidden rounded-3xl border border-border/80 bg-card/60 backdrop-blur-md shadow-sm transition-all duration-300",
+        "relative flex flex-col justify-between overflow-hidden rounded-3xl border border-border/80 bg-card/60 backdrop-blur-md shadow-sm transition-all motion-tier-standard",
         expanded || size === "lg" || size === "hero"
           ? "min-h-[580px]"
           : compact || size === "sm" || size === "compact"
@@ -312,7 +324,6 @@ export function CampusCore({
         className
       )}
     >
-      {/* Top Header & Telemetry Badges */}
       <div className="relative z-10 flex items-center justify-between border-b border-border/70 p-5 bg-background/40 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
@@ -327,6 +338,9 @@ export function CampusCore({
                 <span className="size-1 rounded-full bg-emerald-500 animate-pulse" />
                 Live Pulse
               </span>
+              <span className="hidden sm:inline-flex items-center rounded-full border border-border/60 bg-background/70 px-2 py-0.5 text-[9px] font-mono uppercase tracking-wider text-muted-foreground">
+                Metric: {activeMetric}
+              </span>
             </div>
             <p className="text-[11px] text-muted-foreground">
               Living Digital Infrastructure &bull; Dynamic Telemetry
@@ -334,14 +348,13 @@ export function CampusCore({
           </div>
         </div>
 
-        {/* Viewport Control Buttons */}
         <div className="flex items-center gap-1.5">
           <Button
             variant="ghost"
             size="icon"
-            className="size-10 rounded-lg border border-border/70 hover:bg-muted sm:size-8"
+            className="size-10 rounded-lg border border-border/70 hover:bg-muted sm:size-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={handleReset}
-            aria-label="Reset 3D Core camera"
+            aria-label="Reset 3D Core camera and orientation"
             title="Reset Orientation"
           >
             <RotateCcw className="size-3.5 text-foreground" />
@@ -350,7 +363,7 @@ export function CampusCore({
             <Button
               variant="ghost"
               size="icon"
-              className="size-10 rounded-lg border border-border/70 hover:bg-muted sm:size-8"
+              className="size-10 rounded-lg border border-border/70 hover:bg-muted sm:size-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={() => setExpanded((prev) => !prev)}
               aria-label={expanded ? "Collapse core view" : "Expand core view"}
               title={expanded ? "Collapse View" : "Expand View"}
@@ -365,11 +378,10 @@ export function CampusCore({
         </div>
       </div>
 
-      {/* 3D WebGL Canvas Layer */}
       <div className="absolute inset-0 z-0">
         <ImmersiveCanvas
           key={resetKey}
-          camera={{ position: [0, 0, 5.2], fov: 45 }}
+          camera={{ position: [0, 0, 5.2], fov: 45, near: 0.1, far: 100 }}
           sceneName="RBU Campus Core"
           fallback={
             <div className="flex h-full w-full items-center justify-center p-8 text-center bg-gradient-to-br from-card via-background to-muted/20">
@@ -385,18 +397,22 @@ export function CampusCore({
             </div>
           }
         >
-          <CoreScene isDark={isDark} intensity={visualIntensity} isInteracting={interactive} />
+          <CoreScene
+            isDark={isDark}
+            intensity={visualIntensity}
+            speed={orbitalSpeed}
+            isInteracting={interactive}
+            spatialResetTrigger={spatialReset}
+          />
         </ImmersiveCanvas>
       </div>
 
-      {/* Center Interactive Hint */}
       <div className="pointer-events-none relative z-10 flex justify-center py-4">
         <span className="rounded-full border border-border/60 bg-background/60 px-3 py-1 text-[10px] font-medium text-muted-foreground backdrop-blur-md">
           Drag to rotate spatial core &bull; Data-reactive topology
         </span>
       </div>
 
-      {/* Bottom Live Metric HUD (Accessible DOM Overlay) */}
       {showTelemetry && (
         <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2 border-t border-border/70 bg-background/50 p-4 backdrop-blur-md">
           <div className="rounded-2xl border border-border/60 bg-card/60 p-2.5">
@@ -443,3 +459,5 @@ export function CampusCore({
     </article>
   );
 }
+
+export default CampusCore;

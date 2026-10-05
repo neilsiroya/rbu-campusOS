@@ -73,7 +73,7 @@ export default function CampusMapPage() {
               key={item}
               variant={kind === item ? "default" : "outline"}
               size="sm"
-              className="shrink-0 rounded-full text-xs"
+              className="min-h-11 shrink-0 rounded-full px-4 text-xs"
               onClick={() => setKind(item)}
             >
               {item}
@@ -146,7 +146,7 @@ export default function CampusMapPage() {
                       type="button"
                       onClick={() => setSelected(place)}
                       className={cn(
-                        "w-full flex items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition-all",
+                        "w-full flex min-h-11 items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs transition-all",
                         isCur
                           ? "bg-primary text-primary-foreground font-bold shadow-sm"
                           : "hover:bg-muted text-foreground"

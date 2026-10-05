@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, Moon, Sun, X, Sparkles, Eye, Search } from "lucide-react";
+import { Menu, Moon, Sun, X, Sparkles, Eye, Search, ChevronRight } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { titleForPath } from "@/lib/nav";
+import { titleForPath, NAV_GROUPS } from "@/lib/nav";
 import { BrandMark } from "@/components/os/BrandMark";
 import CommandSearch from "./CommandSearch";
 import NotificationsMenu from "./NotificationsMenu";
@@ -33,6 +33,18 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
   }, []);
 
   const dark = mounted && resolvedTheme === "dark";
+
+  const navContext = useMemo(() => {
+    let group: string | null = null;
+    for (const g of NAV_GROUPS) {
+      const hit = g.items.find((i) => pathname === i.href || pathname.startsWith(`${i.href}/`));
+      if (hit) {
+        group = g.group;
+        break;
+      }
+    }
+    return { group, page: titleForPath(pathname) };
+  }, [pathname]);
 
   const handleSearchOpen = () => {
     setSearchOpen(true);
@@ -87,13 +99,33 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
         <div className="lg:hidden">
           <BrandMark compact />
         </div>
-        <div className="hidden items-center gap-2 lg:flex">
-          <p className="truncate text-sm font-semibold text-foreground">{titleForPath(pathname)}</p>
-          <span className="text-muted-foreground/40 font-mono text-xs">/</span>
-          <span className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
-            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            NODE-01 ACTIVE
-          </span>
+        <div className="hidden flex-col lg:flex">
+          <div className="flex items-center gap-2">
+            <p className="truncate text-sm font-semibold text-foreground">{navContext.page}</p>
+            <span className="text-muted-foreground/40 font-mono text-xs">/</span>
+            <span className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
+              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              NODE-01 ACTIVE
+            </span>
+          </div>
+          {navContext.group && (
+            <nav
+              aria-label="Breadcrumb"
+              className="mt-0.5 flex items-center gap-1 text-[10px] text-muted-foreground/70"
+            >
+              <span>CampusOS</span>
+              <ChevronRight className="size-3 opacity-50" aria-hidden="true" />
+              <span>{navContext.group}</span>
+              {navContext.group !== navContext.page && (
+                <>
+                  <ChevronRight className="size-3 opacity-50" aria-hidden="true" />
+                  <span className="text-muted-foreground" aria-current="page">
+                    {navContext.page}
+                  </span>
+                </>
+              )}
+            </nav>
+          )}
         </div>
 
         <div className="hidden lg:block">
@@ -183,7 +215,7 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: HeaderProps) 
         <Button
           variant="ghost"
           size="icon"
-          className="size-9 rounded-full hover:bg-muted/50"
+          className="size-11 shrink-0 rounded-full hover:bg-muted/50"
           aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
           onClick={() => setTheme(dark ? "light" : "dark")}
         >

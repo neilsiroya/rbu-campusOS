@@ -187,7 +187,7 @@ export default function NotesPage() {
                 <strong>{stats.subjects}</strong> Subjects Covered
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-background/60 px-3 py-1.5 text-xs font-medium backdrop-blur-md">
-                <ThumbsUp className="size-3.5 text-purple-500" />
+                <ThumbsUp className="size-3.5 text-sky-500" />
                 <strong>{stats.totalUseful}</strong> Peer Endorsements
               </span>
             </div>

@@ -17,6 +17,7 @@ import { BrandMark } from "@/components/os/BrandMark";
 import { Button } from "@/components/ui/button";
 import { MagneticButton } from "@/components/motion";
 import { CampusCore } from "@/components/immersive/CampusCoreDynamic";
+import { LiveSystemBar } from "@/components/landing/LiveSystemBar";
 
 const lanes = [
   {
@@ -58,14 +59,14 @@ export default function Home() {
             render={<Link href="/auth/login" />}
             nativeButton={false}
             variant="ghost"
-            className="min-h-10 rounded-full px-4 text-xs font-semibold"
+            className="min-h-11 rounded-full px-5 text-xs font-semibold"
           >
             Log in
           </Button>
           <Button
             render={<Link href="/dashboard" />}
             nativeButton={false}
-            className="min-h-10 rounded-full px-5 text-xs font-semibold shadow-md shadow-primary/20"
+            className="min-h-11 rounded-full px-6 text-xs font-semibold shadow-md shadow-primary/20"
           >
             Launch CampusOS
           </Button>
@@ -117,6 +118,9 @@ export default function Home() {
               Explore 3D Map
             </Button>
           </div>
+
+          {/* Live campus status — real clock + real academic state */}
+          <LiveSystemBar />
 
           {/* Quick Metrics Bar */}
           <div className="mt-10 grid max-w-lg grid-cols-1 gap-4 border-t border-border/60 pt-6 sm:grid-cols-3 sm:gap-3">

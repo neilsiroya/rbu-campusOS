@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CampusBackground } from "@/components/CampusBackground";
@@ -16,10 +16,6 @@ export const metadata: Metadata = {
   description:
     "A social operating system for campus life, student community discovery, academics, peer exchange, and facilities.",
   icons: { icon: "/icon.svg" },
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfbfa" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f1216" },
-  ],
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
@@ -35,6 +31,16 @@ export const metadata: Metadata = {
     description:
       "A social operating system for campus life, student community discovery, academics, peer exchange, and facilities.",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfa" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1216" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

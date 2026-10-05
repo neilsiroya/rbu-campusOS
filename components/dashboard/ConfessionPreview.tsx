@@ -13,7 +13,7 @@ export default function ConfessionPreview({ confession }: ConfessionPreviewProps
     <article className="activity-surface relative overflow-hidden rounded-3xl p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
             <Ghost className="size-4" />
           </div>
           <div>

@@ -25,9 +25,8 @@ export function FilterChips<T extends string>({
           aria-selected={value === option}
           onClick={() => onChange(option)}
           className={cn(
-            // 36px tall so the chips stay comfortably tappable on phones while
-            // the pill shape keeps the compact density.
-            "min-h-9 shrink-0 snap-start rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors",
+            // 44px tall: filter chips are primary touch controls on phones.
+            "min-h-11 shrink-0 snap-start rounded-full border px-4 py-2 text-xs font-medium transition-colors",
             value === option
               ? "border-foreground bg-foreground text-background"
               : "border-border bg-card/70 text-muted-foreground hover:border-foreground/40 hover:text-foreground"

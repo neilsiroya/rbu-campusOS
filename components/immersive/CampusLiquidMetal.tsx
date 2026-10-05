@@ -1,366 +1,407 @@
 "use client";
 
-import React, { useRef, useMemo, useState, useEffect } from "react";
 import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
+import React, { useRef, useMemo, useEffect, useCallback, useState, type ReactNode, type KeyboardEvent } from "react";
+import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { useTheme } from "next-themes";
+import { useAdaptiveQuality } from "@/components/webgl/useAdaptiveQuality";
+import { useSceneCleanup, disposeObject3D } from "@/lib/webgl";
 import { ImmersiveCanvas } from "@/components/webgl/ImmersiveCanvas";
+import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Custom GLSL Liquid Metal Shaders
-const vertexShader = `
-  uniform float uTime;
-  uniform vec2 uPointer;
-  uniform float uPress;
-  uniform float uHover;
-  uniform float uIntensity;
-  uniform float uSpeed;
-  
-  varying vec2 vUv;
-  varying vec3 vNormal;
-  varying vec3 vViewPosition;
-  varying float vDisplacement;
+export type LiquidInteraction = "idle" | "hover" | "press" | "focus";
 
-  // Simplex 2D noise helpers
-  vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+const BASE_PRIMARY_DARK = 0x34d399;
+const BASE_PRIMARY_LIGHT = 0x10b981;
+const METAL_DARK = 0x0d1712;
+const METAL_LIGHT = 0xe6f4ee;
 
-  float snoise(vec2 v){
-    const vec4 C = vec4(0.211324865405187, 0.366025403784439,
-             -0.577350269189626, 0.024390243902439);
-    vec2 i  = floor(v + dot(v, C.yy) );
-    vec2 x0 = v -   i + dot(i, C.xx);
-    vec2 i1;
-    i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-    vec4 x12 = x0.xyxy + C.xxzz;
-    x12.xy -= i1;
-    i = mod(i, 289.0);
-    vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
-    + i.x + vec3(0.0, i1.x, 1.0 ));
-    vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-    m = m*m ;
-    m = m*m ;
-    vec3 x = 2.0 * fract(p * C.www) - 1.0;
-    vec3 h = abs(x) - 0.5;
-    vec3 ox = floor(x + 0.5);
-    vec3 a0 = x - ox;
-    m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
-    vec3 g;
-    g.x  = a0.x  * x0.x  + h.x  * x0.y;
-    g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-    return 130.0 * dot(m, g);
-  }
+function ease(current: number, target: number, lambda: number, dt: number): number {
+  return current + (target - current) * (1 - Math.exp(-lambda * dt));
+}
 
-  void main() {
-    vUv = uv;
-    
-    // Wave calculations (uSpeed scales temporal frequency, uIntensity scales amplitude)
-    float t = uTime * uSpeed;
-    vec2 p = uv * 3.0;
-    float wave1 = snoise(p + vec2(t * 0.25, t * 0.18)) * 0.12;
-    float wave2 = snoise(p * 2.0 - vec2(t * 0.15, t * 0.22)) * 0.06;
-    
-    // Localized pointer distortion
-    float dist = distance(uv, uPointer);
-    float pointerWave = exp(-dist * 8.0) * sin(dist * 20.0 - t * 4.0) * 0.15 * uHover;
-    
-    // Press ripple shockwave
-    float ripple = sin(dist * 24.0 - uPress * 6.0) * exp(-dist * 5.0) * (1.0 - uPress) * 0.2;
-
-    float totalDisp = (wave1 + wave2 + pointerWave + ripple) * uIntensity;
-    vDisplacement = totalDisp;
-
-    vec3 newPosition = position + normal * totalDisp;
-    
-    // Finite difference approximation for smooth normals
-    float offset = 0.01;
-    float d1 = snoise((uv + vec2(offset, 0.0)) * 3.0 + uTime * 0.2);
-    float d2 = snoise((uv - vec2(offset, 0.0)) * 3.0 + uTime * 0.2);
-    float d3 = snoise((uv + vec2(0.0, offset)) * 3.0 + uTime * 0.2);
-    float d4 = snoise((uv - vec2(0.0, offset)) * 3.0 + uTime * 0.2);
-    
-    vec3 tangentX = vec3(offset * 2.0, 0.0, (d1 - d2) * 0.1);
-    vec3 tangentY = vec3(0.0, offset * 2.0, (d3 - d4) * 0.1);
-    vec3 computedNormal = normalize(cross(tangentX, tangentY));
-
-    vNormal = normalize(normalMatrix * computedNormal);
-    vec4 mvPosition = modelViewMatrix * vec4(newPosition, 1.0);
-    vViewPosition = -mvPosition.xyz;
-
-    gl_Position = projectionMatrix * mvPosition;
-  }
-`;
-
-const fragmentShader = `
-  uniform float uTime;
-  uniform float uIsDark;
-  uniform float uHover;
-  uniform float uFocus;
-
-  varying vec2 vUv;
-  varying vec3 vNormal;
-  varying vec3 vViewPosition;
-  varying float vDisplacement;
-
-  void main() {
-    vec3 normal = normalize(vNormal);
-    vec3 viewDir = normalize(vViewPosition);
-
-    // Fresnel reflection
-    float fresnel = pow(1.0 - max(dot(viewDir, normal), 0.0), 3.0);
-    
-    // Controlled metallic light model
-    vec3 lightDir1 = normalize(vec3(0.6, 0.8, 1.0));
-    vec3 lightDir2 = normalize(vec3(-0.8, -0.4, 0.6));
-    
-    float diff1 = max(dot(normal, lightDir1), 0.0);
-    float diff2 = max(dot(normal, lightDir2), 0.0);
-    
-    vec3 half1 = normalize(lightDir1 + viewDir);
-    float spec1 = pow(max(dot(normal, half1), 0.0), 32.0);
-    
-    vec3 half2 = normalize(lightDir2 + viewDir);
-    float spec2 = pow(max(dot(normal, half2), 0.0), 20.0);
-
-    // Subtle chromatic dispersion along edges
-    float dispersion = vDisplacement * 1.5;
-    vec3 tint;
-    
-    if (uIsDark > 0.5) {
-      // Dark Mode: Deep metallic graphite, obsidian, subtle emerald/cyan iridescent sheen
-      vec3 baseColor = vec3(0.06, 0.07, 0.09);
-      vec3 metallicColor = vec3(0.20, 0.23, 0.28);
-      vec3 accentColor = vec3(0.18, 0.82, 0.60); // Emerald/mint CampusOS accent
-      vec3 rimColor = vec3(0.35, 0.45, 0.60);
-
-      tint = mix(baseColor, metallicColor, diff1 * 0.7 + diff2 * 0.3);
-      tint += spec1 * vec3(0.9, 0.95, 1.0) * 0.9;
-      tint += spec2 * accentColor * 0.5;
-      tint += fresnel * rimColor * 0.8;
-      tint += sin(dispersion * 10.0 + vec3(0.0, 0.5, 1.0)) * 0.035 * uHover;
-
-      // Keyboard focus accessible halo
-      tint += uFocus * accentColor * 0.35;
-    } else {
-      // Light Mode: Crisp platinum, architectural brushed silver, subtle cyan reflection
-      vec3 baseColor = vec3(0.88, 0.90, 0.92);
-      vec3 metallicColor = vec3(0.98, 0.99, 1.0);
-      vec3 accentColor = vec3(0.10, 0.65, 0.45); // Deep emerald
-      vec3 rimColor = vec3(0.70, 0.75, 0.85);
-
-      tint = mix(baseColor, metallicColor, diff1 * 0.8 + diff2 * 0.4);
-      tint += spec1 * vec3(1.0, 1.0, 1.0) * 0.95;
-      tint += spec2 * accentColor * 0.35;
-      tint += fresnel * rimColor * 0.5;
-      tint += sin(dispersion * 8.0 + vec3(0.0, 0.4, 0.8)) * 0.02 * uHover;
-
-      // Keyboard focus accessible halo
-      tint += uFocus * accentColor * 0.3;
-    }
-
-    gl_FragColor = vec4(tint, 1.0);
-  }
-`;
-
-function LiquidMetalMesh({
-  interactive = true,
-  onPress,
-  isFocused = false,
-  intensity = 1,
-  speed = 1,
-}: {
-  interactive?: boolean;
-  onPress?: () => void;
-  isFocused?: boolean;
+interface CampusLiquidMetalCoreProps {
+  radius?: number;
+  detail?: number;
   intensity?: number;
   speed?: number;
-}) {
+  interactive?: boolean;
+  focused?: boolean;
+  /** Increment to fire a press ripple from keyboard/assistive interaction. */
+  pulseSignal?: number;
+  onInteractionChange?: (state: LiquidInteraction) => void;
+}
+
+export function CampusLiquidMetalCore({
+  radius = 1.2,
+  detail = 5,
+  intensity = 1.0,
+  speed = 1.0,
+  interactive = true,
+  focused = false,
+  pulseSignal = 0,
+  onInteractionChange,
+}: CampusLiquidMetalCoreProps) {
   const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
+
+  const { reducedMotion, tier, isMobile } = useAdaptiveQuality();
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+  const cleanup = useSceneCleanup();
 
-  const pointerRef = useRef({ x: 0.5, y: 0.5, targetX: 0.5, targetY: 0.5 });
-  const hoverRef = useRef(0);
-  const pressRef = useRef(1.0); // 1.0 means idle
-  const focusRef = useRef(0);
+  const isDark = resolvedTheme !== "light";
+  const actualDetail = tier === "low" || isMobile ? 4 : detail;
+  const effectiveSpeed = reducedMotion ? 0.2 : speed;
 
-  const uniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uPointer: { value: new THREE.Vector2(0.5, 0.5) },
-      uPress: { value: 1.0 },
-      uHover: { value: 0.0 },
-      uFocus: { value: 0.0 },
-      uIsDark: { value: isDark ? 1.0 : 0.0 },
-      uIntensity: { value: Math.max(0, intensity) },
-      uSpeed: { value: Math.max(0, speed) },
-    }),
-    // Only re-create on theme flip; intensity/speed are pushed via effects below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isDark]
+  const baseColor = isDark ? METAL_DARK : METAL_LIGHT;
+  const primaryColor = isDark ? BASE_PRIMARY_DARK : BASE_PRIMARY_LIGHT;
+
+  const geometry = useMemo(() => {
+    const geo = new THREE.IcosahedronGeometry(radius, actualDetail);
+    geo.computeVertexNormals();
+    return geo;
+  }, [radius, actualDetail]);
+
+  useEffect(() => {
+    cleanup.track(geometry);
+    cleanup.addCleanup(() => {
+      const group = groupRef.current;
+      if (group) disposeObject3D(group);
+    });
+  }, [geometry, cleanup]);
+
+  const originalPositions = useRef<Float32Array | null>(null);
+  const baseNormals = useRef<Float32Array | null>(null);
+
+  useEffect(() => {
+    originalPositions.current = geometry.attributes.position.array.slice() as Float32Array;
+    baseNormals.current = geometry.attributes.normal.array.slice() as Float32Array;
+  }, [geometry]);
+
+  const easedPointer = useRef({ x: 0, y: 0, active: false });
+  const targetPointer = useRef({ x: 0, y: 0, active: false });
+  const pressPulse = useRef({ t: -1, origin: new THREE.Vector3() });
+  const focusPulse = useRef(0);
+  const focusLatch = useRef(false);
+
+  useEffect(() => {
+    if (focused && !focusLatch.current) {
+      focusPulse.current = 1;
+      focusLatch.current = true;
+    } else if (!focused) {
+      focusLatch.current = false;
+    }
+  }, [focused]);
+
+  // Keyboard/assistive press: ripple from the surface crown.
+  useEffect(() => {
+    if (pulseSignal > 0 && interactive && !reducedMotion) {
+      pressPulse.current = { t: 0, origin: new THREE.Vector3(0, 0, radius) };
+      onInteractionChange?.("press");
+    }
+  }, [pulseSignal, interactive, reducedMotion, radius, onInteractionChange]);
+
+  const surfaceToLocal = useCallback((event: ThreeEvent<PointerEvent>) => {
+    const point = event.point.clone();
+    if (meshRef.current) meshRef.current.worldToLocal(point);
+    return point;
+  }, []);
+
+  const setPointerFromEvent = useCallback((event: ThreeEvent<PointerEvent>, active: boolean) => {
+    const x = (event.uv?.x ?? 0.5) * 2 - 1;
+    const y = (event.uv?.y ?? 0.5) * 2 - 1;
+    targetPointer.current.x = x;
+    targetPointer.current.y = y;
+    targetPointer.current.active = active;
+  }, []);
+
+  const handlePointerOver = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      if (!interactive || reducedMotion) return;
+      setPointerFromEvent(e, true);
+      onInteractionChange?.(focused ? "focus" : "hover");
+    },
+    [setPointerFromEvent, interactive, reducedMotion, focused, onInteractionChange]
   );
 
-  useEffect(() => {
-    uniforms.uIsDark.value = isDark ? 1.0 : 0.0;
-  }, [isDark, uniforms]);
+  const handlePointerMove = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      if (!interactive || reducedMotion) return;
+      setPointerFromEvent(e, true);
+    },
+    [setPointerFromEvent, interactive, reducedMotion]
+  );
 
-  useEffect(() => {
-    uniforms.uIntensity.value = Math.max(0, intensity);
-  }, [intensity, uniforms]);
+  const handlePointerOut = useCallback(() => {
+    targetPointer.current.active = false;
+    onInteractionChange?.(focused ? "focus" : "idle");
+  }, [focused, onInteractionChange]);
 
-  useEffect(() => {
-    uniforms.uSpeed.value = Math.max(0, speed);
-  }, [speed, uniforms]);
+  const handlePointerDown = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      if (!interactive || reducedMotion) return;
+      pressPulse.current = { t: 0, origin: surfaceToLocal(e) };
+      onInteractionChange?.("press");
+    },
+    [surfaceToLocal, interactive, reducedMotion, onInteractionChange]
+  );
 
-  useEffect(() => {
-    focusRef.current = isFocused ? 1.0 : 0.0;
-  }, [isFocused]);
+  const handlePointerUp = useCallback(() => {
+    onInteractionChange?.(targetPointer.current.active ? (focused ? "focus" : "hover") : focused ? "focus" : "idle");
+  }, [focused, onInteractionChange]);
 
-  useFrame((_, delta) => {
-    uniforms.uTime.value += delta;
+  useFrame((state, deltaRaw) => {
+    if (!meshRef.current || !originalPositions.current || !baseNormals.current) return;
+    const delta = Math.min(deltaRaw, 1 / 30);
 
-    // Smooth inertia for pointer
-    pointerRef.current.x += (pointerRef.current.targetX - pointerRef.current.x) * 0.08;
-    pointerRef.current.y += (pointerRef.current.targetY - pointerRef.current.y) * 0.08;
-    uniforms.uPointer.value.set(pointerRef.current.x, pointerRef.current.y);
+    easedPointer.current.x = ease(
+      easedPointer.current.x,
+      targetPointer.current.active ? targetPointer.current.x : 0,
+      6,
+      delta
+    );
+    easedPointer.current.y = ease(
+      easedPointer.current.y,
+      targetPointer.current.active ? targetPointer.current.y : 0,
+      6,
+      delta
+    );
+    easedPointer.current.active = targetPointer.current.active;
 
-    // Eased hover transition
-    uniforms.uHover.value += (hoverRef.current - uniforms.uHover.value) * 0.1;
+    if (pressPulse.current.t >= 0) {
+      pressPulse.current.t += delta;
+      if (pressPulse.current.t > 0.9) pressPulse.current.t = -1;
+    }
+    focusPulse.current = Math.max(0, focusPulse.current - delta * 1.4);
+    if (focused) focusPulse.current = Math.max(focusPulse.current, 0.15);
 
-    // Eased focus transition
-    uniforms.uFocus.value += (focusRef.current - uniforms.uFocus.value) * 0.12;
+    const pos = meshRef.current.geometry.attributes.position;
+    const orig = originalPositions.current;
+    const norms = baseNormals.current;
+    const count = pos.count;
+    const time = state.clock.getElapsedTime() * effectiveSpeed;
 
-    // Press decay
-    if (pressRef.current < 1.0) {
-      pressRef.current += delta * 1.5;
-      if (pressRef.current > 1.0) pressRef.current = 1.0;
-      uniforms.uPress.value = pressRef.current;
+    const pointerVector = { x: easedPointer.current.x, y: easedPointer.current.y };
+    const pointerActive = interactive && easedPointer.current.active && !reducedMotion;
+    const pointerInfluence = pointerActive ? 0.045 * intensity : 0;
+
+    const flowT = time * 0.55;
+    const noiseAmount = (0.12 * intensity) * (isMobile ? 0.7 : 1);
+
+    const press = pressPulse.current;
+    const pressActive = press.t >= 0;
+    const pressRadius = pressActive ? Math.pow(Math.min(press.t / 0.5, 1), 0.5) * 1.6 : 0;
+    const pressDepth = pressActive ? Math.sin(press.t / 0.5 * Math.PI) * 0.16 * intensity : 0;
+
+    for (let i = 0; i < count; i++) {
+      const u = i * 3;
+      const ox = orig[u];
+      const oy = orig[u + 1];
+      const oz = orig[u + 2];
+      const nx = norms[u];
+      const ny = norms[u + 1];
+      const nz = norms[u + 2];
+
+      const len = Math.hypot(ox, oy, oz) || 1;
+      const sx = ox / len;
+      const sy = oy / len;
+      const sz = oz / len;
+
+      const f1 =
+        Math.sin(sx * 2.3 + flowT) *
+        Math.cos(sy * 2.2 + flowT * 0.7) *
+        Math.sin(sz * 2.4 + flowT * 1.1);
+      const f2 = Math.sin(sx * 4.1 + flowT * 1.6) * Math.cos(sy * 3.9 - flowT * 0.5) * 0.5;
+      const flowNoise = (f1 + f2 * 0.35) * noiseAmount;
+
+      let pointerNudge = 0;
+      if (pointerActive) {
+        const theta = Math.atan2(sy, sx);
+        const phi = Math.acos(sz);
+        const surfaceU = (theta + Math.PI) / (2 * Math.PI);
+        const surfaceV = phi / Math.PI;
+        const localX = surfaceU * 2 - 1;
+        const localY = 1 - surfaceV * 2;
+        const dx = localX - pointerVector.x;
+        const dy = localY - pointerVector.y;
+        const dist = Math.hypot(dx, dy);
+        const falloff = Math.max(0, 1 - dist / 0.6);
+        pointerNudge = falloff * falloff * pointerInfluence;
+      }
+
+      let pressNudge = 0;
+      if (pressActive) {
+        const dp = Math.hypot(ox - press.origin.x, oy - press.origin.y, oz - press.origin.z);
+        const ring = Math.abs(dp - pressRadius);
+        const envelope = Math.max(0, 1 - ring / 0.35);
+        pressNudge = -envelope * pressDepth;
+      }
+
+      const focusNudge = focusPulse.current * 0.02 * Math.sin((sx + 1) * 8 + time * 4);
+      const total = flowNoise + pointerNudge + pressNudge + focusNudge;
+
+      pos.setXYZ(i, ox + nx * total, oy + ny * total, oz + nz * total);
+    }
+    pos.needsUpdate = true;
+    geometry.computeVertexNormals();
+
+    if (groupRef.current) {
+      const rotAmt = pointerActive ? 0.35 : 0.18;
+      groupRef.current.rotation.y = ease(
+        groupRef.current.rotation.y,
+        easedPointer.current.x * rotAmt + state.clock.getElapsedTime() * 0.06 * effectiveSpeed,
+        4,
+        delta
+      );
+      groupRef.current.rotation.x = ease(
+        groupRef.current.rotation.x,
+        -easedPointer.current.y * rotAmt * 0.6 + Math.sin(state.clock.getElapsedTime() * 0.12) * 0.12,
+        4,
+        delta
+      );
+    }
+
+    const mat = meshRef.current.material as THREE.MeshStandardMaterial;
+    if (mat) {
+      const baseEmissive = isDark ? 0.32 : 0.12;
+      const hoverBoost = pointerActive ? 0.16 : 0;
+      const pressBoost = pressActive ? 0.12 : 0;
+      const focusBoost = focusPulse.current * 0.18;
+      mat.emissiveIntensity = baseEmissive + hoverBoost + pressBoost + focusBoost;
+      mat.roughness = ease(mat.roughness, isDark ? 0.2 : 0.26, 3, delta);
     }
   });
 
-  const handlePointerMove = (e: any) => {
-    if (!interactive) return;
-    if (e.uv) {
-      pointerRef.current.targetX = e.uv.x;
-      pointerRef.current.targetY = e.uv.y;
-    }
-    hoverRef.current = 1.0;
-  };
-
-  const handlePointerLeave = () => {
-    hoverRef.current = 0.0;
-  };
-
-  const handlePointerDown = () => {
-    if (!interactive) return;
-    pressRef.current = 0.0;
-    uniforms.uPress.value = 0.0;
-    onPress?.();
-  };
+  const emissiveHex = isDark ? 0x064e3b : 0x10b981;
 
   return (
-    <mesh
-      ref={meshRef}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
-      onPointerDown={handlePointerDown}
-      position={[0, 0, 0]}
-    >
-      <planeGeometry args={[4.2, 4.2, 72, 72]} />
-      <shaderMaterial
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        uniforms={uniforms}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
+    <group ref={groupRef}>
+      <mesh
+        ref={meshRef}
+        geometry={geometry}
+        castShadow
+        receiveShadow
+        onPointerOver={handlePointerOver}
+        onPointerMove={handlePointerMove}
+        onPointerOut={handlePointerOut}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerOut}
+      >
+        <meshStandardMaterial
+          color={baseColor}
+          metalness={isDark ? 0.94 : 0.86}
+          roughness={isDark ? 0.2 : 0.26}
+          emissive={emissiveHex}
+          emissiveIntensity={isDark ? 0.32 : 0.12}
+          envMapIntensity={isDark ? 1.1 : 0.9}
+          flatShading={false}
+        />
+      </mesh>
+      {focused && (
+        <mesh>
+          <icosahedronGeometry args={[radius * 1.06, 2]} />
+          <meshBasicMaterial color={primaryColor} transparent opacity={0.4} wireframe />
+        </mesh>
+      )}
+    </group>
   );
 }
 
-export interface CampusLiquidMetalProps {
+interface CampusLiquidMetalProps extends CampusLiquidMetalCoreProps {
   className?: string;
-  interactive?: boolean;
-  /** Displacement amplitude multiplier. Higher = more molten motion. */
-  intensity?: number;
-  /** Animation speed multiplier. `1` is the authored base speed. */
-  speed?: number;
-  onPress?: () => void;
+  style?: React.CSSProperties;
+  fallback?: ReactNode;
+  sceneName?: string;
+  cameraFov?: number;
+  /** Accessible name for the surface when interactive. */
   label?: string;
-  badge?: string;
-  statusText?: string;
+  /** Fired on press (pointer or keyboard). */
+  onPress?: () => void;
 }
 
 export function CampusLiquidMetal({
   className,
+  style,
+  radius,
+  detail,
+  intensity = 1.0,
+  speed = 1.0,
   interactive = true,
-  intensity = 1,
-  speed = 1,
+  focused,
+  pulseSignal,
+  onInteractionChange,
+  fallback,
+  sceneName = "CampusOS Liquid Surface",
+  cameraFov = 50,
+  label = "CampusOS liquid metal surface. Press Enter to pulse.",
   onPress,
-  label = "CampusOS Liquid Material",
-  badge = "Spatial Material Tier 1",
-  statusText = "Active Surface",
 }: CampusLiquidMetalProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const [pulse, setPulse] = useState(0);
+  const showFocused = focused ?? isFocused;
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!interactive) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setPulse((p) => p + 1);
+      onPress?.();
+    }
+  };
 
   return (
     <div
-      tabIndex={interactive ? 0 : -1}
-      role={interactive ? "button" : undefined}
-      aria-label={label}
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onPress?.();
-        }
-      }}
       className={cn(
-        "group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-border/80 bg-card/40 transition-all duration-300",
-        interactive && "cursor-pointer hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "relative",
+        interactive &&
+          "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         className
       )}
+      style={style}
+      tabIndex={interactive ? 0 : undefined}
+      role={interactive ? "button" : undefined}
+      aria-label={interactive ? label : undefined}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+      onKeyDown={handleKeyDown}
     >
-      {/* 3D WebGL Canvas Layer */}
-      <div className="absolute inset-0">
-        <ImmersiveCanvas
-          camera={{ position: [0, 0, 3], fov: 50 }}
-          sceneName="CampusOS Liquid Metal"
-          fallback={
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-card via-background to-muted/30 p-6">
-              <div className="size-32 rounded-full bg-gradient-to-tr from-primary/30 to-emerald-400/20 blur-xl" />
+      <ImmersiveCanvas
+        sceneName={sceneName}
+        camera={{ position: [0, 0, 4], fov: cameraFov, near: 0.1, far: 100 }}
+        fallback={
+          fallback ?? (
+            <div className="flex h-full w-full items-center justify-center p-4">
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="flex size-9 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+                  <Sparkles className="size-4" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-foreground">{sceneName}</p>
+                  <p className="text-[10px] text-muted-foreground">2D accelerated fallback active.</p>
+                </div>
+              </div>
             </div>
-          }
-        >
-          <LiquidMetalMesh
-            interactive={interactive}
-            onPress={onPress}
-            isFocused={isFocused}
-            intensity={intensity}
-            speed={speed}
-          />
-        </ImmersiveCanvas>
-      </div>
-
-      {/* Foreground Accessible Overlay */}
-      <div className="relative z-10 flex items-start justify-between p-5 pointer-events-none">
-        <div>
-          <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider text-primary">
-            {badge}
-          </span>
-          <p className="mt-2 text-sm font-bold text-foreground drop-shadow-xs">{label}</p>
-        </div>
-        <div className="flex items-center gap-1.5 rounded-full border border-border/70 bg-background/70 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground backdrop-blur-md">
-          <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>{statusText}</span>
-        </div>
-      </div>
-
-      <div className="relative z-10 flex items-center justify-between border-t border-border/40 bg-background/30 p-3.5 backdrop-blur-sm pointer-events-none">
-        <span className="text-[11px] text-muted-foreground">
-          {interactive ? "Tap or drag to deform material" : "Ambient State"}
-        </span>
-        <span className="text-[10px] font-mono text-muted-foreground/80">WebGL2 · Progressive Mesh</span>
-      </div>
+          )
+        }
+      >
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[5, 8, 5]} intensity={1.1} />
+        <pointLight position={[-3, -2, -4]} intensity={0.9} color={BASE_PRIMARY_DARK} />
+        <CampusLiquidMetalCore
+          radius={radius}
+          detail={detail}
+          intensity={intensity}
+          speed={speed}
+          interactive={interactive}
+          focused={showFocused}
+          pulseSignal={pulseSignal ?? pulse}
+          onInteractionChange={onInteractionChange}
+        />
+      </ImmersiveCanvas>
     </div>
   );
 }
+
+export default CampusLiquidMetal;

@@ -78,7 +78,7 @@ export default function AcademicPreview({ nextClass }: AcademicPreviewProps) {
 
             {/* Exam Prep */}
             <div className="data-surface rounded-2xl p-4 flex items-start gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400">
                 <GraduationCap className="size-4" />
               </div>
               <div>
