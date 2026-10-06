@@ -12,7 +12,7 @@ export function PageIntro({
   action?: ReactNode;
 }) {
   return (
-    <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <header className="page-intro flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div className="max-w-2xl space-y-2">
         {kicker ? (
           <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">{kicker}</p>

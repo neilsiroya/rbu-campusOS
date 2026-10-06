@@ -1,6 +1,7 @@
 "use client";
+import { useSessionItems } from "@/lib/session-store";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 
-import { useState } from "react";
 import { ASSIGNMENTS } from "@/lib/campus-data";
 import { DemoNotice } from "@/components/os/DemoNotice";
 import { EmptyState } from "@/components/os/EmptyState";
@@ -9,13 +10,13 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function AssignmentsPage() {
-  const [done, setDone] = useState<string[]>([]);
-  const allDone = done.length >= ASSIGNMENTS.length;
+  const { items: done, update: setDone, storageError } = useSessionItems<string>("campusos.assignments.saved", []);
+  const allDone = ASSIGNMENTS.every((assignment) => done.includes(assignment.id));
 
   return (
     <div className="space-y-6 stagger-in">
       <PageIntro kicker="Academics" title="Assignments" description="A personal checklist. Completing a row only updates this browser session." />
-      <DemoNotice />
+      <DemoNotice /><SessionStorageNotice message={storageError} />
       {allDone ? (
         <EmptyState
           title="Your academic runway is clear."
@@ -32,6 +33,7 @@ export default function AssignmentsPage() {
             <Button
               variant="outline"
               className="min-h-11 rounded-full px-5"
+              aria-pressed={done.includes(a.id)}
               onClick={() => setDone((ids) => (ids.includes(a.id) ? ids.filter((id) => id !== a.id) : [...ids, a.id]))}
             >
               {done.includes(a.id) ? "Marked done (session)" : "Mark done"}

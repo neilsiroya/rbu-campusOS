@@ -21,7 +21,7 @@ const kinds = ["All", "Academic", "Lab", "Facility", "Service", "Social"] as con
 export default function CampusMapPage() {
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<(typeof kinds)[number]>("All");
-  const [selected, setSelected] = useState<MapPlace | null>(MAP_PLACES[0]);
+  const [selectedId, setSelectedId] = useState(MAP_PLACES[0].id);
 
   const places = useMemo(
     () =>
@@ -32,6 +32,7 @@ export default function CampusMapPage() {
       ),
     [kind, query]
   );
+  const selected: MapPlace | null = places.find((place) => place.id === selectedId) ?? places[0] ?? null;
 
   // Cross-reference facilities for richer context
   const matchedFacility = useMemo(() => {
@@ -46,13 +47,13 @@ export default function CampusMapPage() {
   return (
     <div className="space-y-6 stagger-in">
       <PageIntro
-        kicker="Spatial Wayfinding"
+        kicker="Around campus"
         title="Campus Map"
-        description="A 3D spatial schematic for campus orientation, facility nodes, and laboratory wayfinding."
+        description="Find a building, explore the campus model, and check the facilities directory."
       />
 
       <DemoNotice>
-        Spatial coordinates and facility statuses represent current academic session geometry.
+        This is a sample campus model, not a surveyed map. Locations and opening hours are illustrative; confirm details with the university.
       </DemoNotice>
 
       {/* Filter and Search Bar */}
@@ -63,6 +64,7 @@ export default function CampusMapPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search buildings, labs, hubs…"
+            aria-label="Search campus places"
             className="pl-9 bg-background/50 rounded-xl"
           />
         </div>
@@ -75,6 +77,7 @@ export default function CampusMapPage() {
               size="sm"
               className="min-h-11 shrink-0 rounded-full px-4 text-xs"
               onClick={() => setKind(item)}
+              aria-pressed={kind === item}
             >
               {item}
             </Button>
@@ -88,8 +91,8 @@ export default function CampusMapPage() {
         <div className="min-w-0">
           <SpatialCampusMap
             selectedPlace={selected}
-            onSelectPlace={(place) => setSelected(place)}
-            filteredKind={kind}
+            onSelectPlace={(place) => setSelectedId(place.id)}
+            places={places}
           />
         </div>
 
@@ -102,7 +105,7 @@ export default function CampusMapPage() {
               </span>
               {selected && (
                 <span className="text-[10px] text-muted-foreground font-mono">
-                  Coordinates: {selected.x}°, {selected.y}°
+                  Sample location
                 </span>
               )}
             </div>
@@ -135,16 +138,18 @@ export default function CampusMapPage() {
             {/* Quick Directory List */}
             <div className="pt-2">
               <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                All Buildings ({places.length})
+                Matching places ({places.length})
               </p>
               <div className="max-h-48 space-y-1.5 overflow-y-auto pr-1 custom-scrollbar">
+                {places.length === 0 && <p role="status" className="py-4 text-sm text-muted-foreground">No places match. Try another name or category.</p>}
                 {places.map((place) => {
                   const isCur = selected?.id === place.id;
                   return (
                     <button
                       key={place.id}
                       type="button"
-                      onClick={() => setSelected(place)}
+                      onClick={() => setSelectedId(place.id)}
+                      aria-pressed={isCur}
                       className={cn(
                         "w-full flex min-h-11 items-center justify-between rounded-xl px-3 py-2.5 text-left text-xs transition-all",
                         isCur

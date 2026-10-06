@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useRef, useState, useMemo } from "react";
-import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
-import { OrbitControls, Html } from "@react-three/drei";
+import React, { useRef, useState } from "react";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import { OrbitControls } from "@react-three/drei";
 import { useTheme } from "next-themes";
 import { ImmersiveCanvas } from "@/components/webgl/ImmersiveCanvas";
-import { MAP_PLACES, type MapPlace } from "@/lib/campus-data";
+import { type MapPlace } from "@/lib/campus-data";
 import { Navigation, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -36,16 +35,9 @@ function BuildingMesh({
   onSelect: () => void;
   isDark: boolean;
 }) {
-  const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   const config = BUILDING_COORDS[place.id] || { x: 0, z: 0, width: 2, depth: 2, height: 1.2 };
-
-  useFrame((_, delta) => {
-    if (!meshRef.current) return;
-    const targetScale = isSelected ? 1.08 : hovered ? 1.04 : 1.0;
-    meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), delta * 8);
-  });
 
   const getCategoryColor = () => {
     switch (place.kind) {
@@ -70,7 +62,7 @@ function BuildingMesh({
     <group position={[config.x, config.height / 2, config.z]}>
       {/* Building Physical Mass */}
       <mesh
-        ref={meshRef}
+        scale={isSelected ? 1.04 : 1}
         onClick={(e) => {
           e.stopPropagation();
           onSelect();
@@ -113,18 +105,6 @@ function BuildingMesh({
         />
       </mesh>
 
-      {/* 3D Floating Tag Marker */}
-      {(hovered || isSelected) && (
-        <Html position={[0, config.height + 0.5, 0]} center distanceFactor={14}>
-          <div className="pointer-events-none flex flex-col items-center">
-            <div className="whitespace-nowrap rounded-xl border border-border/80 bg-background/90 px-3 py-1.5 shadow-xl backdrop-blur-md">
-              <p className="text-xs font-bold text-foreground">{place.name}</p>
-              <p className="text-[10px] text-muted-foreground">{place.kind}</p>
-            </div>
-            <div className="size-2 -rotate-45 border-b border-r border-border/80 bg-background/90 -mt-1" />
-          </div>
-        </Html>
-      )}
     </group>
   );
 }
@@ -166,17 +146,17 @@ function GroundTerrain({ isDark }: { isDark: boolean }) {
 export interface SpatialCampusMapProps {
   selectedPlace: MapPlace | null;
   onSelectPlace: (place: MapPlace) => void;
-  filteredKind: string;
+  places: MapPlace[];
 }
 
 export function SpatialCampusMap({
   selectedPlace,
   onSelectPlace,
-  filteredKind,
+  places,
 }: SpatialCampusMapProps) {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
-  const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<OrbitControlsImpl>(null);
 
   const resetCamera = () => {
     if (controlsRef.current) {
@@ -184,22 +164,17 @@ export function SpatialCampusMap({
     }
   };
 
-  const visiblePlaces = useMemo(() => {
-    return MAP_PLACES.filter(
-      (p) => filteredKind === "All" || p.kind === filteredKind
-    );
-  }, [filteredKind]);
-
   return (
     <div className="relative h-full min-h-[460px] w-full overflow-hidden rounded-3xl border border-border/80 bg-card/40 shadow-sm">
       {/* 3D WebGL Canvas */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none sm:pointer-events-auto" aria-hidden="true">
         <ImmersiveCanvas
           camera={{ position: [0, 9, 11], fov: 42 }}
           sceneName="RBU 3D Spatial Campus Map"
+          demand
           fallback={
             <div className="flex h-full w-full items-center justify-center p-8 text-center">
-              <p className="text-sm font-semibold text-foreground">Spatial 3D Map Fallback</p>
+              <p className="text-sm text-foreground">The campus model is unavailable on this device. Use the places list to explore every location.</p>
             </div>
           }
         >
@@ -214,7 +189,7 @@ export function SpatialCampusMap({
 
           <GroundTerrain isDark={isDark} />
 
-          {visiblePlaces.map((place) => (
+          {places.map((place) => (
             <BuildingMesh
               key={place.id}
               place={place}
@@ -227,6 +202,7 @@ export function SpatialCampusMap({
           <OrbitControls
             ref={controlsRef}
             enableDamping
+            enableZoom={false}
             dampingFactor={0.08}
             minDistance={6}
             maxDistance={18}
@@ -241,7 +217,7 @@ export function SpatialCampusMap({
       <div className="pointer-events-none relative z-10 flex items-center justify-between p-4">
         <div className="pointer-events-auto flex items-center gap-2 rounded-2xl border border-border/80 bg-background/80 px-3 py-1.5 shadow-md backdrop-blur-md">
           <Navigation className="size-4 text-primary" />
-          <span className="text-xs font-bold text-foreground">Spatial Campus View</span>
+          <span className="text-xs font-bold text-foreground">Campus model</span>
           <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-mono font-semibold text-primary">
             3D Orbit
           </span>
@@ -254,6 +230,7 @@ export function SpatialCampusMap({
             onClick={resetCamera}
             className="h-8 gap-1.5 rounded-xl border border-border/80 bg-background/80 px-2.5 text-xs backdrop-blur-md hover:bg-muted"
             title="Reset Map Orientation"
+            aria-label="Reset map orientation"
           >
             <RotateCcw className="size-3.5" />
             <span className="hidden sm:inline">Reset Camera</span>
@@ -262,12 +239,14 @@ export function SpatialCampusMap({
       </div>
 
       {/* Bottom Spatial Interaction Hint */}
+      {selectedPlace && <p className="pointer-events-none absolute bottom-14 left-4 z-10 rounded-lg border border-border bg-background px-3 py-2 text-xs font-semibold">{selectedPlace.name}</p>}
       <div className="pointer-events-none absolute bottom-3 left-4 right-4 z-10 flex items-center justify-between text-[11px] text-muted-foreground">
         <span className="rounded-full border border-border/60 bg-background/70 px-2.5 py-1 backdrop-blur-md">
-          Click any building to inspect &bull; Drag to orbit &bull; Scroll to zoom
+          <span className="hidden sm:inline">Select a building &bull; Drag to look around</span>
+          <span className="sm:hidden">Choose a place from the list below</span>
         </span>
         <span className="hidden sm:inline-block rounded-full border border-border/60 bg-background/70 px-2.5 py-1 font-mono text-[10px] backdrop-blur-md">
-          RBU Main Quad &bull; 11 Key Hubs
+          {places.length} sample locations
         </span>
       </div>
     </div>

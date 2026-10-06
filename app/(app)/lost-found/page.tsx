@@ -17,7 +17,7 @@ export default function LostFoundPage() {
   const [q, setQ] = useState("");
   const [form, setForm] = useState({ kind: "lost" as "lost" | "found", title: "", location: "", category: "Other" as LostFoundItem["category"], description: "" });
   const [note, setNote] = useState("");
-  const [contacted, setContacted] = useState<string[]>([]);
+  const { items: contacted, update: setContacted, storageError: savedError } = useSessionItems<string>("campusos.lostfound.saved", []);
 
   const list = useMemo(
     () =>
@@ -34,15 +34,15 @@ export default function LostFoundPage() {
       <PageIntro
         kicker="Community"
         title="Lost & Found"
-        description="Listings with a place, a date, and a way to reclaim — without pretending the desk is staffed by a server."
+        description="Browse lost and found items, or add details to help classmates find their belongings."
       />
       <DemoNotice />
-      <SessionStorageNotice message={storageError} />
+      <SessionStorageNotice message={storageError || savedError} />
 
       <section className="glass rounded-3xl p-5">
         <p className="text-body font-medium">New listing</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 stagger-in">
-          <select
+          <select aria-label="Lost or found"
             className="h-9 rounded-lg border border-input bg-background px-2 text-sm"
             value={form.kind}
             onChange={(e) => setForm({ ...form, kind: e.target.value as "lost" | "found" })}
@@ -50,7 +50,7 @@ export default function LostFoundPage() {
             <option value="lost">Lost</option>
             <option value="found">Found</option>
           </select>
-          <select
+          <select aria-label="Item category"
             className="h-9 rounded-lg border border-input bg-background px-2 text-sm"
             value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value as LostFoundItem["category"] })}
@@ -59,9 +59,9 @@ export default function LostFoundPage() {
               <option key={c}>{c}</option>
             ))}
           </select>
-          <Input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-          <Input placeholder="Last seen / found at" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
-          <textarea
+          <Input aria-label="Title" placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+          <Input aria-label="Last seen / found at" placeholder="Last seen / found at" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
+          <textarea aria-label="Description"
             className="min-h-20 rounded-xl border border-input bg-background p-2 text-sm sm:col-span-2"
             placeholder="Description"
             value={form.description}
@@ -73,7 +73,7 @@ export default function LostFoundPage() {
           <Button
             className="rounded-full"
             onClick={() => {
-              if (!form.title.trim() || !form.location.trim()) return;
+              if (!form.title.trim() || !form.location.trim()) { setNote("Add an item title and location before listing it."); return; }
               prepend({
                 id: crypto.randomUUID(),
                 kind: form.kind,
@@ -92,12 +92,12 @@ export default function LostFoundPage() {
             List item
           </Button>
         </div>
-        {note ? <p className="mt-2 text-caption text-muted-foreground">{note}</p> : null}
+        {note ? <p role="status" className="mt-2 text-caption text-muted-foreground">{note}</p> : null}
       </section>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center stagger-in">
         <FilterChips value={kind} onChange={setKind} options={["All", "lost", "found"]} />
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search listings" className="sm:max-w-xs" />
+        <Input aria-label="Search lost and found listings" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search listings" className="sm:max-w-xs" />
       </div>
 
       {list.length === 0 ? (
@@ -122,11 +122,11 @@ export default function LostFoundPage() {
                   variant="outline"
                   className="mt-4 rounded-full"
                   onClick={() => {
-                    setContacted((ids) => [...ids, item.id]);
-                    setNote("Contact/reclaim is a UI action only. No message was sent.");
+                    setContacted((ids) => [...new Set([...ids, item.id])]);
+                    setNote("Item saved for this browser session. No message was sent.");
                   }}
                 >
-                  {contacted.includes(item.id) ? "Noted (this session)" : "Contact / reclaim"}
+                  {contacted.includes(item.id) ? "Item saved" : "Save item"}
                 </Button>
               </div>
             </article>

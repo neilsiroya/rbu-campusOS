@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@base-ui/react/dialog";
-import { Search, X, Sparkles, Clock } from "lucide-react";
+import { Search, X, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -92,48 +92,31 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [recent, setRecent] = useState<RecentAction[]>(() => loadRecent());
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const { setMode, triggerSpatialReset } = useOSStore();
+  const { setMode } = useOSStore();
 
   const COMMAND_ITEMS: Hit[] = useMemo(
     () => [
       {
-        id: "cmd-immersive",
-        label: "Enter Immersive Mode (3D Spatial Theater)",
-        href: "#",
-        hint: "Spatial WebGL Engine",
-        category: "Command",
-        action: () => setMode("immersive"),
-      },
-      {
         id: "cmd-focus",
-        label: "Enable Focus Mode (Study Runway)",
+        label: "Focus on academics",
         href: "#",
         hint: "Distraction-free",
         category: "Command",
-        action: () => setMode("focus"),
+        action: () => { setMode("focus"); router.push("/dashboard"); },
       },
       {
         id: "cmd-normal",
-        label: "Standard OS Mode",
+        label: "Show full dashboard",
         href: "#",
         hint: "Reset Mode",
         category: "Command",
-        action: () => setMode("normal"),
-      },
-      {
-        id: "cmd-reset-spatial",
-        label: "Reset Spatial 3D Camera",
-        href: "#",
-        hint: "Campus Viewport",
-        category: "Command",
-        action: () => triggerSpatialReset(),
+        action: () => { setMode("normal"); router.push("/dashboard"); },
       },
     ],
-    [setMode, triggerSpatialReset]
+    [router, setMode]
   );
 
   const SEARCH_INDEX: Hit[] = useMemo(() => {
@@ -214,16 +197,6 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
     ).slice(0, 14);
   }, [normalizedQuery, SEARCH_INDEX]);
 
-  useEffect(() => {
-    if (!normalizedQuery) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    const id = window.setTimeout(() => setLoading(false), 120);
-    return () => window.clearTimeout(id);
-  }, [normalizedQuery]);
-
   const { groupedHits, flatHits } = useMemo(() => {
     const emptyQuery = !normalizedQuery;
     const source = emptyQuery
@@ -247,7 +220,7 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
       : filtered;
 
     const groups = new Map<Hit["category"], Hit[]>();
-    for (const hit of source) {
+    for (const hit of new Map(source.map((hit) => [hit.label, hit])).values()) {
       if (!groups.has(hit.category)) groups.set(hit.category, []);
       groups.get(hit.category)!.push(hit);
     }
@@ -266,15 +239,10 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
     return { groupedHits: grouped, flatHits: flat };
   }, [normalizedQuery, filtered, COMMAND_ITEMS, SEARCH_INDEX, recent]);
 
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [query, open]);
-
   const close = useCallback(() => {
     setOpen(false);
     setQuery("");
     setActiveIndex(0);
-    setLoading(false);
     onClose?.();
   }, [onClose]);
 
@@ -306,6 +274,8 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        setQuery("");
+        setActiveIndex(0);
         setOpen((prev) => !prev);
       }
     };
@@ -413,8 +383,7 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
         if (!nextOpen) {
           setQuery("");
           setActiveIndex(0);
-          setLoading(false);
-        }
+              }
         setOpen(nextOpen);
       }}
     >
@@ -423,10 +392,10 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="size-9 rounded-xl border border-border/60 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Open Omnisearch (Cmd+K)"
+            className="size-11 sm:w-auto sm:gap-3 sm:px-3 rounded-lg border border-border hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Search campus (Control or Command K)"
           >
-            <Search className="size-4" />
+            <Search className="size-4" /><span className="hidden sm:inline text-muted-foreground text-xs">Search campus</span><kbd className="hidden lg:inline text-[10px] text-muted-foreground">Ctrl K</kbd>
           </Button>
         }
       />
@@ -436,18 +405,21 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
             <>
               <Dialog.Backdrop className="fixed inset-0 min-h-dvh bg-black/60 backdrop-blur-md z-40 animate-in fade-in-0 duration-150" />
               <Dialog.Popup className="glass-command fixed top-1/2 left-1/2 z-50 w-[min(94vw,34rem)] max-h-[82dvh] -translate-x-1/2 -translate-y-1/2 flex flex-col overflow-hidden rounded-3xl border border-border/80 bg-card/95 text-foreground shadow-2xl backdrop-blur-2xl">
+                <Dialog.Title className="sr-only">Search campus</Dialog.Title>
+                <Dialog.Description className="sr-only">Search pages, campus places, people and resources.</Dialog.Description>
                 <motion.div
                   initial={{ opacity: 0, y: 12, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.98 }}
                   transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex h-full flex-col"
+                  className="flex min-h-0 flex-1 flex-col"
                 >
                   <div className="flex shrink-0 items-center gap-3 border-b border-border/80 px-4 py-3 bg-muted/20">
                     <Search className="size-4 text-muted-foreground" aria-hidden="true" />
                     <input
                       ref={inputRef}
                       type="search"
+                      aria-label="Search campus"
                       role="combobox"
                       aria-expanded={flatHits.length > 0}
                       aria-controls="campus-search-results"
@@ -489,17 +461,7 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                     aria-label="Search results"
                     className="custom-scrollbar min-h-0 overflow-y-auto p-2"
                   >
-                    {loading && (
-                      <div className="space-y-2 px-2 py-3">
-                        {[0, 1, 2].map((i) => (
-                          <div
-                            key={i}
-                            className="loading-preserve h-11 w-full rounded-2xl bg-muted/60"
-                          />
-                        ))}
-                      </div>
-                    )}
-                    {!loading && flatHits.length === 0 ? (
+                    {flatHits.length === 0 ? (
                       <div
                         role="none"
                         className="px-4 py-8 text-center"
@@ -511,18 +473,14 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                           Nothing found for &quot;{query}&quot;
                         </p>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          Try &quot;immersive&quot;, &quot;focus&quot;, &quot;lab-4&quot;, or
+                          Try &quot;focus&quot;, &quot;lab-4&quot;, or
                           &quot;notes&quot;.
                         </p>
                       </div>
                     ) : (
-                      !loading &&
                       groupedHits.map((group) => (
                         <div key={group.category} className="mt-1 first:mt-0">
                           <h3 className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground flex items-center gap-1.5">
-                            {group.category === "Command" && !normalizedQuery && recent.length > 0 ? (
-                              <Clock className="size-3 opacity-70" aria-hidden="true" />
-                            ) : null}
                             {group.category === "Command" && !normalizedQuery
                               ? "Commands"
                               : group.category}
@@ -539,6 +497,7 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                                     data-cmd-id={hit.id}
                                     type="button"
                                     role="option"
+                                    tabIndex={-1}
                                     aria-selected={isActive}
                                     onClick={() => executeHit(hit)}
                                     onMouseEnter={() => setActiveIndex(idx)}
@@ -573,34 +532,6 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                         </div>
                       ))
                     )}
-                    {!loading && !normalizedQuery && recent.length > 0 ? (
-                      <div className="mt-3 border-t border-border/60 pt-2">
-                        <h3 className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground flex items-center gap-1.5">
-                          <Clock className="size-3 opacity-70" aria-hidden="true" />
-                          Recent
-                        </h3>
-                        <ul className="space-y-1">
-                          {recent.map((r) => {
-                            const hit = SEARCH_INDEX.find((h) => h.label === r.label);
-                            if (!hit) return null;
-                            return (
-                              <li role="none" key={`rec-${r.id}`}>
-                                <button
-                                  type="button"
-                                  onClick={() => executeHit(hit)}
-                                  className="flex min-h-10 w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                                >
-                                  <span className="text-sm">{hit.label}</span>
-                                  <span className="text-[10px] font-mono text-muted-foreground/60">
-                                    {hit.category}
-                                  </span>
-                                </button>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    ) : null}
                   </div>
 
                   <div className="flex shrink-0 items-center justify-between border-t border-border/80 bg-muted/20 px-4 py-2.5 text-[11px] text-muted-foreground">

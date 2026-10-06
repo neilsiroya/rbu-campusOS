@@ -71,8 +71,8 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       id="app-sidebar"
       onKeyDown={handleKeyDown}
       className={cn(
-        "fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-border/70 surface-elevated transition-transform duration-300 ease-out lg:relative lg:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        "app-sidebar fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border/70 surface-elevated transition-transform duration-300 ease-out lg:relative lg:translate-x-0",
+        isOpen ? "translate-x-0 visible" : "-translate-x-full invisible lg:visible"
       )}
       aria-label="Main navigation"
     >
@@ -117,12 +117,6 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                       ? "text-primary font-semibold"
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                   )}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      closeMobileMenu();
-                    }
-                  }}
                 >
                   {isActive && (
                     <motion.div

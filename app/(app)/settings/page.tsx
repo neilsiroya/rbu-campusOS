@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { PageIntro } from "@/components/os/PageIntro";
 import { DemoNotice } from "@/components/os/DemoNotice";
 import { Button } from "@/components/ui/button";
+import { useSessionItems } from "@/lib/session-store";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 
 type Preferences = {
   email: boolean;
@@ -19,32 +21,25 @@ const initial: Preferences = {
   visible: true,
   anonymous: true,
 };
+const preferenceSeed = [initial];
+const subscribeMounted = () => () => {};
 
 export default function SettingsPage() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [prefs, setPrefs] = useState<Preferences>(() => {
-    try {
-      const raw = sessionStorage.getItem("campusos.preferences");
-      if (raw) return JSON.parse(raw) as Preferences;
-    } catch {
-      // Ignore storage errors
-    }
-    return initial;
-  });
+  const { theme, setTheme } = useTheme();
+  const mounted = useSyncExternalStore(subscribeMounted, () => true, () => false);
+  const { items, update, storageError } = useSessionItems("campusos.preferences.v2", preferenceSeed);
+  const [draft, setDraft] = useState<Preferences | null>(null);
+  const prefs = draft ?? items[0] ?? initial;
   const [saved, setSaved] = useState(false);
 
   const toggle = (key: keyof Preferences) => {
-    setPrefs((p) => ({ ...p, [key]: !p[key] }));
+    setDraft({ ...prefs, [key]: !prefs[key] });
     setSaved(false);
   };
 
   const save = () => {
-    try {
-      sessionStorage.setItem("campusos.preferences", JSON.stringify(prefs));
-      setSaved(true);
-    } catch {
-      // Ignore
-    }
+    update(() => [prefs]);
+    setSaved(true);
   };
 
   const rows: Array<[keyof Preferences, string, string]> = [
@@ -62,27 +57,31 @@ export default function SettingsPage() {
         description="Personal display and product preferences. These settings stay in this browser session."
       />
       <DemoNotice />
+      <SessionStorageNotice message={storageError} />
 
       <section className="surface rounded-3xl p-6">
         <h2 className="text-h3">Appearance</h2>
         <p className="mt-1 text-body text-muted-foreground">Choose the CampusOS color mode.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button
-            variant={resolvedTheme === "light" ? "default" : "outline"}
+            variant={mounted && theme === "light" ? "default" : "outline"}
+            aria-pressed={mounted && theme === "light"}
             onClick={() => setTheme("light")}
             className="rounded-xl"
           >
             Light
           </Button>
           <Button
-            variant={resolvedTheme === "dark" ? "default" : "outline"}
+            variant={mounted && theme === "dark" ? "default" : "outline"}
+            aria-pressed={mounted && theme === "dark"}
             onClick={() => setTheme("dark")}
             className="rounded-xl"
           >
             Dark
           </Button>
           <Button
-            variant={resolvedTheme === "system" ? "default" : "outline"}
+            variant={mounted && theme === "system" ? "default" : "outline"}
+            aria-pressed={mounted && theme === "system"}
             onClick={() => setTheme("system")}
             className="rounded-xl"
           >
@@ -116,8 +115,8 @@ export default function SettingsPage() {
           <Button className="rounded-full" onClick={save}>
             Save preferences
           </Button>
-          {saved && (
-            <p className="text-body-sm text-muted-foreground">Saved for this browser session.</p>
+          {saved && !storageError && (
+            <p role="status" className="text-body-sm text-muted-foreground">Saved for this browser session.</p>
           )}
         </div>
       </section>

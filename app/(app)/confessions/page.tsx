@@ -47,6 +47,8 @@ export default function ConfessionsPage() {
   const [alias, setAlias] = useState(ALIASES[0]);
   const [composerCategory, setComposerCategory] =
     useState<ConfessionCategory>("Campus");
+  const [replyId, setReplyId] = useState<string | null>(null);
+  const [replyBody, setReplyBody] = useState("");
   const [open, setOpen] = useState(false);
 
   const list = useMemo(
@@ -60,7 +62,7 @@ export default function ConfessionsPage() {
   );
 
   const respond = (id: string) => {
-    const text = window.prompt("Reply anonymously (session only):");
+    const text = replyBody;
     if (!text?.trim()) return;
     update((all) =>
       all.map((c) =>
@@ -80,6 +82,8 @@ export default function ConfessionsPage() {
           : c
       )
     );
+    setReplyBody("");
+    setReplyId(null);
   };
 
   const submitConfession = () => {
@@ -230,6 +234,7 @@ export default function ConfessionsPage() {
           <div className="relative sm:max-w-xs flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
+              aria-label="Search confessions"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search confession text"
@@ -330,7 +335,8 @@ export default function ConfessionsPage() {
                       variant="ghost"
                       size="sm"
                       className="rounded-full text-caption"
-                      onClick={() => respond(c.id)}
+                      aria-expanded={replyId === c.id}
+                      onClick={() => { setReplyId(replyId === c.id ? null : c.id); setReplyBody(""); }}
                     >
                       Reply ({c.replies.length})
                     </Button>
@@ -341,6 +347,7 @@ export default function ConfessionsPage() {
                   </span>
                 </div>
 
+                {replyId === c.id && <form className="mt-4 space-y-3" onSubmit={(event) => { event.preventDefault(); respond(c.id); }}><label htmlFor={`confession-reply-${c.id}`} className="text-sm font-medium">Reply anonymously as Quiet Bench</label><Textarea id={`confession-reply-${c.id}`} autoFocus required value={replyBody} onChange={(event) => setReplyBody(event.target.value)} placeholder="Write a reply…" /><p className="text-xs text-muted-foreground">Your reply stays in this browser session.</p><div className="flex gap-2"><Button type="submit" disabled={!replyBody.trim()}>Post reply</Button><Button type="button" variant="outline" onClick={() => { setReplyId(null); setReplyBody(""); }}>Cancel</Button></div></form>}
                 {c.replies.length > 0 && (
                   <div className="mt-3 space-y-2">
                     {c.replies.map((r) => (

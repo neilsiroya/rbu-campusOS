@@ -1,4 +1,6 @@
 "use client";
+import { useSessionItems } from "@/lib/session-store";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 
 import { useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
@@ -23,7 +25,7 @@ const FILTERS: Array<"All" | CampusEvent["category"]> = [
 export default function EventsPage() {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [interested, setInterested] = useState<string[]>([]);
+  const { items: interested, update: setInterested, storageError } = useSessionItems<string>("campusos.events.saved", []);
   const [note, setNote] = useState("");
 
   const markInterested = (id: string) => {
@@ -43,9 +45,9 @@ export default function EventsPage() {
       <PageIntro
         kicker="Community"
         title="Events"
-        description="The campus week as a discovery hub — technical, cultural, club, workshop, competition."
+        description="Find workshops, competitions, and cultural events around campus."
       />
-      <DemoNotice />
+      <DemoNotice /><SessionStorageNotice message={storageError} />
 
       <SpotlightCard className="overflow-hidden rounded-3xl border-border stagger-in" intensity={0.22}>
         <article className="grid md:grid-cols-2">
@@ -64,7 +66,7 @@ export default function EventsPage() {
             </Button>
           </div>
           <div className="flex flex-col justify-end bg-muted/40 p-8">
-            <p className="font-display text-2xl leading-tight">Not a dashboard card. A week you can walk through.</p>
+            <p className="font-display text-2xl leading-tight">Make room for something beyond the classroom.</p>
             <p className="mt-3 text-sm text-muted-foreground">{SESSION_NOTICE}</p>
           </div>
         </article>

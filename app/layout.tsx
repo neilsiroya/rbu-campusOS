@@ -1,11 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { CampusBackground } from "@/components/CampusBackground";
 import { ToastProvider } from "@/lib/toast-context";
 import { ToastViewport } from "@/components/ui/Toast";
 
-import LiquidCursor from "@/components/CursorSpotlight";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rbu-campus-os.vercel.app"),
@@ -52,8 +50,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body className="min-h-full flex flex-col relative" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <CampusBackground />
-          <LiquidCursor />
           <ToastProvider>
             {children}
             <ToastViewport />

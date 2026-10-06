@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { createClient } from "@/lib/supabase";
+import { getSafeReturnPath } from "@/lib/auth-redirect";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -14,6 +16,13 @@ type FormMessage = {
   text: string;
 };
 
+const subscribeToNavigation = (listener: () => void) => {
+  window.addEventListener("popstate", listener);
+  return () => window.removeEventListener("popstate", listener);
+};
+const getReturnPath = () => getSafeReturnPath(new URLSearchParams(window.location.search).get("from"));
+const getServerReturnPath = () => "/dashboard";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +30,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState<FormMessage | null>(null);
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
+  const returnPath = useSyncExternalStore(subscribeToNavigation, getReturnPath, getServerReturnPath);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,32 +38,20 @@ export default function LoginPage() {
     setMessage(null);
 
     try {
-      const hasRealSupabase = Boolean(
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder")
-      );
-
       const searchParams = new URLSearchParams(window.location.search);
-      const requestedPath = searchParams.get('from');
-      const fromPath = requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/dashboard';
-
-      if (!hasRealSupabase) {
-        // Fallback for preview/demo mode when Supabase is not configured
-        router.replace(fromPath);
-        return;
-      }
+      const fromPath = getSafeReturnPath(searchParams.get("from"));
 
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password,
       });
 
       if (error) throw error;
       router.replace(fromPath);
+      router.refresh();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+      const errorMessage = error instanceof Error ? error.message : "We couldn't sign you in. Please try again.";
       setMessage({ tone: "error", text: errorMessage });
     } finally {
       setLoading(false);
@@ -69,8 +67,9 @@ export default function LoginPage() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8 space-y-2">
-          <h2 className="text-xs font-black uppercase tracking-[0.3em] text-primary">Identity Gateway</h2>
-          <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase">System Login</h1>
+          <Link href="/" className="text-xs font-bold tracking-widest text-primary">CampusOS</Link>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back</h1>
+          <p className="text-sm text-muted-foreground">Sign in to stay connected with campus.</p>
         </div>
 
         <Card className="glass-command border-primary/20 p-8 shadow-2xl">
@@ -93,7 +92,7 @@ export default function LoginPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="login-password" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Access Key</label>
+                <label htmlFor="login-password" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
@@ -124,10 +123,15 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Verifying…" : "Access System"}
+              {loading ? "Signing in…" : "Sign in"}
             </Button>
           </form>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            New to CampusOS?{" "}
+            <Link href={`/auth/signup?from=${encodeURIComponent(returnPath)}`} className="font-semibold text-primary hover:underline">Create an account</Link>
+          </p>
         </Card>
+        <p className="mt-6 text-center text-sm text-muted-foreground"><Link href="/" className="hover:text-primary">Back to home</Link></p>
       </motion.div>
     </div>
   );

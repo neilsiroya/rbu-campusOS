@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getSafeReturnPath } from "./lib/auth-redirect";
 
 const protectedPrefixes = [
   "/dashboard",
@@ -45,48 +46,66 @@ export async function proxy(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseAnonKey) {
+  const loginUrl = () => {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/login";
+    url.search = "";
+    url.searchParams.set("from", `${path}${request.nextUrl.search}`);
+    return url;
+  };
+
+  if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes("placeholder") || supabaseAnonKey.includes("placeholder")) {
     if (isProtectedRoute) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/auth/login";
-      url.searchParams.set("from", `${path}${request.nextUrl.search}`);
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(loginUrl());
     }
 
     return NextResponse.next({ request });
   }
 
   let response = NextResponse.next({ request });
-  const supabase = createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: (cookies) => {
-          cookies.forEach(({ name, value }) => request.cookies.set(name, value));
-          response = NextResponse.next({ request });
-          cookies.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+  const authHeaders: Record<string, string> = {};
+  let user = null;
+  try {
+    const supabase = createServerClient(
+      supabaseUrl,
+      supabaseAnonKey,
+      {
+        cookies: {
+          getAll: () => request.cookies.getAll(),
+          setAll: (cookies, headers = {}) => {
+            cookies.forEach(({ name, value }) => request.cookies.set(name, value));
+            Object.assign(authHeaders, headers);
+            const previousCookies = response.cookies.getAll();
+            response = NextResponse.next({ request });
+            previousCookies.forEach((cookie) => response.cookies.set(cookie));
+            cookies.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+            Object.entries(authHeaders).forEach(([name, value]) => response.headers.set(name, value));
+          },
         },
-      },
-    }
-  );
+      }
+    );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const { data, error } = await supabase.auth.getUser();
+    if (!error) user = data.user;
+  } catch {
+    // An unavailable auth service must not expose protected pages or break login.
+  }
+
+  const redirectWithCookies = (url: URL) => {
+    const redirect = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    redirect.headers.set("Cache-Control", "private, no-store");
+    Object.entries(authHeaders).forEach(([name, value]) => redirect.headers.set(name, value));
+    return redirect;
+  };
 
   if (!user && isProtectedRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
-    url.searchParams.set("from", `${path}${request.nextUrl.search}`);
-    return NextResponse.redirect(url);
+    return redirectWithCookies(loginUrl());
   }
 
   if (user && isAuthRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    const destination = getSafeReturnPath(request.nextUrl.searchParams.get("from"));
+    return redirectWithCookies(new URL(destination, request.url));
   }
 
   return response;

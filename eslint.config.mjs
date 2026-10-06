@@ -6,6 +6,10 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    files: ["tests/**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
+  {
     rules: {
       "react-hooks/set-state-in-effect": "off",
       "react-hooks/immutability": "off",
@@ -26,6 +30,8 @@ const eslintConfig = defineConfig([
     // Local-only tooling and agent workspaces:
     ".claude/**",
     ".kilo/**",
+    ".agents/**",
+    ".codex/**",
   ]),
 ]);
 

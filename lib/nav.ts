@@ -99,7 +99,7 @@ export const NAV_GROUPS: NavGroup[] = [
 ];
 
 export const PAGE_TITLES: Record<string, string> = {
-  "/dashboard": "Campus Command",
+  "/dashboard": "Dashboard",
   "/feed": "Campus Feed",
   "/confessions": "Confessions",
   "/events": "Events",

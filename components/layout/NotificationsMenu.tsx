@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Bell, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NOTIFICATIONS } from "@/lib/campus-data";
+import { useNotifications } from "@/lib/notifications";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 
 export default function NotificationsMenu() {
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState(NOTIFICATIONS);
+  const { items, markRead: read, storageError } = useNotifications();
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const unread = items.filter((notification) => notification.unread).length;
@@ -33,14 +34,6 @@ export default function NotificationsMenu() {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [open]);
-
-  const read = (id: string) => {
-    setItems((all) =>
-      all.map((notification) =>
-        notification.id === id ? { ...notification, unread: false } : notification
-      )
-    );
-  };
 
   return (
     <div ref={menuRef} className="relative">
@@ -81,6 +74,7 @@ export default function NotificationsMenu() {
               <X className="size-4" aria-hidden="true" />
             </Button>
           </div>
+          <SessionStorageNotice message={storageError} />
           {items.slice(0, 4).map((notification) => (
             <Link
               key={notification.id}

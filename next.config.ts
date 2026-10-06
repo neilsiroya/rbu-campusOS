@@ -2,6 +2,7 @@ import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: { qualities: [75, 85] },
   // `output: "standalone"` is for self-hosted/Docker deployments only.
   // Vercel performs its own file tracing and fails the build when
   // standalone mode is on (`ENOENT ... .next/next-server.js.nft.json`),

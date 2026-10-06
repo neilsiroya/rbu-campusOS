@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { ViewTransitionWrapper, SharedElement } from "./ViewTransitionWrapper";
-import { ImmersiveModeOverlay } from "@/components/immersive/ImmersiveModeOverlay";
 import {
   LayoutDashboard,
   GraduationCap,
@@ -36,11 +35,21 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     if (!isMobileMenuOpen || window.innerWidth >= 1024) return;
 
     const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        const items = Array.from(document.querySelectorAll<HTMLElement>('#app-sidebar a[href], #app-sidebar button:not([disabled])')).filter((item) => item.getClientRects().length > 0);
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+        return;
+      }
       if (event.key !== "Escape") return;
+      event.preventDefault();
       setIsMobileMenuOpen(false);
       window.requestAnimationFrame(() => {
-        document.querySelector<HTMLButtonElement>('[aria-controls="app-sidebar"]')?.focus();
+        previousFocus?.focus();
       });
     };
 
@@ -57,9 +66,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, [isMobileMenuOpen]);
 
   const mobileNavItems = [
-    { label: "Command", href: "/dashboard", icon: LayoutDashboard },
+    { label: "Home", href: "/dashboard", icon: LayoutDashboard },
     { label: "Academics", href: "/academics", icon: GraduationCap },
-    { label: "3D Map", href: "/map", icon: Map },
+    { label: "Map", href: "/map", icon: Map },
     { label: "AI", href: "/campus-ai", icon: Sparkles },
   ];
 
@@ -73,10 +82,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           Skip to main content
         </a>
 
-        {/* Global Immersive Spatial Mode Overlay */}
-        <ImmersiveModeOverlay />
-
-        <SharedElement id="app-sidebar" className="relative z-30 shrink-0">
+        <SharedElement id="sidebar-transition" className="relative z-40 shrink-0">
           <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
         </SharedElement>
 
@@ -92,7 +98,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <main
               id="main-content"
               tabIndex={-1}
-              className="custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3 pb-20 sm:p-4 md:p-6 lg:pb-8 lg:p-8"
+              className="app-main custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-4 sm:pb-24 md:p-6 md:pb-24 lg:pb-8 lg:p-8"
             >
               <SharedElement id="page-content">
                 <div className="mx-auto w-full max-w-7xl">
@@ -106,7 +112,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               aria-label="Mobile Bottom Navigation"
               className={cn(
                 "fixed inset-x-0 bottom-0 z-20 flex items-stretch border-t border-border/70 bg-background/90 backdrop-blur-lg lg:hidden",
-                "h-16 pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
+                "min-h-[calc(4rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
               )}
             >
               <LayoutGroup id="mobile-dock-nav" inherit>

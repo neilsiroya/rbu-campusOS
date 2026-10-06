@@ -29,9 +29,8 @@ import { DemoNotice } from "@/components/os/DemoNotice";
 import { PageIntro } from "@/components/os/PageIntro";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { MagneticButton } from "@/components/motion";
+import { Button } from "@/components/ui/button";
 import { TypingEffect } from "@/components/motion/TypingEffect";
-import { CampusLiquidMetal } from "@/components/immersive/CampusLiquidMetalDynamic";
 
 type StructuredCard = {
   type: "place" | "event" | "marketplace" | "notes" | "service" | "timetable" | "lost-found" | "club";
@@ -167,7 +166,7 @@ function resolveCampusQuery(query: string): { text: string; card?: StructuredCar
     const monday = TIMETABLE.filter((t) => t.day === "Mon");
     const summary = monday.map((t) => `${t.title} (${t.time}, ${t.room})`).join(" · ");
     return {
-      text: `Here is Monday from the live timetable: ${summary}. The full week lives in Academics.`,
+      text: `Here is Monday from the sample timetable: ${summary}. The full week lives in Academics.`,
       card: {
         type: "timetable",
         title: "Semester Timetable",
@@ -232,7 +231,7 @@ export default function CampusAIPage() {
   };
 
   const handleSend = useCallback((text: string) => {
-    if (!text.trim()) return;
+    if (!text.trim() || isTyping) return;
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -247,18 +246,9 @@ export default function CampusAIPage() {
     setPhase("thinking");
 
     // Demo pipeline: thinking → retrieving → composing → completed.
-    // A query about failure surfaces the error state instead.
     later(550, () => setPhase("retrieving"));
     later(1200, () => setPhase("composing"));
     later(1750, () => {
-      const q = text.toLowerCase();
-      if (q.includes("error") || q.includes("fail") || q.includes("broken")) {
-        setAiError(
-          "Campus AI had trouble reaching the knowledge layer. Your conversation is safe. Try again in a moment or use Omnisearch above."
-        );
-        setPhase("idle");
-        return;
-      }
       const response = resolveCampusQuery(text);
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
@@ -271,7 +261,7 @@ export default function CampusAIPage() {
       setMessages((prev) => [...prev, assistantMessage]);
       setPhase("idle");
     });
-  }, []);
+  }, [isTyping]);
 
   const scrollToBottom = useCallback(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -284,11 +274,11 @@ export default function CampusAIPage() {
   return (
     <div className="min-h-screen bg-background">
       <DemoNotice>
-        Ask about places, events, gear, notes, clubs, and more. This demo uses a local knowledge engine with structured cards.
+        Ask about places, events, gear, notes, clubs, and more. This demo searches sample records using preset responses.
       </DemoNotice>
 
       <PageIntro
-        title="CampusOS Intelligence"
+        title="Campus guide"
         description="Your campus-aware assistant. Ask about Lab-4, calculator listings, Signals notes, shuttle times, or events."
       />
 
@@ -302,7 +292,7 @@ export default function CampusAIPage() {
                 <Sparkles className="size-4" />
               </div>
               <div>
-                <h2 className="text-sm font-bold">RBU CampusOS Intelligence</h2>
+                <h2 className="text-sm font-bold">Campus guide</h2>
                 <p className="text-[11px] text-muted-foreground">
                   Active Knowledge Engine · Local Session
                 </p>
@@ -310,7 +300,7 @@ export default function CampusAIPage() {
             </div>
             <span className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
               <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Connected
+              Demo
             </span>
           </div>
 
@@ -428,35 +418,24 @@ export default function CampusAIPage() {
             className="flex items-center gap-2"
           >
             <Input
+              aria-label="Ask the campus guide"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about Lab-4, calculator listings, Signals notes, shuttle times, or events…"
               className="h-12 rounded-2xl bg-card border-border/80 text-sm"
             />
-            <MagneticButton type="submit" size="icon" className="size-12 shrink-0 rounded-2xl" strength={0.4} maxDistance={80}>
+            <Button type="submit" size="icon" aria-label="Send question" disabled={isTyping || !input.trim()} className="size-12 shrink-0 rounded-2xl">
               <Send className="size-4" />
-            </MagneticButton>
+            </Button>
           </form>
         </div>
       </section>
 
       {/* OS Quick Actions & Starters */}
       <aside className="space-y-4">
-        {/* Signature Liquid Material Core */}
-        <div className="rounded-3xl border border-border/80 bg-card p-4 space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
-              <span className={cn("size-2 rounded-full", isTyping ? "bg-amber-500 animate-ping" : "bg-emerald-500 animate-pulse")} />
-              {isTyping ? "Neural Reasoning Active" : "Resident Neural Surface"}
-            </span>
-            <span className="font-mono text-[10px] text-muted-foreground">GLSL V2</span>
-          </div>
-          <CampusLiquidMetal
-            className="h-28 w-full"
-            intensity={isTyping ? 1.8 : 0.9}
-            speed={isTyping ? 2.0 : 0.8}
-            interactive={true}
-          />
+        <div className="rounded-3xl border border-border/80 bg-card p-5 space-y-2">
+          <h2 className="text-sm font-semibold">A guide to this demo</h2>
+          <p className="text-sm leading-relaxed text-muted-foreground">Answers come from sample campus records and preset lookups. This is not connected to an AI model or university systems.</p>
         </div>
 
         <div className="rounded-3xl border border-border/80 bg-card p-5 space-y-3">

@@ -5,6 +5,7 @@ import { PEOPLE } from "@/lib/campus-data";
 import { DemoNotice } from "@/components/os/DemoNotice";
 import { FilterChips } from "@/components/os/FilterChips";
 import { PageIntro } from "@/components/os/PageIntro";
+import { EmptyState } from "@/components/os/EmptyState";
 import { Input } from "@/components/ui/input";
 
 const YEARS = ["All", "2nd", "3rd", "4th"] as const;
@@ -32,9 +33,10 @@ export default function PeoplePage() {
       />
       <DemoNotice />
       <div className="flex flex-col gap-3 sm:flex-row stagger-in">
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name, club, interest" className="sm:max-w-xs" />
+        <Input aria-label="Search people by name, club, or interest" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name, club, interest" className="sm:max-w-xs" />
         <FilterChips value={year} onChange={setYear} options={[...YEARS]} />
       </div>
+      {list.length === 0 && <EmptyState title="No people match" body="Try another name, interest, or year." />}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 stagger-in">
         {list.map((person) => (
           <article key={person.id} className="surface rounded-3xl p-5">

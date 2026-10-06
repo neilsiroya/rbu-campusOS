@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { createClient } from "@/lib/supabase";
+import { getSafeReturnPath } from "@/lib/auth-redirect";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -15,6 +17,13 @@ type FormMessage = {
   text: string;
 };
 
+const subscribeToNavigation = (listener: () => void) => {
+  window.addEventListener("popstate", listener);
+  return () => window.removeEventListener("popstate", listener);
+};
+const getReturnPath = () => getSafeReturnPath(new URLSearchParams(window.location.search).get("from"));
+const getServerReturnPath = () => "/dashboard";
+
 export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +34,7 @@ export default function SignupPage() {
   const [message, setMessage] = useState<FormMessage | null>(null);
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
+  const returnPath = useSyncExternalStore(subscribeToNavigation, getReturnPath, getServerReturnPath);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,31 +42,18 @@ export default function SignupPage() {
     setMessage(null);
 
     try {
-      const hasRealSupabase = Boolean(
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder")
-      );
-
       const searchParams = new URLSearchParams(window.location.search);
-      const requestedPath = searchParams.get('from');
-      const fromPath = requestedPath?.startsWith('/') && !requestedPath.startsWith('//') ? requestedPath : '/dashboard';
-
-      if (!hasRealSupabase) {
-        // Fallback for preview/demo mode when Supabase is not configured
-        router.replace(fromPath);
-        return;
-      }
+      const fromPath = getSafeReturnPath(searchParams.get("from"));
 
       const supabase = createClient();
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: email.trim(),
         password,
         options: {
           data: {
-            full_name: fullName,
-            branch: branch,
-            year: year,
+            full_name: fullName.trim(),
+            branch: branch.trim(),
+            year: year.trim(),
           },
         },
       });
@@ -65,15 +62,16 @@ export default function SignupPage() {
       if (!data.session) {
         setMessage({
           tone: "success",
-          text: "Identity created. Check your email to confirm it, then log in.",
+          text: "Check your email for a confirmation link. Once confirmed, return here to sign in. If you already have an account, sign in instead.",
         });
         return;
       }
 
       // Return to previous path or dashboard
       router.replace(fromPath);
+      router.refresh();
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+      const errorMessage = error instanceof Error ? error.message : "We couldn't create your account. Please try again.";
       setMessage({ tone: "error", text: errorMessage });
     } finally {
       setLoading(false);
@@ -89,8 +87,9 @@ export default function SignupPage() {
         className="w-full max-w-lg"
       >
         <div className="text-center mb-8 space-y-2">
-          <h2 className="text-xs font-black uppercase tracking-[0.3em] text-primary">Identity Gateway</h2>
-          <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase">Create Identity</h1>
+          <Link href="/" className="text-xs font-bold tracking-widest text-primary">CampusOS</Link>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Join your campus</h1>
+          <p className="text-sm text-muted-foreground">Create an account to get started with CampusOS.</p>
         </div>
 
         <Card className="glass-command border-primary/20 p-8 shadow-2xl">
@@ -156,7 +155,7 @@ export default function SignupPage() {
                 </div>
               </div>
               <div className="space-y-2 sm:col-span-2">
-                <label htmlFor="signup-password" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Access Key</label>
+                <label htmlFor="signup-password" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                   <Input
@@ -165,11 +164,14 @@ export default function SignupPage() {
                     type="password"
                     placeholder="Create a password"
                     autoComplete="new-password"
+                    minLength={8}
+                    aria-describedby="signup-password-help"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
+                <p id="signup-password-help" className="text-xs text-muted-foreground">Use at least 8 characters.</p>
               </div>
             </div>
 
@@ -192,10 +194,15 @@ export default function SignupPage() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Creating identity…" : "Create System Identity"}
+              {loading ? "Creating account…" : "Create account"}
             </Button>
           </form>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link href={`/auth/login?from=${encodeURIComponent(returnPath)}`} className="font-semibold text-primary hover:underline">Sign in</Link>
+          </p>
         </Card>
+        <p className="mt-6 text-center text-sm text-muted-foreground"><Link href="/" className="hover:text-primary">Back to home</Link></p>
       </motion.div>
     </div>
   );

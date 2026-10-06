@@ -19,6 +19,7 @@ interface ImmersiveCanvasProps {
   };
   fallback?: ReactNode;
   sceneName?: string;
+  demand?: boolean;
 }
 
 const DEFAULT_CAMERA: Required<NonNullable<ImmersiveCanvasProps["camera"]>> = {
@@ -35,6 +36,7 @@ export function ImmersiveCanvas({
   camera = DEFAULT_CAMERA,
   fallback,
   sceneName = "CampusOS Spatial Scene",
+  demand = false,
 }: ImmersiveCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -96,7 +98,7 @@ export function ImmersiveCanvas({
           key={`${sceneName}-${tier}-${reducedMotion ? "rm" : "std"}`}
           camera={{ ...DEFAULT_CAMERA, ...camera }}
           dpr={dpr}
-          frameloop={isPaused ? "never" : "always"}
+          frameloop={isPaused ? "never" : demand || reducedMotion ? "demand" : "always"}
           gl={{
             antialias: tier !== "low",
             alpha: true,

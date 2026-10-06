@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Dialog } from "@base-ui/react/dialog";
 import {
   BookOpen,
   FileText,
@@ -50,7 +51,7 @@ export default function NotesPage() {
   const [sortBy, setSortBy] = useState<"Popular" | "Recent">("Popular");
   const [selectedResource, setSelectedResource] = useState<StudyResource | null>(null);
   const [isSharing, setIsSharing] = useState(false);
-  const [votedIds, setVotedIds] = useState<Set<string>>(new Set());
+  const { items: votedIds, update: setVotedIds, storageError: voteError } = useSessionItems<string>("campusos.study.votes", []);
 
   // Form state
   const [form, setForm] = useState({
@@ -81,7 +82,7 @@ export default function NotesPage() {
       })
       .sort((a, b) => {
         if (sortBy === "Popular") return b.useful - a.useful;
-        return a.sessionLocal ? -1 : 1;
+        return Number(Boolean(b.sessionLocal)) - Number(Boolean(a.sessionLocal));
       });
   }, [items, selectedType, selectedBranch, selectedYear, query, sortBy]);
 
@@ -95,9 +96,9 @@ export default function NotesPage() {
 
   const handleUpvote = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    if (votedIds.has(id)) return;
+    if (votedIds.includes(id)) return;
 
-    setVotedIds((prev) => new Set(prev).add(id));
+    setVotedIds((prev) => [...prev, id]);
     update((all) =>
       all.map((item) => (item.id === id ? { ...item, useful: item.useful + 1 } : item))
     );
@@ -153,7 +154,7 @@ export default function NotesPage() {
       <DemoNotice>
         Study Hub records are demo materials. New resources are stored in your browser session; no external document upload is initiated.
       </DemoNotice>
-      <SessionStorageNotice message={storageError} />
+      <SessionStorageNotice message={storageError || voteError} />
 
       {/* NexDash-inspired Knowledge Command Surface */}
       <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8 stagger-in">
@@ -166,7 +167,7 @@ export default function NotesPage() {
               </p>
             </div>
             <h2 className="text-display-lg tracking-tight">
-              High-yield campus materials, verified by peers.
+              Explore sample study materials and save your own resource summaries.
             </h2>
             <p className="max-w-2xl text-body leading-relaxed text-muted-foreground">
               Direct access to exam question patterns, lab step-by-steps, and curated notes from top semester scorers.
@@ -232,6 +233,7 @@ export default function NotesPage() {
         <div className="relative flex-1 max-w-lg">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
+            aria-label="Search study resources"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search subjects (Signals, OS, BEE), topics, tags, or authors…"
@@ -307,7 +309,7 @@ export default function NotesPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredResources.map((item) => {
-            const hasVoted = votedIds.has(item.id);
+            const hasVoted = votedIds.includes(item.id);
 
             return (
               <article
@@ -337,7 +339,7 @@ export default function NotesPage() {
 
                   {/* Title & Description */}
                   <h3 className="mt-4 font-display text-lg font-semibold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors">
-                    {item.title}
+                    <button type="button" className="text-left focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4" onClick={() => setSelectedResource(item)} aria-haspopup="dialog">{item.title}</button>
                   </h3>
                   <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                     {item.description}
@@ -389,18 +391,10 @@ export default function NotesPage() {
 
       {/* Resource Detail Modal */}
       {selectedResource && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 p-4 backdrop-blur-sm">
-          <button
-            type="button"
-            className="absolute inset-0 cursor-default"
-            aria-label="Close resource modal"
-            onClick={() => setSelectedResource(null)}
-          />
-          <aside
-            role="dialog"
-            aria-modal="true"
+        <Dialog.Root open={Boolean(selectedResource)} onOpenChange={(open) => { if (!open) setSelectedResource(null); }}><Dialog.Portal><Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
+          <Dialog.Popup
             aria-label="Resource detail"
-            className="glass-rich relative z-10 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-2xl"
+            className="glass-rich fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-xl max-h-[90dvh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl p-6 shadow-2xl"
           >
             <Button
               variant="ghost"
@@ -483,7 +477,7 @@ export default function NotesPage() {
                 Shared by {selectedResource.uploader}
               </p>
               <p className="mt-1">
-                Verified campus resource preview. In this interactive demo build, simulated offline study caching is active.
+                This listing contains a resource summary. No PDF file has been attached. You can download the summary as a text file.
               </p>
             </div>
 
@@ -495,28 +489,36 @@ export default function NotesPage() {
                 onClick={() => handleUpvote(selectedResource.id)}
               >
                 <ThumbsUp className="size-4 text-primary" />
-                {votedIds.has(selectedResource.id) ? "Marked as Useful" : "Upvote Resource"}
+                {votedIds.includes(selectedResource.id) ? "Marked as Useful" : "Upvote Resource"}
               </Button>
               <Button
                 className="rounded-full gap-2"
-                onClick={() => alert("Simulated download: PDF resource cached for offline study in your session.")}
+                onClick={() => {
+                  const summary = [selectedResource.title, selectedResource.subject, selectedResource.type, "", selectedResource.description, "", "Topics: " + selectedResource.tags.join(", "), "Shared by " + selectedResource.uploader, "", "CampusOS resource summary. This is not the original study document."].join("\n");
+                  const url = URL.createObjectURL(new Blob([summary], { type: "text/plain;charset=utf-8" }));
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.download = selectedResource.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase() + "-summary.txt";
+                  document.body.appendChild(link);
+                  link.click();
+                  link.remove();
+                  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+                }}
               >
                 <Download className="size-4" />
-                Download PDF Preview
+                Download summary
               </Button>
             </div>
-          </aside>
-        </div>
+          </Dialog.Popup></Dialog.Portal>
+        </Dialog.Root>
       )}
 
       {/* Share Modal */}
       {isSharing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 p-4 backdrop-blur-sm">
-          <div
-            role="dialog"
-            aria-modal="true"
+        <Dialog.Root open={isSharing} onOpenChange={setIsSharing}><Dialog.Portal><Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
+          <Dialog.Popup
             aria-label="Share resource"
-            className="glass-rich relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-2xl"
+            className="glass-rich fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl p-6 shadow-2xl"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -541,10 +543,8 @@ export default function NotesPage() {
 
             <form onSubmit={handleShare} className="mt-5 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Resource Title *
-                </label>
-                <Input
+                <label htmlFor="notes-resource-title" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Resource Title *</label>
+                <Input id="notes-resource-title"
                   required
                   placeholder="e.g. Signals & Systems Complete Unit 3 Notes"
                   value={form.title}
@@ -555,10 +555,8 @@ export default function NotesPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Subject Name *
-                  </label>
-                  <Input
+                  <label htmlFor="notes-subject-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Subject Name *</label>
+                <Input id="notes-subject-name"
                     required
                     placeholder="e.g. Operating Systems, BEE"
                     value={form.subject}
@@ -568,11 +566,8 @@ export default function NotesPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Resource Type
-                  </label>
-                  <select
-                    aria-label="Resource type"
+                  <label htmlFor="notes-resource-type" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Resource Type</label>
+                <select id="notes-resource-type"
                     value={form.type}
                     onChange={(e) =>
                       setForm({ ...form, type: e.target.value as StudyResource["type"] })
@@ -591,11 +586,8 @@ export default function NotesPage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Branch
-                  </label>
-                  <select
-                    aria-label="Target branch"
+                  <label htmlFor="notes-branch" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Branch</label>
+                <select id="notes-branch"
                     value={form.branch}
                     onChange={(e) => setForm({ ...form, branch: e.target.value })}
                     className="h-10 w-full rounded-xl border border-input bg-background px-3 text-xs font-medium"
@@ -610,11 +602,8 @@ export default function NotesPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Year
-                  </label>
-                  <select
-                    aria-label="Academic year"
+                  <label htmlFor="notes-year" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Year</label>
+                <select id="notes-year"
                     value={form.year}
                     onChange={(e) => setForm({ ...form, year: e.target.value })}
                     className="h-10 w-full rounded-xl border border-input bg-background px-3 text-xs font-medium"
@@ -628,10 +617,8 @@ export default function NotesPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Tags (comma separated)
-                </label>
-                <Input
+                <label htmlFor="notes-tags-comma-separated-" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tags (comma separated)</label>
+                <Input id="notes-tags-comma-separated-"
                   placeholder="e.g. Fourier, Unit 3, Exam Prep, Formulas"
                   value={form.tags}
                   onChange={(e) => setForm({ ...form, tags: e.target.value })}
@@ -640,10 +627,8 @@ export default function NotesPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Description & Key Topics
-                </label>
-                <Textarea
+                <label htmlFor="notes-description-key-topics" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description & Key Topics</label>
+                <Textarea id="notes-description-key-topics"
                   placeholder="Explain what this covers, which professors or syllabus units it aligns with…"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -665,8 +650,8 @@ export default function NotesPage() {
                 </Button>
               </div>
             </form>
-          </div>
-        </div>
+          </Dialog.Popup></Dialog.Portal>
+        </Dialog.Root>
       )}
     </div>
   );

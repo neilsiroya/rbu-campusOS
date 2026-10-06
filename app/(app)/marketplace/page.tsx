@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Dialog } from "@base-ui/react/dialog";
 import {
   ShoppingBag,
   Plus,
@@ -60,7 +61,8 @@ export default function MarketplacePage() {
   const [sortBy, setSortBy] = useState<"Recent" | "PriceLow" | "PriceHigh">("Recent");
   const [selectedItem, setSelectedItem] = useState<MarketplaceListing | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [contactSent, setContactSent] = useState(false);
+  const { items: interestedIds, update: setInterestedIds, storageError: interestError } = useSessionItems<string>("campusos.marketplace.interested", []);
+  const contactSent = selectedItem ? interestedIds.includes(selectedItem.id) : false;
 
   // New listing form state
   const [form, setForm] = useState({
@@ -93,7 +95,7 @@ export default function MarketplacePage() {
       .sort((a, b) => {
         if (sortBy === "PriceLow") return a.price - b.price;
         if (sortBy === "PriceHigh") return b.price - a.price;
-        return a.sessionLocal ? -1 : 1;
+        return Number(Boolean(b.sessionLocal)) - Number(Boolean(a.sessionLocal));
       });
   }, [items, selectedCategory, selectedType, selectedCondition, query, sortBy]);
 
@@ -176,7 +178,7 @@ export default function MarketplacePage() {
       <DemoNotice>
         Marketplace listings are demo records. Listings you create stay stored in your browser session; no monetary transaction or external message is processed.
       </DemoNotice>
-      <SessionStorageNotice message={storageError} />
+      <SessionStorageNotice message={storageError || interestError} />
 
       {/* NexDash-inspired Marketplace Command Surface */}
       <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8 stagger-in">
@@ -257,6 +259,7 @@ export default function MarketplacePage() {
         <div className="relative flex-1 max-w-lg">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
+            aria-label="Search marketplace listings"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search listings, gear, models, seller, or location…"
@@ -338,7 +341,6 @@ export default function MarketplacePage() {
                 key={item.id}
                 onClick={() => {
                   setSelectedItem(item);
-                  setContactSent(false);
                 }}
                 className="interactive-card group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 cursor-pointer"
               >
@@ -369,7 +371,7 @@ export default function MarketplacePage() {
 
                   {/* Title & Description */}
                   <h3 className="mt-4 font-display text-lg font-semibold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors">
-                    {item.title}
+                    <button type="button" className="text-left focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-4" onClick={() => setSelectedItem(item)} aria-haspopup="dialog">{item.title}</button>
                   </h3>
                   <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                     {item.description}
@@ -423,18 +425,10 @@ export default function MarketplacePage() {
 
       {/* Item Detail Modal */}
       {selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 p-4 backdrop-blur-sm">
-          <button
-            type="button"
-            className="absolute inset-0 cursor-default"
-            aria-label="Close modal background"
-            onClick={() => setSelectedItem(null)}
-          />
-          <aside
-            role="dialog"
-            aria-modal="true"
+        <Dialog.Root open={Boolean(selectedItem)} onOpenChange={(open) => { if (!open) setSelectedItem(null); }}><Dialog.Portal><Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
+          <Dialog.Popup
             aria-label="Listing detail"
-            className="glass-rich relative z-10 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-2xl"
+            className="glass-rich fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-xl max-h-[90dvh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl p-6 shadow-2xl"
           >
             <Button
               variant="ghost"
@@ -543,44 +537,37 @@ export default function MarketplacePage() {
               </Button>
               <Button
                 className="rounded-full gap-2"
-                onClick={() => setContactSent(true)}
+                disabled={contactSent}
+                onClick={() => setInterestedIds((ids) => [...new Set([...ids, selectedItem.id])])}
               >
                 {contactSent ? (
                   <>
                     <CheckCircle2 className="size-4 text-success" />
-                    Interest Marked (Session)
+                    Interest saved
                   </>
                 ) : (
                   <>
                     <Sparkles className="size-4" />
-                    {selectedItem.type === "Free"
-                      ? "Claim Free Item"
-                      : selectedItem.type === "For Rent"
-                      ? "Request Rental"
-                      : selectedItem.type === "Lend / Borrow"
-                      ? "Request to Borrow"
-                      : "Contact Seller"}
+                    Save interest
                   </>
                 )}
               </Button>
             </div>
             {contactSent && (
               <p className="mt-2 text-center text-xs text-muted-foreground">
-                Demo notice: In this prototype, interest is noted locally in your session.
+                Interest saved in this browser session. No message, reservation, or payment has been sent.
               </p>
             )}
-          </aside>
-        </div>
+          </Dialog.Popup></Dialog.Portal>
+        </Dialog.Root>
       )}
 
       {/* Create Listing Modal */}
       {isCreating && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 p-4 backdrop-blur-sm">
-          <div
-            role="dialog"
-            aria-modal="true"
+        <Dialog.Root open={isCreating} onOpenChange={setIsCreating}><Dialog.Portal><Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
+          <Dialog.Popup
             aria-label="Create listing"
-            className="glass-rich relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-2xl"
+            className="glass-rich fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl p-6 shadow-2xl"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -605,10 +592,8 @@ export default function MarketplacePage() {
 
             <form onSubmit={handleCreate} className="mt-5 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Item Title *
-                </label>
-                <Input
+                <label htmlFor="marketplace-item-title" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Item Title *</label>
+                <Input id="marketplace-item-title"
                   required
                   placeholder="e.g. Casio fx-991EX, Hero Cycle, BEE Textbook"
                   value={form.title}
@@ -619,11 +604,8 @@ export default function MarketplacePage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Exchange Type
-                  </label>
-                  <select
-                    aria-label="Listing exchange type"
+                  <label htmlFor="marketplace-exchange-type" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Exchange Type</label>
+                <select id="marketplace-exchange-type"
                     value={form.type}
                     onChange={(e) =>
                       setForm({ ...form, type: e.target.value as MarketplaceListing["type"] })
@@ -638,11 +620,8 @@ export default function MarketplacePage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Category
-                  </label>
-                  <select
-                    aria-label="Item category"
+                  <label htmlFor="marketplace-category" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Category</label>
+                <select id="marketplace-category"
                     value={form.category}
                     onChange={(e) =>
                       setForm({
@@ -668,11 +647,12 @@ export default function MarketplacePage() {
               {form.type !== "Free" && form.type !== "Lend / Borrow" && (
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Price (₹)
-                    </label>
-                    <Input
+                    <label htmlFor="marketplace-price-" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Price (₹)</label>
+                <Input id="marketplace-price-"
                       type="number"
+                      min="0"
+                      step="0.01"
+                      required
                       placeholder="e.g. 500"
                       value={form.price}
                       onChange={(e) => setForm({ ...form, price: e.target.value })}
@@ -680,10 +660,8 @@ export default function MarketplacePage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Pricing Unit
-                    </label>
-                    <Input
+                    <label htmlFor="marketplace-pricing-unit" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pricing Unit</label>
+                <Input id="marketplace-pricing-unit"
                       placeholder="e.g. one-time, / day, / week"
                       value={form.pricingUnit}
                       onChange={(e) => setForm({ ...form, pricingUnit: e.target.value })}
@@ -695,11 +673,8 @@ export default function MarketplacePage() {
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Item Condition
-                  </label>
-                  <select
-                    aria-label="Item condition"
+                  <label htmlFor="marketplace-item-condition" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Item Condition</label>
+                <select id="marketplace-item-condition"
                     value={form.condition}
                     onChange={(e) =>
                       setForm({
@@ -717,10 +692,8 @@ export default function MarketplacePage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Campus Location
-                  </label>
-                  <Input
+                  <label htmlFor="marketplace-campus-location" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Campus Location</label>
+                <Input id="marketplace-campus-location"
                     placeholder="e.g. Library, LT-101, Gate 2"
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -730,10 +703,8 @@ export default function MarketplacePage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Availability Note
-                </label>
-                <Input
+                <label htmlFor="marketplace-availability-note" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Availability Note</label>
+                <Input id="marketplace-availability-note"
                   placeholder="e.g. Evenings after 5pm, Weekends"
                   value={form.availability}
                   onChange={(e) => setForm({ ...form, availability: e.target.value })}
@@ -742,10 +713,8 @@ export default function MarketplacePage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Description
-                </label>
-                <Textarea
+                <label htmlFor="marketplace-description" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</label>
+                <Textarea id="marketplace-description"
                   placeholder="Mention key specs, condition, accessories included, and pickup preferences…"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -767,8 +736,8 @@ export default function MarketplacePage() {
                 </Button>
               </div>
             </form>
-          </div>
-        </div>
+          </Dialog.Popup></Dialog.Portal>
+        </Dialog.Root>
       )}
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { SERVICES } from "@/lib/campus-data";
+import { EmptyState } from "@/components/os/EmptyState";
 import { DemoNotice } from "@/components/os/DemoNotice";
 import { FilterChips } from "@/components/os/FilterChips";
 import { PageIntro } from "@/components/os/PageIntro";
@@ -25,9 +26,10 @@ export default function ServicesPage() {
       <PageIntro kicker="Campus" title="Services" description="Administration, support, transport, maintenance, library, and IT — as a directory, not a ticket system." />
       <DemoNotice />
       <div className="flex flex-col gap-3 stagger-in">
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search services" className="max-w-xs" />
+        <Input aria-label="Search services" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search services" className="max-w-xs" />
         <FilterChips value={cat} onChange={setCat} options={CATS} />
       </div>
+      {list.length === 0 && <EmptyState title="No services match" body="Try another search or category." />}
       <div className="grid gap-4 md:grid-cols-2 stagger-in">
         {list.map((s) => (
           <article key={s.id} className="surface rounded-3xl p-5">

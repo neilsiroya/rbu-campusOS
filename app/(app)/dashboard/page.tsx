@@ -1,393 +1,71 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  ShoppingBag,
-  BookOpen,
-  Flame,
-  Sparkles,
-  Clock,
-  Eye,
-} from "lucide-react";
-import {
-  CURRENT_STUDENT,
-  CONFESSIONS,
-  EVENTS,
-  FEED_POSTS,
-  TIMETABLE,
-  DEMO_NOTICE,
-  MARKETPLACE_LISTINGS,
-  STUDY_RESOURCES,
-  ASSIGNMENTS,
-  ATTENDANCE,
-} from "@/lib/campus-data";
+import { ArrowUpRight, BookOpen, CalendarDays, Check, Eye, MapPin, ShoppingBag, Users } from "lucide-react";
+import { ASSIGNMENTS, ATTENDANCE, EVENTS, FEED_POSTS, TIMETABLE, STUDY_RESOURCES, MARKETPLACE_LISTINGS } from "@/lib/campus-data";
 import { DemoNotice } from "@/components/os/DemoNotice";
-import CampusPulse from "@/components/dashboard/CampusPulse";
-import ConfessionPreview from "@/components/dashboard/ConfessionPreview";
-import QuickActions from "@/components/dashboard/QuickActions";
-import AcademicPreview from "@/components/dashboard/AcademicPreview";
-import CampusAIQuickAsk from "@/components/dashboard/CampusAIQuickAsk";
-import CampusAIPreview from "@/components/dashboard/CampusAIPreview";
-import { CampusCore } from "@/components/immersive/CampusCoreDynamic";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
+import { useSessionItems } from "@/lib/session-store";
 import { useOSStore } from "@/lib/os-store";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const shortcuts = [
+  { href: "/timetable", title: "Your timetable", icon: CalendarDays },
+  { href: "/notes", title: "Study resources", icon: BookOpen },
+  { href: "/map", title: "Find a place", icon: MapPin },
+  { href: "/clubs", title: "Find your community", icon: Users },
+];
+const attendance = Math.round(ATTENDANCE.reduce((sum, item) => sum + item.percent, 0) / ATTENDANCE.length);
 
 export default function DashboardPage() {
-  const hour = new Date().getHours();
-  const hello = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-  const nextClass = TIMETABLE[2];
-  const confession = CONFESSIONS[0];
-  const event = EVENTS[0];
   const { isFocusMode, setMode } = useOSStore();
-
-  // If in Focus Mode, render the quiet, hyper-focused productivity runway
-  if (isFocusMode) {
-    return (
-      <div className="space-y-6 stagger-in">
-        <div className="flex items-center justify-between border-b border-border/50 pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="flex size-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Eye className="size-4" />
-            </div>
-            <div>
-              <h1 className="font-display text-xl font-black text-foreground">
-                Focus Runway · Quiet Mode
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                Distraction-free view · Priority classes, attendance, and urgent submissions
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setMode("normal")}
-            className="rounded-full text-xs font-semibold"
-          >
-            Exit Focus
-          </Button>
-        </div>
-
-        {/* Focus Mode Grid */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Priority Next Session */}
-          <div className="surface rounded-3xl p-6 border border-border/70 space-y-3">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-primary">
-              Upcoming Academic Slot
-            </span>
-            <h2 className="font-display text-2xl font-bold text-foreground">
-              {nextClass.title}
-            </h2>
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1 font-mono">
-                <Clock className="size-3.5" />
-                {nextClass.time}
-              </span>
-              <span>·</span>
-              <span>Room {nextClass.room}</span>
-              <span>·</span>
-              <span>{nextClass.kind}</span>
-            </div>
-            <div className="pt-3 border-t border-border/40 flex justify-between items-center">
-              <Link
-                href="/timetable"
-                className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
-              >
-                View Full Timetable
-                <ArrowRight className="size-3" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Assignments Runway */}
-          <div className="surface rounded-3xl p-6 border border-border/70 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-amber-500">
-                Active Assignment Queue
-              </span>
-              <Link href="/assignments" className="text-xs text-primary font-semibold hover:underline">
-                Open Checklist
-              </Link>
-            </div>
-            <div className="space-y-2">
-              {ASSIGNMENTS.slice(0, 3).map((a) => (
-                <div key={a.id} className="flex items-center justify-between rounded-xl bg-muted/40 p-2.5 text-xs">
-                  <span className="font-medium text-foreground truncate max-w-[200px]">{a.title}</span>
-                  <span className="font-mono text-[11px] text-muted-foreground">{a.due}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Attendance Safety Bar */}
-          <div className="surface rounded-3xl p-6 border border-border/70 space-y-3 md:col-span-2">
-            <div className="flex items-center justify-between">
-              <h3 className="font-display text-base font-bold text-foreground">
-                Attendance Margin Status
-              </h3>
-              <span className="font-mono text-xs font-bold text-emerald-500">
-                Above 75% Safety Line
-              </span>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-4">
-              {ATTENDANCE.map((att) => (
-                <div key={att.code} className="rounded-2xl border border-border/40 p-3 bg-card/60">
-                  <div className="flex justify-between text-xs font-medium">
-                    <span className="font-mono">{att.code}</span>
-                    <span className="font-bold">{att.percent}%</span>
-                  </div>
-                  <div className="mt-2 h-1 w-full bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary"
-                      style={{ width: `${att.percent}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Standard OS Dashboard
+  const { items: done, update: setDone, storageError } = useSessionItems<string>("campusos.assignments.saved", []);
+  const pending = ASSIGNMENTS.filter((a) => !done.includes(a.id));
   return (
-    <div className="space-y-8 stagger-in">
-      {/* Hero Greeting with Telemetry */}
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-            <p className="font-mono text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              RBU OS Session Active · Node 01
-            </p>
-          </div>
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground">
-            {hello}, {CURRENT_STUDENT.name.split(" ")[0]}.
-          </h1>
-          <p className="text-sm text-muted-foreground max-w-xl">
-            Community first. Peer exchange. High-speed academic runway on demand.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            className="min-h-11 rounded-full px-5 text-xs font-semibold gap-1.5"
-            onClick={() => setMode("focus")}
-          >
-            <Eye className="size-3.5 text-primary" />
-            Focus Mode
-          </Button>
-
-          <Button
-            size="sm"
-            className="min-h-11 rounded-full px-5 text-xs font-semibold gap-1.5 shadow-md shadow-primary/20"
-            onClick={() => setMode("immersive")}
-          >
-            <Sparkles className="size-3.5" />
-            Spatial Core 3D
-          </Button>
-        </div>
+    <div className="space-y-7">
+      <header className="dashboard-intro">
+        <div><p className="mb-2 text-xs text-muted-foreground">Your workspace</p><h1>{isFocusMode ? "A little room to focus." : "Your campus, in view."}</h1><p className="mt-3 text-sm text-muted-foreground">{isFocusMode ? "Classes, tasks, and the next thing to do." : "Make space for the work. Stay close to everything else."}</p></div>
+        <Button variant="outline" className="min-h-11 shrink-0 gap-2" aria-label={isFocusMode ? "Show full dashboard" : "Focus on academics"} aria-pressed={isFocusMode} onClick={() => setMode(isFocusMode ? "normal" : "focus")}><Eye className="size-4" /><span className="hidden sm:inline">{isFocusMode ? "Full dashboard" : "Focus"}</span></Button>
+      </header>
+      <DemoNotice />
+      <SessionStorageNotice message={storageError} />
+      {!isFocusMode && <div className="grid gap-5 xl:grid-cols-[1.8fr_1fr]">
+        <section className="dashboard-hero">
+          <Image src="/images/campus-courtyard.webp" alt="" fill sizes="(min-width: 1280px) 60vw, 100vw" priority />
+          <div><p className="!mt-0 !mb-3">One campus. Every possibility.</p><h2>Life happens<br />between classes.</h2><p>Step into the conversations, communities, and places that make RBU yours.</p><Link href="/events">See what’s happening <ArrowUpRight className="size-4" /></Link></div>
+        </section>
+        <nav aria-label="Campus shortcuts" className="surface p-5"><div className="dashboard-section-title"><h2>Where to?</h2><span className="text-xs text-muted-foreground">CampusOS</span></div>{shortcuts.map(({href,title,icon:Icon}) => <Link key={href} href={href} className="dashboard-quick"><span className="flex items-center gap-3"><Icon className="size-4 text-primary" />{title}</span><ArrowUpRight className="size-4 text-muted-foreground" /></Link>)}</nav>
+      </div>}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Link href="/attendance" className="dashboard-stat"><span>Average attendance</span><strong>{attendance}%</strong><span>{ATTENDANCE.length} courses · demo</span></Link>
+        <Link href="/assignments" className="dashboard-stat"><span>On your checklist</span><strong>{pending.length.toString().padStart(2,"0")}</strong><span>{pending.length ? "Assignments remaining" : "All checked off"}</span></Link>
+        <Link href="/events" className="dashboard-stat"><span>Campus happenings</span><strong>{EVENTS.length.toString().padStart(2,"0")}</strong><span>Events to explore</span></Link>
+        <Link href="/notes" className="dashboard-stat"><span>The shared library</span><strong>{STUDY_RESOURCES.length.toString().padStart(2,"0")}</strong><span>Peer study resources</span></Link>
       </div>
-
-      <DemoNotice>{DEMO_NOTICE}</DemoNotice>
-
-      {/* Hero Spatial Core + Overview Banner */}
-      <section className="relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-br from-card/90 via-card/50 to-background p-6 md:p-8 shadow-xl backdrop-blur-md stagger-in">
-        <div className="grid gap-6 md:grid-cols-12 items-center">
-          <div className="md:col-span-8 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                Interactive University Hub
-              </span>
-              <span className="text-xs text-muted-foreground">· Click Core to Ping Pulse</span>
-            </div>
-            <h2 className="font-display text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-              The Campus Core is actively synchronized.
-            </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground max-w-xl leading-relaxed">
-              Real-time awareness of lecture halls, lab bookings, upcoming deadlines, and peer exchanges. Everything is anchored in your student identity.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <div className="flex items-baseline gap-1.5">
-                <span className="font-display text-2xl font-black text-foreground">8.42</span>
-                <span className="font-mono text-xs text-muted-foreground">CGPA</span>
-              </div>
-              <div className="h-6 w-px bg-border/60" />
-              <div className="flex items-baseline gap-1.5">
-                <span className="font-display text-2xl font-black text-emerald-500">88%</span>
-                <span className="font-mono text-xs text-muted-foreground">Attendance</span>
-              </div>
-              <div className="h-6 w-px bg-border/60" />
-              <div className="flex items-baseline gap-1.5">
-                <span className="font-display text-2xl font-black text-foreground">3</span>
-                <span className="font-mono text-xs text-muted-foreground">Pending Tasks</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Embedded 3D Campus Core canvas */}
-          <div className="md:col-span-4 flex justify-center">
-            <CampusCore
-              size="md"
-              interactive={true}
-              metricLabel="Pulse Rate"
-              metricValue="NORMAL"
-              showTelemetry={true}
-            />
-          </div>
+      <div className="grid gap-7 lg:grid-cols-[1.1fr_1fr]">
+        <section className="surface p-5 sm:p-6">
+          <div className="dashboard-section-title"><h2>Your next small win</h2><Link href="/assignments">All assignments <ArrowUpRight className="ml-1 size-3" /></Link></div>
+          <p className="mb-4 text-xs text-muted-foreground">Check off your work. Changes stay in this browser session.</p>
+          {ASSIGNMENTS.map((a) => <label key={a.id} className="flex min-h-16 cursor-pointer items-center gap-3 border-t border-border py-3"><input type="checkbox" checked={done.includes(a.id)} onChange={() => setDone(ids => ids.includes(a.id) ? ids.filter(id => id !== a.id) : [...ids,a.id])} className="size-4 accent-[var(--primary)]" /><span className="min-w-0 flex-1"><span className={cn("block text-sm font-medium", done.includes(a.id) && "line-through text-muted-foreground")}>{a.title}</span><span className="mt-1 block text-xs text-muted-foreground">{a.subject} · {a.due}</span></span>{done.includes(a.id) && <Check className="size-4 text-primary" aria-hidden="true" />}</label>)}
+        </section>
+        <section className="surface p-5 sm:p-6">
+          <div className="dashboard-section-title"><h2>A look at your week</h2><Link href="/timetable">Timetable <ArrowUpRight className="ml-1 size-3" /></Link></div>
+          <p className="mb-4 text-xs text-muted-foreground">From the sample timetable</p>
+          {TIMETABLE.slice(0,4).map((slot,i) => <div key={i} className="flex items-start gap-4 border-t border-border py-4"><div className="min-w-12 rounded-lg bg-muted px-2 py-2 text-center text-xs font-medium">{slot.day}</div><div className="min-w-0 flex-1"><h3 className="text-sm font-medium">{slot.title}</h3><p className="mt-1 text-xs text-muted-foreground">{slot.time} · {slot.room}</p></div><span className="text-xs text-muted-foreground">{slot.kind}</span></div>)}
+        </section>
+      </div>
+      {!isFocusMode && <>
+        <div className="grid gap-7 lg:grid-cols-[1.1fr_1fr]">
+          <section><div className="dashboard-section-title"><h2>The campus conversation</h2><Link href="/feed">Open feed <ArrowUpRight className="ml-1 size-3" /></Link></div>{FEED_POSTS.slice(0,3).map(post => <article className="dashboard-row" key={post.id}><div className="mb-2 flex items-center justify-between"><span className="text-xs font-semibold">{post.author}</span><small>{post.category}</small></div><p>{post.body}</p></article>)}</section>
+          <section><div className="dashboard-section-title"><h2>After class</h2><Link href="/events">All events <ArrowUpRight className="ml-1 size-3" /></Link></div>{EVENTS.slice(0,3).map(event => <Link key={event.id} href="/events" className="dashboard-row block"><small>{event.category} · {event.date}</small><h3 className="my-2 text-lg font-medium tracking-tight">{event.title}</h3><p className="text-muted-foreground">{event.location}</p></Link>)}</section>
         </div>
-      </section>
-
-      {/* Main Feed & Confessions Grid */}
-      <section className="grid gap-4 lg:grid-cols-12 stagger-in">
-        <CampusPulse posts={FEED_POSTS} />
-
-        <div className="flex flex-col gap-4 lg:col-span-5 stagger-in">
-          <ConfessionPreview confession={confession} />
-
-          {/* Upcoming Event Card */}
-          <article className="featured-card overflow-hidden rounded-3xl p-5 border border-border/60">
-            <div className="flex items-center justify-between">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                Next Marquee Event
-              </p>
-              <Link
-                href="/events"
-                className="inline-flex min-h-8 items-center gap-1 py-2 text-xs font-semibold text-primary hover:underline"
-              >
-                More events
-                <ArrowRight className="size-3" />
-              </Link>
-            </div>
-            <h2 className="mt-3 text-lg font-bold leading-tight text-foreground">
-              {event.title}
-            </h2>
-            <p className="mt-1.5 text-xs text-muted-foreground">
-              {event.date} · {event.time} · {event.location}
-            </p>
-          </article>
-        </div>
-      </section>
-
-      {/* Marketplace & Study Hub Pulse Mini-Modules */}
-      <section className="grid gap-4 lg:grid-cols-2 stagger-in">
-        {/* Marketplace Pulse */}
-        <div className="command-surface relative overflow-hidden rounded-3xl p-5 border border-border/60">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <ShoppingBag className="size-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-foreground">
-                  Campus Marketplace
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  {MARKETPLACE_LISTINGS.length} active listings
-                </p>
-              </div>
-            </div>
-            <Link
-              href="/marketplace"
-              className="inline-flex min-h-8 items-center gap-1 py-2 text-xs font-semibold text-primary hover:underline"
-            >
-              Browse
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
-
-          <div className="mt-4 grid gap-2 sm:grid-cols-2 stagger-in">
-            {MARKETPLACE_LISTINGS.slice(0, 4).map((item) => (
-              <Link
-                key={item.id}
-                href="/marketplace"
-                className="interactive-card rounded-2xl p-2.5"
-              >
-                <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
-                  {item.title}
-                </p>
-                <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
-                  <span className="rounded-md bg-muted px-1.5 py-0.5 font-medium">{item.type}</span>
-                  {item.type === "Free" ? (
-                    <span className="font-bold text-amber-600 dark:text-amber-400">Free</span>
-                  ) : (
-                    <span className="font-bold text-foreground">₹{item.price}</span>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Study Hub Pulse */}
-        <div className="command-surface relative overflow-hidden rounded-3xl p-5 border border-border/60">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <BookOpen className="size-4" />
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-foreground">
-                  Study Hub Activity
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  {STUDY_RESOURCES.length} resources · {STUDY_RESOURCES.filter((s) => s.popular).length} trending
-                </p>
-              </div>
-            </div>
-            <Link
-              href="/notes"
-              className="inline-flex min-h-8 items-center gap-1 py-2 text-xs font-semibold text-primary hover:underline"
-            >
-              Open Hub
-              <ArrowRight className="size-3" />
-            </Link>
-          </div>
-
-          <div className="mt-4 grid gap-2 sm:grid-cols-2 stagger-in">
-            {STUDY_RESOURCES.filter((s) => s.popular)
-              .slice(0, 4)
-              .map((note) => (
-                <Link
-                  key={note.id}
-                  href="/notes"
-                  className="interactive-card rounded-2xl p-2.5"
-                >
-                  <p className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
-                    {note.title}
-                  </p>
-                  <div className="mt-1 flex items-center justify-between text-[11px] text-muted-foreground">
-                    <span className="rounded-md bg-muted px-1.5 py-0.5 font-medium">
-                      {note.subject}
-                    </span>
-                    <span className="flex items-center gap-0.5 font-semibold text-primary">
-                      <Flame className="size-2.5" />
-                      {note.useful}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-          </div>
-        </div>
-      </section>
-
-      {/* OS Subsystem Quick Actions */}
-      <QuickActions opportunities="3 internship examples and 2 hackathon examples." />
-
-      {/* Academics & Urgency Section */}
-      <AcademicPreview nextClass={nextClass} />
-
-      {/* Campus AI Quick Ask */}
-      <CampusAIQuickAsk />
-
-      {/* Campus AI Intelligence Preview */}
-      <CampusAIPreview />
+        <section className="grid gap-5 md:grid-cols-2">
+          <Link href="/marketplace" className="surface flex items-start gap-4 p-6"><ShoppingBag className="mt-1 size-5 text-primary" /><div className="flex-1"><h2 className="font-medium">Good things, passed on.</h2><p className="mt-2 text-sm text-muted-foreground">Browse {MARKETPLACE_LISTINGS.length} sample listings for books, gear, and everyday campus essentials.</p></div><ArrowUpRight className="size-4" /></Link>
+          <Link href="/campus-ai" className="surface flex items-start gap-4 p-6"><BookOpen className="mt-1 size-5 text-primary" /><div className="flex-1"><h2 className="font-medium">A little campus knowledge.</h2><p className="mt-2 text-sm text-muted-foreground">Find rooms, notes, and events with the Campus AI demo guide.</p></div><ArrowUpRight className="size-4" /></Link>
+        </section>
+      </>}
     </div>
   );
 }

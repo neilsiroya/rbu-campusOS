@@ -1,4 +1,6 @@
 "use client";
+import { useSessionItems } from "@/lib/session-store";
+import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 
 import { useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
@@ -17,7 +19,7 @@ const CATS = ["All", ...Array.from(new Set(CLUBS.map((c) => c.category)))] as co
 export default function ClubsPage() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("All");
-  const [joined, setJoined] = useState<string[]>([]);
+  const { items: joined, update: setJoined, storageError } = useSessionItems<string>("campusos.clubs.saved", []);
   const [note, setNote] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -37,9 +39,9 @@ export default function ClubsPage() {
         title="Clubs"
         description="Communities with rooms, rituals, and a next gathering — not a table of rows."
       />
-      <DemoNotice />
+      <DemoNotice /><SessionStorageNotice message={storageError} />
       <div className="flex flex-col gap-3 sm:flex-row stagger-in">
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search clubs" className="sm:max-w-xs" />
+        <Input aria-label="Search clubs" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search clubs" className="sm:max-w-xs" />
         <FilterChips value={cat} onChange={setCat} options={[...CATS]} />
       </div>
       {note ? <p className="text-caption text-muted-foreground">{note}</p> : null}
@@ -61,10 +63,10 @@ export default function ClubsPage() {
               className="min-h-11 rounded-full bg-background px-6 text-foreground hover:bg-background/90"
               onClick={() => {
                 setJoined((ids) => [...new Set([...ids, featured.id])]);
-                setNote(`Join request is local to this session. ${SESSION_NOTICE}`);
+                setNote(`Club saved for this browser session. No join request was sent. ${SESSION_NOTICE}`);
               }}
             >
-              {joined.includes(featured.id) ? "Exploring (this session)" : "Join / explore"}
+              {joined.includes(featured.id) ? "Club saved" : "Save club"}
             </Button>
           </div>
         </SpotlightCard>
@@ -114,10 +116,10 @@ export default function ClubsPage() {
                     className="min-h-11 flex-1 rounded-full"
                     onClick={() => {
                       setJoined((ids) => [...new Set([...ids, club.id])]);
-                      setNote(`Join request is local to this session. ${SESSION_NOTICE}`);
+                      setNote(`Club saved for this browser session. No join request was sent. ${SESSION_NOTICE}`);
                     }}
                   >
-                    {isJoined ? "Exploring (this session)" : "Join / explore"}
+                    {isJoined ? "Club saved" : "Save club"}
                   </Button>
                   <Button
                     variant="outline"
