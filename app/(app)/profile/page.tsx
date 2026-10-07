@@ -23,8 +23,8 @@ export default function ProfilePage() {
           setIdentity({
             name: String(user.user_metadata?.full_name || user.email || "Campus member"),
             email: user.email,
-            branch: String(user.user_metadata?.branch || CURRENT_STUDENT.branch),
-            year: String(user.user_metadata?.year || CURRENT_STUDENT.year),
+            branch: String(user.user_metadata?.branch || "Not provided"),
+            year: String(user.user_metadata?.year || "Not provided"),
             authenticated: true,
           });
         })
@@ -51,7 +51,7 @@ export default function ProfilePage() {
           {identity.name.charAt(0)}
         </div>
         <h2 className="mt-5 text-display-sm">{identity.name}</h2>
-        {identity.email && <p className="mt-1 text-body text-muted-foreground">{identity.email}</p>}
+        {identity.email && <p className="mt-1 break-words text-body text-muted-foreground">{identity.email}</p>}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <div className="rounded-2xl bg-muted/45 p-4">
             <p className="text-meta text-muted-foreground">Branch</p>

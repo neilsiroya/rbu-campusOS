@@ -10,7 +10,7 @@ CampusOS is an interactive product prototype. **Authentication uses Supabase; ca
 | --- | --- | --- |
 | Dashboard & academics | Overview, timetable, attendance, assignment checklist, exam board | Sample academic data; checklist changes stay in this browser session |
 | Feed & confessions | Compose posts, react, and reply | Local demo interactions; no publication, moderation service, or anonymity guarantee |
-| Events & clubs | Browse, filter, view details, save interest, and mark a club as joined | Local preferences; no registration or membership request is sent |
+| Events & clubs | Browse an event agenda, filter, view details, and save interest | Local preferences; no registration or membership request is sent |
 | Marketplace & lost-and-found | Search, filter, inspect, create listings, and save marketplace interest | Session-local records; no payments or messaging service |
 | Study Hub | Browse resources, filter by branch/year/type, add descriptions, upvote, and download text summaries | Demo catalogue; downloads are generated summaries, not attached course documents; no upload service |
 | Campus map & directories | Find buildings, inspect a schematic map, browse people, facilities, and services | Sample locations and directory records; no GPS navigation or live availability |
@@ -18,9 +18,11 @@ CampusOS is an interactive product prototype. **Authentication uses Supabase; ca
 | Gaming & sports | Tournament discovery, saved tournaments, sample scores, and facility information | No live scores, matchmaking, or facility booking |
 | Profile, notifications & settings | Supabase account metadata, demo alerts, theme controls, and local preferences | Account identity is real when authenticated; campus data and notification preferences remain a demo |
 | Campus AI | Keyword-based answers and links to campus sections | Runs locally against sample data; no language-model API or live retrieval |
-| Hostels | Placeholder page | Not implemented |
+| Hostels | Campus living directory links | Hostel groups and room services are not connected |
 
-The interface supports light and dark themes, responsive navigation, keyboard focus styles, and reduced-motion handling. The campus map includes a searchable place list alongside the optional 3D view. Campus artwork is a generated concept illustration, not a photograph of RBU.
+The interface supports neutral light and graphite dark themes, responsive navigation, keyboard focus styles, and reduced-motion handling. The landing uses a code-drawn conceptual campus topology with layered interface planes. The map includes a searchable place list alongside its optional 3D view. Neither diagram is a surveyed map of RBU.
+
+The cursor spotlight follows fine mouse pointers, responds over controls, and fades after inactivity. It preserves the native cursor, never intercepts clicks, stops its animation loop when settled, and is disabled for reduced motion, touch-primary devices, and forced colors.
 
 ## Run locally
 

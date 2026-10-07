@@ -181,20 +181,20 @@ export default function MarketplacePage() {
       <SessionStorageNotice message={storageError || interestError} />
 
       {/* NexDash-inspired Marketplace Command Surface */}
-      <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8 stagger-in">
+      <section className="relative overflow-hidden border-y border-border py-7">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <span className="flex size-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="size-2 bg-primary" />
               <p className="text-meta text-muted-foreground">
-                Exchange Telemetry · Live Session
+                CAMPUS EXCHANGE / SAMPLE LISTINGS
               </p>
             </div>
             <h2 className="text-display-lg tracking-tight">
-              What campus has to offer, right now.
+              Good things. Another chapter.
             </h2>
             <p className="max-w-2xl text-body leading-relaxed text-muted-foreground">
-              Direct peer exchanges across hostels, lecture halls, and labs with zero platform fees.
+              Explore sample books, equipment, and everyday essentials. Save your interest or add a listing in this browser session.
             </p>
 
             {/* Status chips */}
@@ -231,7 +231,7 @@ export default function MarketplacePage() {
       </section>
 
       {/* Category Pills Carousel / Wrap */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 custom-scrollbar">
+      <div className="flex flex-wrap items-center gap-2 py-1">
         {CATEGORIES.map((cat) => {
           const Icon = cat.icon;
           const isActive = selectedCategory === cat.value;

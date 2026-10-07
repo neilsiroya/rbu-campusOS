@@ -72,7 +72,7 @@ const GamerProfile = ({ user }: { user: typeof DEMO_GAMING_DATA.user }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}
-    className="glass-elevated p-6 rounded-3xl border border-primary/30 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group"
+    className="surface p-6 rounded-xl border border-primary/30 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group"
   >
     <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />
 
@@ -82,17 +82,17 @@ const GamerProfile = ({ user }: { user: typeof DEMO_GAMING_DATA.user }) => (
            <Gamepad2 className="size-12 text-primary/40" />
         </div>
       </div>
-      <div className="absolute -bottom-2 -right-2 size-8 rounded-full bg-primary border-4 border-background flex items-center justify-center text-white font-black text-[10px]">
+      <div className="absolute -bottom-2 -right-2 size-8 rounded-full bg-primary border-4 border-background flex items-center justify-center text-white font-semibold text-xs">
         LVL 12
       </div>
     </div>
 
     <div className="flex-1 text-center md:text-left space-y-2">
-      <div className="flex items-center justify-center md:justify-start gap-3">
-        <h2 className="text-2xl font-black tracking-tighter text-foreground uppercase leading-none group-hover:text-primary transition-colors">
+      <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+        <h2 className="text-2xl font-semibold tracking-tighter text-foreground uppercase leading-none group-hover:text-primary transition-colors">
           {user.handle}
         </h2>
-        <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
+        <span className="text-xs font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30">
           {user.rank}
         </span>
       </div>
@@ -108,8 +108,8 @@ const GamerProfile = ({ user }: { user: typeof DEMO_GAMING_DATA.user }) => (
 
     <div className="hidden lg:flex items-center gap-3">
       <div className="text-right">
-        <p className="text-[10px] font-bold text-muted-foreground uppercase">Campus Rank</p>
-        <p className="text-lg font-black text-foreground">#124</p>
+        <p className="text-xs font-bold text-muted-foreground uppercase">Campus Rank</p>
+        <p className="text-lg font-semibold text-foreground">#124</p>
       </div>
       <ArrowUpRight className="size-5 text-primary" />
     </div>
@@ -117,12 +117,12 @@ const GamerProfile = ({ user }: { user: typeof DEMO_GAMING_DATA.user }) => (
 );
 
 const ArenaLeaderboard = ({ players }: { players: Player[] }) => (
-  <div className="glass-panel rounded-3xl border border-border/50 overflow-hidden">
+  <div className="surface rounded-xl border border-border/50 overflow-hidden">
     <div className="p-4 border-b border-border/50 bg-background/20 flex items-center justify-between">
-      <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
-        <Crown className="size-4 text-primary" /> Leaderboard Nexus
+      <h2 className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
+        <Crown className="size-4 text-primary" /> Campus leaderboard
       </h2>
-      <span className="text-[10px] font-bold text-muted-foreground uppercase">Demo Rankings</span>
+      <span className="text-xs font-bold text-muted-foreground uppercase">Demo Rankings</span>
     </div>
     <div className="divide-y divide-border/50">
       {players.map((p, i) => (
@@ -134,12 +134,12 @@ const ArenaLeaderboard = ({ players }: { players: Player[] }) => (
             )}>{p.rank}</span>
             <div className="flex flex-col">
               <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{p.handle}</span>
-              <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">{p.game} &bull; {p.type}</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-tighter">{p.game} &bull; {p.type}</span>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-xs font-mono font-black text-foreground">{p.score}</span>
-            <span className="text-[9px] text-muted-foreground ml-1 uppercase">pts</span>
+            <span className="text-xs font-mono font-semibold text-foreground">{p.score}</span>
+            <span className="text-xs text-muted-foreground ml-1 uppercase">pts</span>
           </div>
         </div>
       ))}
@@ -162,23 +162,23 @@ const TournamentCard = ({
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.1 }}
-    className="glass-panel p-5 rounded-2xl border border-border/50 group hover:border-primary/40 transition-all motion-smooth"
+    className="surface p-5 rounded-2xl border border-border/50 group hover:border-primary/40 transition-all motion-smooth"
   >
     <div className="flex justify-between items-start mb-4">
       <div className="flex items-center gap-2">
         <div className={cn(
-          "size-2 rounded-full animate-pulse",
+          "size-2 rounded-full",
           tournament.status === "Live" ? "bg-success" : "bg-muted"
         )} />
-        <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
-          {tournament.status}
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {tournament.status} · sample
         </span>
       </div>
-      <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/30">
+      <span className="text-xs font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/30">
         {tournament.category}
       </span>
     </div>
-    <h3 className="text-lg font-black text-foreground tracking-tight group-hover:text-primary transition-colors mb-1 uppercase">
+    <h3 className="text-lg font-semibold text-foreground tracking-tight group-hover:text-primary transition-colors mb-1 uppercase">
       {tournament.title}
     </h3>
     <p className="text-xs text-muted-foreground mb-6">Game: {tournament.game}</p>
@@ -192,7 +192,7 @@ const TournamentCard = ({
         size="sm"
         aria-pressed={saved}
         onClick={onToggleSaved}
-        className="min-h-11 px-3 text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-primary/10 hover:text-primary"
+        className="min-h-11 px-3 text-xs font-bold uppercase tracking-wide transition-all hover:bg-primary/10 hover:text-primary"
       >
         {saved ? "Saved this session" : "Save for this session"}
       </Button>
@@ -217,13 +217,13 @@ export default function GamingPage() {
       >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase opacity-80">Gaming Nexus</span>
-            <div className="size-1 rounded-full bg-success animate-pulse" />
+            <span className="text-xs font-semibold tracking-[0.2em] text-primary uppercase opacity-80">Gaming Nexus</span>
+            <div className="size-1 rounded-full bg-primary" />
           </div>
-          <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase leading-none">
+          <h1 className="text-3xl font-semibold tracking-tighter text-foreground uppercase leading-none">
             Esports <span className="text-primary italic">Arena</span>
           </h1>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Competition, Glory, and Digital Dominance
           </p>
         </div>
@@ -238,8 +238,8 @@ export default function GamingPage() {
         <div className="lg:col-span-7 space-y-6">
           <ArenaLeaderboard players={DEMO_GAMING_DATA.leaderboard} />
 
-          <div className="glass-panel p-6 rounded-3xl border border-border/50">
-            <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 mb-6">
+          <div className="surface p-6 rounded-xl border border-border/50">
+            <h2 className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2 mb-6">
               <Trophy className="size-4 text-primary" /> Achievement Wall
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -248,7 +248,7 @@ export default function GamingPage() {
                   <div className={cn("p-3 rounded-xl bg-muted group-hover:bg-primary/10 transition-colors", ach.color)}>
                     <ach.icon className="size-6" />
                   </div>
-                  <span className="text-[10px] font-bold text-center text-muted-foreground group-hover:text-foreground transition-colors uppercase tracking-tighter">
+                  <span className="text-xs font-bold text-center text-muted-foreground group-hover:text-foreground transition-colors uppercase tracking-tighter">
                     {ach.name}
                   </span>
                 </div>
@@ -259,10 +259,10 @@ export default function GamingPage() {
 
         <div className="lg:col-span-5 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
               <Zap className="size-4 text-primary" /> Tournament examples
             </h2>
-            <span className="text-[10px] font-medium text-muted-foreground">
+            <span className="text-xs font-medium text-muted-foreground">
               {DEMO_GAMING_DATA.tournaments.length} demo listings
             </span>
           </div>

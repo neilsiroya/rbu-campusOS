@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut, X, ChevronRight } from "lucide-react";
@@ -24,17 +24,6 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const [logoutError, setLogoutError] = useState("");
   const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
   const handleLogout = async () => {
     setLoggingOut(true);
     setLogoutError("");
@@ -53,11 +42,6 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
   const closeMobileMenu = () => {
     setIsOpen(false);
-    if (window.matchMedia("(max-width: 1023px)").matches) {
-      window.requestAnimationFrame(() => {
-        document.querySelector<HTMLButtonElement>('[aria-controls="app-sidebar"]')?.focus();
-      });
-    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -71,13 +55,13 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       id="app-sidebar"
       onKeyDown={handleKeyDown}
       className={cn(
-        "app-sidebar fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border/70 surface-elevated transition-transform duration-300 ease-out lg:relative lg:translate-x-0",
+        "app-sidebar fixed inset-y-0 left-0 z-40 flex h-[100dvh] min-h-0 w-64 max-w-[calc(100vw-2rem)] flex-col overflow-hidden border-r border-border/70 surface-elevated transition-transform duration-300 ease-out lg:relative lg:translate-x-0",
         isOpen ? "translate-x-0 visible" : "-translate-x-full invisible lg:visible"
       )}
       aria-label="Main navigation"
     >
-      <div className="flex items-center justify-between px-5 py-5 border-b border-border/50">
-        <BrandMark />
+      <div className="flex shrink-0 items-center justify-between px-5 py-5 border-b border-border/50">
+        <BrandMark onClick={closeMobileMenu} />
         <Button
           variant="ghost"
           size="icon"
@@ -91,8 +75,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
       <nav
         aria-label="Primary navigation"
-        className="custom-scrollbar flex-1 space-y-6 overflow-y-auto px-3 pb-8"
-        onKeyDown={handleKeyDown}
+        className="custom-scrollbar min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-3 pb-8"
       >
         <LayoutGroup id="sidebar-nav" inherit>
         {NAV_GROUPS.map((group) => (
@@ -112,7 +95,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   onClick={closeMobileMenu}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "relative flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-150",
+                    "relative flex min-h-11 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-150",
                     isActive
                       ? "text-primary font-semibold"
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -121,7 +104,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   {isActive && (
                     <motion.div
                       layoutId="sidebar-active-pill"
-                      className="absolute inset-0 rounded-xl bg-primary/10 border-l-2 border-primary"
+                      className="absolute inset-0 rounded-md bg-primary/10 border-l-2 border-primary"
                       transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 350, damping: 30 }}
                       aria-hidden="true"
                     />
@@ -145,7 +128,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </LayoutGroup>
       </nav>
 
-      <div className="border-t border-border/70 p-4">
+      <div className="shrink-0 border-t border-border/70 p-4">
         {logoutError ? (
           <p role="alert" className="mb-2 rounded-lg bg-danger/10 px-3 py-2 text-xs text-danger">
             {logoutError}

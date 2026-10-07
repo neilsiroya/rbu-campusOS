@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/lib/toast-context";
 import { ToastViewport } from "@/components/ui/Toast";
+import CursorSpotlight from "@/components/CursorSpotlight";
 
 
 export const metadata: Metadata = {
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ToastProvider>
             {children}
             <ToastViewport />
+            <CursorSpotlight />
           </ToastProvider>
         </ThemeProvider>
       </body>

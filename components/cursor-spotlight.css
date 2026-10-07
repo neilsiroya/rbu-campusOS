@@ -1,0 +1,24 @@
+/* A bounded composited light, not a viewport-sized canvas or replacement cursor. */
+.cursor-spotlight {
+  --spotlight-color: 70 104 147;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  pointer-events: none;
+  user-select: none;
+  z-index: 39;
+  opacity: 0;
+  contain: strict;
+  background: radial-gradient(circle, rgb(var(--spotlight-color) / .085), rgb(var(--spotlight-color) / .035) 28%, transparent 68%);
+  transition: opacity 350ms ease;
+}
+.dark .cursor-spotlight { --spotlight-color: 164 192 224; }
+.dark .cursor-spotlight { background: radial-gradient(circle, rgb(var(--spotlight-color) / .13), rgb(var(--spotlight-color) / .045) 30%, transparent 68%); }
+.cursor-spotlight[data-visible="true"] { opacity: 1; }
+.cursor-spotlight-lens { position: absolute; inset: 144px; border: 1px solid rgb(var(--spotlight-color) / .25); border-radius: 50%; opacity: 0; transform: scale(.65); transition: opacity 180ms ease, transform 220ms ease; }
+.cursor-spotlight[data-interactive="true"] .cursor-spotlight-lens { opacity: 1; transform: scale(1); }
+.cursor-spotlight[data-pressed="true"] .cursor-spotlight-lens { transform: scale(.8); }
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse), (forced-colors: active) { .cursor-spotlight { display: none; } }

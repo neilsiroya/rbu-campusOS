@@ -10,7 +10,6 @@ import { EmptyState } from "@/components/os/EmptyState";
 import { FilterChips } from "@/components/os/FilterChips";
 import { PageIntro } from "@/components/os/PageIntro";
 import { Button } from "@/components/ui/button";
-import { SpotlightCard } from "@/components/motion";
 import { cn } from "@/lib/utils";
 
 const FILTERS: Array<"All" | CampusEvent["category"]> = [
@@ -49,8 +48,8 @@ export default function EventsPage() {
       />
       <DemoNotice /><SessionStorageNotice message={storageError} />
 
-      <SpotlightCard className="overflow-hidden rounded-3xl border-border stagger-in" intensity={0.22}>
-        <article className="grid md:grid-cols-2">
+      {filter === "All" && <section className="overflow-hidden border border-border">
+        <article className="grid md:grid-cols-[1.7fr_1fr]">
           <div className="bg-foreground p-8 text-background">
             <p className="text-meta opacity-70">Featured</p>
             <h2 className="mt-3 text-display-md leading-tight">{featured.title}</h2>
@@ -65,18 +64,18 @@ export default function EventsPage() {
               {interested.includes(featured.id) ? "Interested (this session)" : "I’m interested"}
             </Button>
           </div>
-          <div className="flex flex-col justify-end bg-muted/40 p-8">
-            <p className="font-display text-2xl leading-tight">Make room for something beyond the classroom.</p>
+          <div className="flex flex-col justify-between gap-8 bg-muted/40 p-8">
+            <div><p className="text-xs text-muted-foreground">ON THE PROGRAMME</p><p className="mt-4 text-6xl font-medium tracking-tighter">{String(EVENTS.length).padStart(2, "0")}</p><p className="mt-2 text-sm">Ways to take part.</p></div>
             <p className="mt-3 text-sm text-muted-foreground">{SESSION_NOTICE}</p>
           </div>
         </article>
-      </SpotlightCard>
+      </section>}
 
       {note ? <p className="text-caption text-muted-foreground">{note}</p> : null}
 
       <FilterChips value={filter} onChange={setFilter} options={FILTERS} />
 
-      <div className="grid gap-4 sm:grid-cols-2 stagger-in">
+      <div className="divide-y divide-border border-y border-border">
         {list.length === 0 ? (
           <div className="sm:col-span-2">
             <EmptyState title="No events on your calendar" body="Try another category — the week is wider than one lane." />
@@ -89,7 +88,7 @@ export default function EventsPage() {
               <article
                 key={event.id}
                 className={cn(
-                  "interactive-card rounded-2xl p-5",
+                  "bg-card px-5 py-6 transition-colors hover:bg-muted/30 sm:px-7",
                   expanded && "border-primary/40"
                 )}
               >
@@ -106,7 +105,7 @@ export default function EventsPage() {
                         {event.category}
                         {event.club ? ` · ${event.club}` : ""}
                       </span>
-                      <span className="mt-2 block text-h4 leading-tight">{event.title}</span>
+                      <span className="mt-2 block text-xl font-medium tracking-tight sm:text-2xl">{event.title}</span>
                       <span className="mt-2 block text-body-sm text-muted-foreground">
                         {event.date} · {event.location}
                       </span>

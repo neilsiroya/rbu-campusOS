@@ -63,17 +63,17 @@ const DEMO_SPORTS_DATA = {
 const ScoreTicker = ({ match }: { match: MatchScore }) => (
   <div className="flex w-full min-w-0 items-center justify-between rounded-xl border border-border/50 bg-background/40 px-4 py-2 motion-fast">
     <div className="flex items-center gap-2">
-      <span className="text-[10px] font-bold text-foreground">{match.homeTeam}</span>
-      <span className="text-xs font-black text-primary">{match.homeScore}</span>
+      <span className="text-xs font-bold text-foreground">{match.homeTeam}</span>
+      <span className="text-xs font-semibold text-primary">{match.homeScore}</span>
     </div>
     <div className="flex items-center gap-1">
-      <span className="text-[10px] font-black text-muted-foreground">VS</span>
-      <span className="text-[10px] font-semibold text-muted-foreground">{match.status}</span>
-      {match.status === "Live" && <div className="size-1 rounded-full bg-success animate-pulse" />}
+      <span className="text-xs font-semibold text-muted-foreground">VS</span>
+      <span className="text-xs font-semibold text-muted-foreground">{match.status} · sample</span>
+      {match.status === "Live" && <div className="size-1 rounded-full bg-primary" />}
     </div>
     <div className="flex items-center gap-2 text-right">
-      <span className="text-xs font-black text-primary">{match.awayScore}</span>
-      <span className="text-[10px] font-bold text-foreground">{match.awayTeam}</span>
+      <span className="text-xs font-semibold text-primary">{match.awayScore}</span>
+      <span className="text-xs font-bold text-foreground">{match.awayTeam}</span>
     </div>
   </div>
 );
@@ -90,26 +90,26 @@ const FacilityCard = ({ facility, index }: { facility: Facility; index: number }
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.1 }}
-      className="glass-panel p-5 rounded-2xl border border-border/50 group hover:border-primary/40 transition-all motion-smooth"
+      className="surface p-5 rounded-2xl border border-border/50 group hover:border-primary/40 transition-all motion-smooth"
     >
       <div className="flex justify-between items-start mb-4">
         <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
           {React.createElement(facility.icon, { className: "size-5", "aria-hidden": "true" })}
         </div>
         <span className={cn(
-          "text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border",
+          "text-xs font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full border",
           statusStyles[facility.status]
         )}>
           {facility.status}
         </span>
       </div>
-      <h3 className="text-lg font-black text-foreground tracking-tight uppercase mb-1">
+      <h3 className="text-lg font-semibold text-foreground tracking-tight uppercase mb-1">
         {facility.name}
       </h3>
       <p className="text-xs text-muted-foreground mb-6">{facility.type} Facility</p>
       <Button
         disabled
-        className="w-full h-9 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all hover:scale-105"
+        className="w-full h-9 text-xs font-bold uppercase tracking-wide rounded-xl transition-all hover:scale-105"
       >
         Booking unavailable
       </Button>
@@ -134,13 +134,13 @@ const AthleticEvent = ({ event, index }: { event: SportsEvent; index: number }) 
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="break-words text-sm font-bold text-foreground transition-colors group-hover:text-primary">{event.title}</span>
-        <span className="flex flex-wrap items-center gap-1 text-[10px] text-muted-foreground">
+        <span className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
           <MapPin className="size-2.5" /> {event.location} &bull; {event.sport}
         </span>
       </div>
     </div>
     <div className={cn(
-      "shrink-0 self-start rounded border px-2 py-0.5 text-[9px] font-black uppercase sm:self-center",
+      "shrink-0 self-start rounded border px-2 py-0.5 text-xs font-semibold uppercase sm:self-center",
       event.type === "Match" ? "border-primary/30 text-primary bg-primary/10" : "border-border text-muted-foreground bg-muted/20"
     )}>
       {event.type}
@@ -158,14 +158,14 @@ export default function SportsPage() {
       >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase opacity-80">Athletic Nexus</span>
-            <div className="size-1 rounded-full bg-success animate-pulse" />
+            <span className="text-xs font-semibold tracking-[0.2em] text-primary uppercase opacity-80">Campus recreation</span>
+            <div className="size-1 rounded-full bg-primary" />
           </div>
-          <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase leading-none">
+          <h1 className="text-3xl font-semibold tracking-tighter text-foreground uppercase leading-none">
             Sports <span className="text-primary italic">Hub</span>
           </h1>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
-            facility booking & performance telemetry
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Facilities, fixtures and campus sport
           </p>
           <p className="max-w-prose text-xs leading-relaxed text-muted-foreground">
             Demo data only. Scores and availability are not live, and facility bookings are not connected.
@@ -184,7 +184,7 @@ export default function SportsPage() {
         {/* Facility Grid */}
         <div className="lg:col-span-7 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
               <Dumbbell className="size-4 text-primary" /> Facility Nexus
             </h2>
           </div>
@@ -197,12 +197,12 @@ export default function SportsPage() {
 
         {/* Events Timeline */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="glass-panel rounded-2xl border border-border/50 overflow-hidden">
+          <div className="surface rounded-2xl border border-border/50 overflow-hidden">
             <div className="p-4 border-b border-border/50 bg-background/20 flex items-center justify-between">
-              <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+              <h2 className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
                 <Calendar className="size-4 text-primary" /> Upcoming Events
               </h2>
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Scheduled</span>
+              <span className="text-xs font-bold text-muted-foreground uppercase">Scheduled</span>
             </div>
             <div className="p-6 space-y-4">
               {DEMO_SPORTS_DATA.events.map((e, i) => (
@@ -211,18 +211,18 @@ export default function SportsPage() {
             </div>
           </div>
 
-          <div className="glass-elevated p-6 rounded-2xl border border-primary/30 space-y-4">
-            <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+          <div className="surface p-6 rounded-2xl border border-primary/30 space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
               <Trophy className="size-4 text-primary" /> Personal Bests
             </h2>
             <div className="grid grid-cols-2 gap-4">
               <div className="p-3 rounded-xl bg-background/40 border border-border/50">
-                <span className="text-[9px] font-bold text-muted-foreground uppercase">100m Sprint</span>
-                <div className="text-lg font-black text-foreground">11.2s</div>
+                <span className="text-xs font-bold text-muted-foreground uppercase">100m Sprint</span>
+                <div className="text-lg font-semibold text-foreground">11.2s</div>
               </div>
               <div className="p-3 rounded-xl bg-background/40 border border-border/50">
-                <span className="text-[9px] font-bold text-muted-foreground uppercase">Bench Press</span>
-                <div className="text-lg font-black text-foreground">85kg</div>
+                <span className="text-xs font-bold text-muted-foreground uppercase">Bench Press</span>
+                <div className="text-lg font-semibold text-foreground">85kg</div>
               </div>
             </div>
           </div>

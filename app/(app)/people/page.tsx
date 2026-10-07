@@ -37,13 +37,13 @@ export default function PeoplePage() {
         <FilterChips value={year} onChange={setYear} options={[...YEARS]} />
       </div>
       {list.length === 0 && <EmptyState title="No people match" body="Try another name, interest, or year." />}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 stagger-in">
+      <div className="grid gap-x-8 md:grid-cols-2">
         {list.map((person) => (
-          <article key={person.id} className="surface rounded-3xl p-5">
-            <div className="grid size-12 place-items-center rounded-2xl bg-muted font-display text-xl">
+          <article key={person.id} className="relative border-t border-border py-6 pl-16">
+            <div className="absolute left-0 top-6 grid size-11 place-items-center rounded-md border border-border bg-card font-display text-xl">
               {person.name.charAt(0)}
             </div>
-            <h2 className="mt-4 text-h4">{person.name}</h2>
+            <h2 className="text-h4">{person.name}</h2>
             <p className="text-body-sm text-muted-foreground">
               {person.branch} · {person.year} year
             </p>

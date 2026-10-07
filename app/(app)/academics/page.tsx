@@ -82,15 +82,15 @@ const AcademicStat = ({
   icon: React.ElementType;
   colorClass: string
 }) => (
-  <div className="glass-surface p-4 rounded-xl border border-border/50 flex items-center gap-4 motion-fast">
+  <div className="border-l border-border py-3 pl-4 flex items-center gap-4">
     <div className={cn("p-2 rounded-lg shadow-inner", colorClass as string)}>
       {React.createElement(Icon, { className: "size-4 text-white", "aria-hidden": "true" })}
     </div>
     <div className="flex flex-col">
-      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</span>
+      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">{label}</span>
       <div className="flex items-baseline gap-2">
-        <span className="text-2xl font-black tabular-nums text-foreground leading-none">{value}</span>
-        {subValue && <span className="text-[10px] text-muted-foreground font-medium">{subValue}</span>}
+        <span className="text-2xl font-semibold tabular-nums text-foreground leading-none">{value}</span>
+        {subValue && <span className="text-xs text-muted-foreground font-medium">{subValue}</span>}
       </div>
     </div>
   </div>
@@ -101,11 +101,11 @@ const CourseCard = ({ course, index }: { course: Course; index: number }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.1 }}
-    className="glass-panel p-5 rounded-2xl border border-border/50 group hover:border-primary/40 transition-all motion-smooth relative overflow-hidden"
+    className="surface p-5 rounded-2xl border border-border/50 group hover:border-primary/40 transition-all motion-smooth relative overflow-hidden"
   >
     <div className="absolute top-0 right-0 p-3">
       <span className={cn(
-        "text-[9px] font-black uppercase px-2 py-0.5 rounded-full border",
+        "text-xs font-semibold uppercase px-2 py-0.5 rounded-full border",
         course.status === "On Track" ? "border-success/30 text-success bg-success/10" : "border-danger/30 text-danger bg-danger/10"
       )}>
         {course.status}
@@ -115,17 +115,17 @@ const CourseCard = ({ course, index }: { course: Course; index: number }) => (
     <div className="space-y-4">
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">{course.code}</span>
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">{course.credits} Credits</span>
+          <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">{course.code}</span>
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-tighter">{course.credits} Credits</span>
         </div>
-        <h3 className="text-lg font-black text-foreground tracking-tight group-hover:text-primary transition-colors">
+        <h3 className="text-lg font-semibold text-foreground tracking-tight group-hover:text-primary transition-colors">
           {course.name}
         </h3>
       </div>
 
       <div className="space-y-2">
         <div className="flex justify-between items-end">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Syllabus Completion</span>
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Syllabus Completion</span>
           <span className="text-xs font-mono font-bold text-foreground">{course.progress}%</span>
         </div>
         <div
@@ -140,7 +140,7 @@ const CourseCard = ({ course, index }: { course: Course; index: number }) => (
             initial={{ width: 0 }}
             animate={{ width: `${course.progress}%` }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="absolute top-0 left-0 h-full bg-primary shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+            className="absolute top-0 left-0 h-full bg-primary"
           />
         </div>
       </div>
@@ -148,7 +148,7 @@ const CourseCard = ({ course, index }: { course: Course; index: number }) => (
       <div className="pt-4 border-t border-border/50 flex items-center justify-between">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Clock className="size-3" />
-          <span className="text-[10px] font-medium">{course.nextSession.time} &bull; {course.nextSession.room}</span>
+          <span className="text-xs font-medium">{course.nextSession.time} &bull; {course.nextSession.room}</span>
         </div>
         <ArrowUpRight className="size-4 text-muted-foreground" aria-hidden="true" />
       </div>
@@ -167,13 +167,13 @@ const DeadlineRow = ({ deadline, index }: { deadline: Deadline; index: number })
       <div className="size-1.5 rounded-full bg-border group-hover:bg-primary transition-colors" />
       <div className="flex flex-col">
         <span className="text-xs font-bold text-foreground">{deadline.task}</span>
-        <span className="text-[10px] text-muted-foreground">{deadline.subject}</span>
+        <span className="text-xs text-muted-foreground">{deadline.subject}</span>
       </div>
     </div>
     <div className="flex items-center gap-3">
-      <span className="text-[10px] font-mono text-muted-foreground">{deadline.dueDate}</span>
+      <span className="text-xs font-mono text-muted-foreground">{deadline.dueDate}</span>
       <span className={cn(
-        "text-[9px] font-black uppercase px-1.5 py-0.5 rounded-sm border",
+        "text-xs font-semibold uppercase px-1.5 py-0.5 rounded-sm border",
         deadline.status === "urgent" ? "border-danger/50 text-danger bg-danger/10" : "border-border text-muted-foreground bg-muted/10"
       )}>
         {deadline.status}
@@ -196,7 +196,7 @@ const ResourceLink = ({ resource, index }: { resource: Resource; index: number }
       <span className="text-xs font-medium text-foreground">{resource.label}</span>
     </div>
     <div className="flex items-center gap-2">
-      <span className="text-[9px] font-bold text-muted-foreground uppercase">{resource.type}</span>
+      <span className="text-xs font-bold text-muted-foreground uppercase">{resource.type}</span>
       <ChevronRight className="size-3 text-muted-foreground group-hover:text-primary transition-colors" />
     </div>
   </motion.div>
@@ -230,13 +230,13 @@ export default function AcademicsPage() {
       >
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black tracking-[0.2em] text-primary uppercase opacity-80">Academic OS</span>
-            <div className="size-1 rounded-full bg-success animate-pulse" />
+            <span className="text-xs font-semibold tracking-[0.2em] text-primary uppercase opacity-80">Academic workspace</span>
+            <div className="size-1 rounded-full bg-primary" />
           </div>
-          <h1 className="text-3xl font-black tracking-tighter text-foreground uppercase leading-none">
-            Academic <span className="text-primary italic">Command Center</span>
+          <h1 className="text-3xl font-semibold tracking-tighter text-foreground uppercase leading-none">
+            Your semester.
           </h1>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Semester 5 &bull; B.Tech Computer Science &bull; 2026
           </p>
         </div>
@@ -281,8 +281,8 @@ export default function AcademicsPage() {
         {/* Left Column: Course Control Center */}
         <div className="lg:col-span-8 space-y-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
-              <BookOpen className="size-4 text-primary" /> Active Course Modules
+            <h2 className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
+              <BookOpen className="size-4 text-primary" /> Your courses
             </h2>
             <div className="relative w-full sm:max-w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3 text-muted-foreground" />
@@ -298,7 +298,7 @@ export default function AcademicsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {courses.map((course, i) => (
               <CourseCard key={course.code} course={course} index={i} />
             ))}
@@ -317,12 +317,12 @@ export default function AcademicsPage() {
         <div className="lg:col-span-4 space-y-6">
 
           {/* Deadlines Telemetry */}
-          <div className="glass-panel rounded-2xl border border-border/50 overflow-hidden">
+          <div className="surface rounded-2xl border border-border/50 overflow-hidden">
             <div className="p-4 border-b border-border/50 bg-background/20 flex items-center justify-between">
-              <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+              <h2 className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
                 <AlertCircle className="size-4 text-primary" /> Pending Deadlines
               </h2>
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">Urgent First</span>
+              <span className="text-xs font-bold text-muted-foreground uppercase">Urgent First</span>
             </div>
             <div className="p-4 space-y-1">
               {DEADLINES.map((d, i) => (
@@ -331,11 +331,11 @@ export default function AcademicsPage() {
             </div>
           </div>
 
-          {/* Resource Nexus */}
-          <div className="glass-elevated rounded-2xl border border-border/50 overflow-hidden relative">
+          {/* Study resources */}
+          <div className="surface rounded-2xl border border-border/50 overflow-hidden relative">
             <div className="p-4 border-b border-border/50 bg-background/20">
-              <h2 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
-                <FileText className="size-4 text-primary" /> Resource Nexus
+              <h2 className="text-xs font-semibold uppercase tracking-wide flex items-center gap-2">
+                <FileText className="size-4 text-primary" /> Study resources
               </h2>
             </div>
             <div className="p-4 space-y-2">
@@ -348,7 +348,7 @@ export default function AcademicsPage() {
                 render={<Link href="/notes" />}
                 nativeButton={false}
                 variant="ghost"
-                className="min-h-11 w-full text-[10px] font-bold uppercase tracking-widest transition-all hover:bg-primary/10 hover:text-primary"
+                className="min-h-11 w-full text-xs font-bold uppercase tracking-wide transition-all hover:bg-primary/10 hover:text-primary"
               >
                 Browse Study Hub <ArrowUpRight className="ml-2 size-3" />
               </Button>
@@ -358,12 +358,12 @@ export default function AcademicsPage() {
       </div>
 
       {/* Attendance Ledger — sortable on desktop, stacked cards on mobile */}
-      <section aria-labelledby="attendance-ledger-heading" className="glass-panel overflow-hidden rounded-2xl border border-border/50">
+      <section aria-labelledby="attendance-ledger-heading" className="surface overflow-hidden rounded-2xl border border-border/50">
         <div className="flex items-center justify-between border-b border-border/50 bg-background/20 p-4">
-          <h2 id="attendance-ledger-heading" className="text-xs font-black uppercase tracking-widest">
+          <h2 id="attendance-ledger-heading" className="text-xs font-semibold uppercase tracking-wide">
             Attendance Ledger
           </h2>
-          <span className="text-[10px] font-bold uppercase text-muted-foreground">
+          <span className="text-xs font-bold uppercase text-muted-foreground">
             Mean {MEAN_ATTENDANCE}%
           </span>
         </div>
@@ -373,7 +373,7 @@ export default function AcademicsPage() {
             Course attendance sorted by percentage
           </caption>
           <thead>
-            <tr className="border-b border-border/50 text-[10px] uppercase tracking-widest text-muted-foreground">
+            <tr className="border-b border-border/50 text-xs uppercase tracking-wide text-muted-foreground">
               <th scope="col" className="px-4 py-3 font-bold">Course</th>
               <th scope="col" className="px-4 py-3 text-right font-bold">Attended</th>
               <th
@@ -398,7 +398,7 @@ export default function AcademicsPage() {
             {attendanceRows.map((row) => (
               <tr key={row.code} className="border-b border-border/40 transition-colors last:border-0 hover:bg-muted/40">
                 <td className="px-4 py-3">
-                  <span className="mr-2 rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] font-bold text-primary">
+                  <span className="mr-2 rounded bg-primary/10 px-1.5 py-0.5 font-mono text-xs font-bold text-primary">
                     {row.code}
                   </span>
                   <span className="text-xs font-semibold text-foreground">{row.name}</span>
@@ -419,7 +419,7 @@ export default function AcademicsPage() {
                 <td className="px-4 py-3 text-right">
                   <span
                     className={cn(
-                      "rounded-full border px-2 py-0.5 text-[9px] font-black uppercase",
+                      "rounded-full border px-2 py-0.5 text-xs font-semibold uppercase",
                       row.percent >= 75
                         ? "border-success/30 bg-success/10 text-success"
                         : "border-danger/30 bg-danger/10 text-danger"
@@ -441,12 +441,12 @@ export default function AcademicsPage() {
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-bold text-foreground">
-                  <span className="mr-2 rounded bg-primary/10 px-1.5 py-0.5 font-mono text-[10px] text-primary">
+                  <span className="mr-2 rounded bg-primary/10 px-1.5 py-0.5 font-mono text-xs text-primary">
                     {row.code}
                   </span>
                   {row.name}
                 </p>
-                <span className="font-display text-xl font-black tabular-nums text-foreground">
+                <span className="font-display text-xl font-semibold tabular-nums text-foreground">
                   {row.percent}%
                 </span>
               </div>
@@ -459,7 +459,7 @@ export default function AcademicsPage() {
                 </span>
                 <span
                   className={cn(
-                    "rounded-full border px-2 py-0.5 text-[9px] font-black uppercase",
+                    "rounded-full border px-2 py-0.5 text-xs font-semibold uppercase",
                     row.percent >= 75
                       ? "border-success/30 bg-success/10 text-success"
                       : "border-danger/30 bg-danger/10 text-danger"

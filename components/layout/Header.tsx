@@ -19,7 +19,7 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(subscribe, () => true, () => false);
   const dark = mounted && resolvedTheme === "dark";
-  const group = NAV_GROUPS.find((g) => g.items.some((i) => pathname === i.href))?.group;
+  const group = NAV_GROUPS.find((g) => g.items.some((i) => pathname === i.href || pathname.startsWith(`${i.href}/`)))?.group;
   return (
     <header className="app-header flex h-[72px] shrink-0 items-center justify-between gap-2 border-b border-border px-3 sm:px-6 lg:px-8">
       <div className="flex min-w-0 items-center gap-2">
@@ -28,7 +28,7 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: {
           aria-controls="app-sidebar" aria-expanded={isMobileMenuOpen}>
           {isMobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </Button>
-        <div className="sm:hidden"><BrandMark compact /></div>
+        <div className="app-header-brand sm:hidden"><BrandMark compact /></div>
         <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-2 text-sm sm:flex">
           <span className="text-muted-foreground">{group ?? "CampusOS"}</span>
           <ChevronRight className="size-3 text-muted-foreground" aria-hidden="true" />

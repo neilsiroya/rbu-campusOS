@@ -13,12 +13,13 @@ import {
   Sparkles,
   Menu,
 } from "lucide-react";
-import { motion, LayoutGroup } from "framer-motion";
+import { motion, LayoutGroup, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const onResize = () => {
@@ -41,16 +42,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         const items = Array.from(document.querySelectorAll<HTMLElement>('#app-sidebar a[href], #app-sidebar button:not([disabled])')).filter((item) => item.getClientRects().length > 0);
         const first = items[0];
         const last = items[items.length - 1];
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        if (!document.querySelector("#app-sidebar")?.contains(document.activeElement)) { event.preventDefault(); first?.focus(); }
+        else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
         else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
         return;
       }
       if (event.key !== "Escape") return;
       event.preventDefault();
       setIsMobileMenuOpen(false);
-      window.requestAnimationFrame(() => {
-        previousFocus?.focus();
-      });
     };
 
     document.body.style.overflow = "hidden";
@@ -62,6 +61,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
+      window.requestAnimationFrame(() => {
+        if (previousFocus?.isConnected) previousFocus.focus();
+      });
     };
   }, [isMobileMenuOpen]);
 
@@ -82,7 +84,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           Skip to main content
         </a>
 
-        <SharedElement id="sidebar-transition" className="relative z-40 shrink-0">
+        <SharedElement id="sidebar-transition" className="relative z-40 h-full min-h-0 shrink-0">
           <Sidebar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
         </SharedElement>
 
@@ -111,14 +113,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <nav
               aria-label="Mobile Bottom Navigation"
               className={cn(
-                "fixed inset-x-0 bottom-0 z-20 flex items-stretch border-t border-border/70 bg-background/90 backdrop-blur-lg lg:hidden",
+                "fixed inset-x-0 bottom-0 z-20 flex items-stretch border-t border-border/70 bg-surface-elevated lg:hidden",
                 "min-h-[calc(4rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
               )}
             >
               <LayoutGroup id="mobile-dock-nav" inherit>
                 {mobileNavItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = pathname === item.href;
+                  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
                   return (
                     <Link
                       key={item.href}
@@ -134,8 +136,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                       {isActive && (
                         <motion.div
                           layoutId="mobile-dock-active"
-                          className="absolute inset-1 rounded-2xl bg-primary/10 border-t-2 border-primary"
-                          transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                          className="absolute inset-1 rounded-md bg-primary/10 border-t-2 border-primary"
+                          transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
                           aria-hidden="true"
                         />
                       )}
@@ -149,6 +151,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   onClick={() => setIsMobileMenuOpen(true)}
                   className="relative flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                   aria-label="Open full menu"
+                  aria-controls="app-sidebar"
+                  aria-expanded={isMobileMenuOpen}
                 >
                   <Menu className="relative z-10 size-4" aria-hidden="true" />
                   <span className="relative z-10">More</span>
@@ -161,7 +165,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {isMobileMenuOpen ? (
           <button
             type="button"
-            className="fixed inset-0 z-20 bg-foreground/20 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-[39] bg-foreground/20 backdrop-blur-sm lg:hidden"
             aria-hidden="true"
             tabIndex={-1}
             onClick={() => setIsMobileMenuOpen(false)}

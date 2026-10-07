@@ -1,5 +1,7 @@
-import PlaceholderPage from "@/components/placeholders/Placeholder";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { PageIntro } from "@/components/os/PageIntro";
 
 export default function HostelsPage() {
-  return <PlaceholderPage title="Hostel Hub" description="Private communities for your hostel. Your digital home is being built!" />;
+  return <div className="space-y-8"><PageIntro kicker="Campus living" title="Around your residence." description="Useful places to start for everyday campus life." /><section className="border-y border-border py-8"><p className="max-w-xl text-sm leading-relaxed text-muted-foreground">Hostel-specific groups and room services are not connected yet. You can explore the sample campus directories below.</p></section><nav aria-label="Campus living resources" className="divide-y divide-border">{[{href:"/services",title:"Campus services",body:"Browse transport, maintenance and support information."},{href:"/lost-found",title:"Lost & found",body:"Look through sample reports or record an item in this browser."},{href:"/marketplace",title:"Campus exchange",body:"Explore books, equipment and everyday essentials."},{href:"/feed",title:"Community feed",body:"Explore campus conversations."}].map(item => <Link key={item.href} href={item.href} className="flex items-center justify-between gap-4 py-6 hover:text-primary"><div><h2 className="text-xl font-medium tracking-tight">{item.title}</h2><p className="mt-2 text-sm text-muted-foreground">{item.body}</p></div><ArrowUpRight className="size-5 shrink-0" /></Link>)}</nav></div>;
 }

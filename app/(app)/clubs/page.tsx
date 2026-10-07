@@ -37,7 +37,7 @@ export default function ClubsPage() {
       <PageIntro
         kicker="Community"
         title="Clubs"
-        description="Communities with rooms, rituals, and a next gathering — not a table of rows."
+        description="Find your people through campus clubs, interests, and gatherings."
       />
       <DemoNotice /><SessionStorageNotice message={storageError} />
       <div className="flex flex-col gap-3 sm:flex-row stagger-in">
@@ -49,7 +49,7 @@ export default function ClubsPage() {
         <SpotlightCard className="overflow-hidden rounded-3xl stagger-in" intensity={0.22}>
           <div className="grid gap-6 bg-foreground p-8 text-background md:grid-cols-[1fr_auto] md:items-center">
             <div>
-              <p className="text-meta opacity-70">Largest community · {featured.category}</p>
+              <p className="text-meta opacity-70">Featured community · {featured.category}</p>
               <h2 className="mt-3 text-display-md leading-tight">{featured.name}</h2>
               <p className="mt-4 max-w-xl text-body leading-relaxed opacity-80">
                 {featured.description}
@@ -99,7 +99,7 @@ export default function ClubsPage() {
                   </div>
                   {isJoined ? (
                     <span className="shrink-0 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
-                      Member
+                      Saved
                     </span>
                   ) : null}
                 </div>

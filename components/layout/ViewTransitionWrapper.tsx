@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useCallback } from "react";
 import { useReducedMotion } from "framer-motion";
 
 interface ViewTransitionWrapperProps {
@@ -9,8 +9,7 @@ interface ViewTransitionWrapperProps {
 }
 
 export function ViewTransitionWrapper({ children, className }: ViewTransitionWrapperProps) {
-  // This component just provides the shared element transition context
-  // The actual view transition is handled by ViewTransitionProvider
+  // Layout boundary; the provider controls workspace entrance and focus.
   return (
     <div className={className}>
       {children}
@@ -49,15 +48,14 @@ export function SharedElement({
 export function useViewTransition() {
   const shouldReduceMotion = useReducedMotion();
 
-  const startTransition = useRef((callback: () => Promise<void> | void) => {
+  const startTransition = useCallback((callback: () => Promise<void> | void) => {
     if (shouldReduceMotion || !document.startViewTransition) {
-      callback();
-      return Promise.resolve();
+      return Promise.resolve(callback());
     }
 
     const transition = document.startViewTransition(callback);
     return transition.finished;
-  });
+  }, [shouldReduceMotion]);
 
-  return { startTransition: startTransition.current };
+  return { startTransition };
 }

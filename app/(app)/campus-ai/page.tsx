@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
-  Sparkles,
   MapPin,
   Calendar,
   BookOpen,
@@ -30,7 +29,7 @@ import { PageIntro } from "@/components/os/PageIntro";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { TypingEffect } from "@/components/motion/TypingEffect";
+
 
 type StructuredCard = {
   type: "place" | "event" | "marketplace" | "notes" | "service" | "timetable" | "lost-found" | "club";
@@ -200,324 +199,40 @@ function resolveCampusQuery(query: string): { text: string; card?: StructuredCar
   };
 }
 
-type AIPhase = "idle" | "thinking" | "retrieving" | "composing";
-
-const PHASE_COPY: Record<Exclude<AIPhase, "idle">, string> = {
-  thinking: "Reasoning across campus knowledge…",
-  retrieving: "Searching 1,204 campus resources…",
-  composing: "Composing a structured answer…",
-};
-
 export default function CampusAIPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [phase, setPhase] = useState<AIPhase>("idle");
-  const [aiError, setAiError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const timersRef = useRef<number[]>([]);
-
-  const isTyping = phase !== "idle";
-
-  useEffect(() => {
-    const timers = timersRef.current;
-    return () => {
-      timers.forEach((t) => window.clearTimeout(t));
-      timersRef.current = [];
-    };
-  }, []);
-
-  const later = (ms: number, fn: () => void) => {
-    timersRef.current.push(window.setTimeout(fn, ms));
-  };
-
-  const handleSend = useCallback((text: string) => {
-    if (!text.trim() || isTyping) return;
-
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: "user",
-      text: text.trim(),
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+  const handleSend = (text: string) => {
+    if (!text.trim()) return;
+    const timestamp = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const response = resolveCampusQuery(text.trim());
+    setMessages(previous => [...previous,
+      { id: crypto.randomUUID(), role: "user", text: text.trim(), timestamp },
+      { id: crypto.randomUUID(), role: "assistant", text: response.text, card: response.card, timestamp }
+    ]);
     setInput("");
-    setAiError(null);
-    setPhase("thinking");
-
-    // Demo pipeline: thinking → retrieving → composing → completed.
-    later(550, () => setPhase("retrieving"));
-    later(1200, () => setPhase("composing"));
-    later(1750, () => {
-      const response = resolveCampusQuery(text);
-      const assistantMessage: Message = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        text: response.text,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        card: response.card,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-      setPhase("idle");
-    });
-  }, [isTyping]);
-
-  const scrollToBottom = useCallback(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping, scrollToBottom]);
-
-  return (
-    <div className="min-h-screen bg-background">
-      <DemoNotice>
-        Ask about places, events, gear, notes, clubs, and more. This demo searches sample records using preset responses.
-      </DemoNotice>
-
-      <PageIntro
-        title="Campus guide"
-        description="Your campus-aware assistant. Ask about Lab-4, calculator listings, Signals notes, shuttle times, or events."
-      />
-
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        {/* Chat Stream Window */}
-        <section className="flex flex-col justify-between overflow-hidden rounded-3xl border border-border/80 bg-card/60 backdrop-blur-md shadow-sm min-h-[560px]">
-          {/* Top Status Header */}
-          <div className="flex items-center justify-between border-b border-border/70 px-6 py-4 bg-muted/20">
-            <div className="flex items-center gap-3">
-              <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                <Sparkles className="size-4" />
-              </div>
-              <div>
-                <h2 className="text-sm font-bold">Campus guide</h2>
-                <p className="text-[11px] text-muted-foreground">
-                  Active Knowledge Engine · Local Session
-                </p>
-              </div>
-            </div>
-            <span className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Demo
-            </span>
-          </div>
-
-          {/* Conversation history */}
-          <div ref={scrollRef} className="stagger-in flex-1 space-y-4 overflow-y-auto p-6 custom-scrollbar">
-            {messages.map((msg, index) => {
-              const isLastAssistantMessage = index === messages.length - 1 && msg.role === "assistant";
-              const shouldType = isLastAssistantMessage && !isTyping;
-
-              return (
-                <div
-                  key={msg.id}
-                  className={cn(
-                    "flex gap-3 max-w-[88%]",
-                    msg.role === "user" ? "ml-auto flex-row-reverse" : "mr-auto"
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "flex size-8 shrink-0 items-center justify-center rounded-xl text-xs font-bold",
-                      msg.role === "user"
-                        ? "bg-foreground text-background"
-                        : "bg-primary text-primary-foreground"
-                    )}
-                  >
-                    {msg.role === "user" ? <User className="size-4" /> : <Bot className="size-4" />}
-                  </div>
-
-                  <div className="space-y-2">
-                    <div
-                      className={cn(
-                        "rounded-2xl px-4 py-3 text-sm leading-relaxed",
-                        msg.role === "user"
-                          ? "bg-primary text-primary-foreground rounded-tr-none shadow-xs"
-                          : "activity-surface rounded-tl-none text-foreground shadow-xs"
-                      )}
-                    >
-                      {shouldType ? (
-                        <TypingEffect text={msg.text} speed={50} />
-                      ) : (
-                        msg.text
-                      )}
-                    </div>
-
-                    {msg.card ? (
-                      <div className="glass-rich rounded-2xl p-4 border border-border/80 shadow-md">
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                              {msg.card.type.replace("-", " ")}
-                            </span>
-                            <h3 className="font-display text-base font-bold text-foreground">
-                              {msg.card.title}
-                            </h3>
-                            <p className="text-xs text-muted-foreground mt-0.5">{msg.card.subtitle}</p>
-                            <p className="text-[11px] text-muted-foreground/80 mt-1">{msg.card.meta}</p>
-                          </div>
-                        </div>
-
-                        <div className="mt-3 pt-2.5 border-t border-border/70 flex justify-end">
-                          <Link
-                            href={msg.card.href}
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
-                          >
-                            {msg.card.actionText}
-                            <ArrowRight className="size-3" />
-                          </Link>
-                        </div>
-                      </div>
-                    ) : null}
-
-                    <p className="text-[10px] text-muted-foreground px-1">{msg.timestamp}</p>
-                  </div>
-                </div>
-              );
-            })}
-            {isTyping ? (
-              <div
-                role="status"
-                aria-live="polite"
-                className="mr-auto flex max-w-[88%] items-center gap-3 rounded-2xl rounded-tl-none border border-border/60 bg-muted/40 px-4 py-3"
-              >
-                <span className="flex gap-1" aria-hidden="true">
-                  {[0, 1, 2].map((i) => (
-                    <span
-                      key={i}
-                      className="size-1.5 animate-bounce rounded-full bg-primary"
-                      style={{ animationDelay: `${i * 150}ms` }}
-                    />
-                  ))}
-                </span>
-                <p className="text-xs font-medium text-muted-foreground">
-                  {PHASE_COPY[phase as Exclude<AIPhase, "idle">]}
-                </p>
-              </div>
-            ) : null}
-            {aiError && !isTyping ? (
-              <div
-                role="alert"
-                className="mr-auto max-w-[88%] rounded-2xl rounded-tl-none border border-danger/40 bg-danger/10 px-4 py-3"
-              >
-                <p className="text-sm font-semibold text-foreground">Something interrupted the lookup.</p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{aiError}</p>
-              </div>
-            ) : null}
-          </div>
-
-        {/* Input Box Form */}
-        <div className="border-t border-border/80 p-4 bg-background/50 backdrop-blur-md">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSend(input);
-            }}
-            className="flex items-center gap-2"
-          >
-            <Input
-              aria-label="Ask the campus guide"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about Lab-4, calculator listings, Signals notes, shuttle times, or events…"
-              className="h-12 rounded-2xl bg-card border-border/80 text-sm"
-            />
-            <Button type="submit" size="icon" aria-label="Send question" disabled={isTyping || !input.trim()} className="size-12 shrink-0 rounded-2xl">
-              <Send className="size-4" />
-            </Button>
-          </form>
+  };
+  useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "instant" }); }, [messages]);
+  const sources = [
+    { href: "/map", label: "Places", icon: MapPin, count: MAP_PLACES.length },
+    { href: "/events", label: "Events", icon: Calendar, count: EVENTS.length },
+    { href: "/notes", label: "Study resources", icon: BookOpen, count: STUDY_RESOURCES.length },
+    { href: "/marketplace", label: "Marketplace", icon: ShoppingBag, count: MARKETPLACE_LISTINGS.length },
+  ];
+  return <div className="space-y-6">
+    <PageIntro kicker="Campus AI / local guide" title="Find your next move." description="A focused workspace for exploring the campus directory." />
+    <DemoNotice>Preset answers from sample records. No AI model, live university data, or external request is involved.</DemoNotice>
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_260px]">
+      <section aria-label="Campus guide workspace" className="flex min-w-0 flex-col border border-border bg-card shadow-sm">
+        <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4"><div className="flex items-center gap-3"><Compass className="size-5 text-primary" /><div><h2 className="text-sm font-semibold">Campus guide</h2><p className="text-xs text-muted-foreground">Local directory lookup</p></div></div><Button variant="ghost" size="sm" disabled={!messages.length} onClick={() => setMessages([])}>Clear session</Button></header>
+        <div ref={scrollRef} role="log" aria-label="Guide conversation" aria-live="polite" className="h-[min(56dvh,560px)] min-h-72 space-y-6 overflow-y-auto p-5 sm:p-8">
+          {!messages.length && <div className="flex min-h-full flex-col justify-center"><p className="text-xs text-primary">START WITH A QUESTION</p><h3 className="mt-4 max-w-md text-3xl font-medium tracking-tight sm:text-4xl">Less searching.<br />More getting there.</h3><p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">Locate a room, find a resource, or explore what is happening. Choose a prompt below or type your own.</p><div className="mt-6 grid gap-2 sm:grid-cols-2">{AI_STARTERS.slice(0,4).map(starter => <button key={starter} className="flex min-h-12 items-center justify-between gap-3 border border-border p-3 text-left text-sm transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary" onClick={() => handleSend(starter)}>{starter}<ArrowRight className="size-4 shrink-0" /></button>)}</div></div>}
+          {messages.map(msg => <article key={msg.id} className={cn("max-w-xl border-l-2 pl-4",msg.role === "user" ? "ml-auto border-border" : "border-primary")}><div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">{msg.role === "user" ? <User className="size-3" /> : <Bot className="size-3" />}{msg.role === "user" ? "You" : "Sample directory"}<span className="ml-auto">{msg.timestamp}</span></div><p className="text-sm leading-relaxed">{msg.text}</p>{msg.card && <Link href={msg.card.href} className="mt-4 block border border-border bg-muted/40 p-4 transition-colors hover:bg-muted"><span className="text-xs text-muted-foreground">{msg.card.type.replace("-"," ")}</span><h3 className="mt-1 text-lg font-medium tracking-tight">{msg.card.title}</h3><p className="mt-1 text-xs text-muted-foreground">{msg.card.meta}</p><span className="mt-4 flex items-center justify-between text-sm font-medium">{msg.card.actionText}<ArrowRight className="size-4" /></span></Link>}</article>)}
         </div>
+        <form onSubmit={event => { event.preventDefault(); handleSend(input); }} className="border-t border-border p-4"><label htmlFor="guide-question" className="mb-2 block text-xs font-medium">Ask the campus guide</label><div className="flex gap-2"><Input id="guide-question" value={input} onChange={event => setInput(event.target.value)} placeholder="Where is Lab-4?" className="h-12 min-w-0" /><Button type="submit" aria-label="Send question" disabled={!input.trim()} className="size-12 shrink-0"><Send className="size-4" /></Button></div><p className="mt-2 text-xs text-muted-foreground">Conversation stays on this page and clears when you leave.</p></form>
       </section>
-
-      {/* OS Quick Actions & Starters */}
-      <aside className="space-y-4">
-        <div className="rounded-3xl border border-border/80 bg-card p-5 space-y-2">
-          <h2 className="text-sm font-semibold">A guide to this demo</h2>
-          <p className="text-sm leading-relaxed text-muted-foreground">Answers come from sample campus records and preset lookups. This is not connected to an AI model or university systems.</p>
-        </div>
-
-        <div className="rounded-3xl border border-border/80 bg-card p-5 space-y-3">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-            <Sparkles className="size-3.5 text-primary" />
-            Quick Query Starters
-          </h2>
-          <div className="space-y-2">
-            {AI_STARTERS.map((starter) => (
-              <button
-                key={starter}
-                type="button"
-                onClick={() => handleSend(starter)}
-                className="w-full min-h-11 text-left rounded-2xl border border-border/70 bg-background/50 hover:bg-primary/10 hover:border-primary/40 p-3 text-xs font-medium text-foreground transition-all flex items-center justify-between group"
-              >
-                <span className="line-clamp-1">{starter}</span>
-                <ArrowRight className="size-3 text-muted-foreground group-hover:text-primary shrink-0 transition-transform group-hover:translate-x-0.5" />
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-border/80 bg-card p-5 space-y-3">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-            <Compass className="size-3.5 text-primary" />
-            Campus Shortcuts
-          </h2>
-          <div className="space-y-2">
-            <Link
-              href="/map"
-              className="flex items-center gap-3 rounded-2xl border border-border/70 bg-background/50 hover:bg-primary/10 hover:border-primary/40 p-3 transition-all"
-            >
-              <MapPin className="size-5 text-primary shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Campus Map</p>
-                <p className="text-[11px] text-muted-foreground">Navigate buildings, labs, facilities</p>
-              </div>
-            </Link>
-            <Link
-              href="/notes"
-              className="flex items-center gap-3 rounded-2xl border border-border/70 bg-background/50 hover:bg-primary/10 hover:border-primary/40 p-3 transition-all"
-            >
-              <BookOpen className="size-5 text-primary shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Study Hub</p>
-                <p className="text-[11px] text-muted-foreground">Notes, resources, timetables</p>
-              </div>
-            </Link>
-            <Link
-              href="/events"
-              className="flex items-center gap-3 rounded-2xl border border-border/70 bg-background/50 hover:bg-primary/10 hover:border-primary/40 p-3 transition-all"
-            >
-              <Calendar className="size-5 text-primary shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Events & Hackathons</p>
-                <p className="text-[11px] text-muted-foreground">Upcoming campus activities</p>
-              </div>
-            </Link>
-            <Link
-              href="/marketplace"
-              className="flex items-center gap-3 rounded-2xl border border-border/70 bg-background/50 hover:bg-primary/10 hover:border-primary/40 p-3 transition-all"
-            >
-              <ShoppingBag className="size-5 text-primary shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Marketplace</p>
-                <p className="text-[11px] text-muted-foreground">Buy, sell, rent campus gear</p>
-              </div>
-            </Link>
-            <Link
-              href="/clubs"
-              className="flex items-center gap-3 rounded-2xl border border-border/70 bg-background/50 hover:bg-primary/10 hover:border-primary/40 p-3 transition-all"
-            >
-              <User className="size-5 text-primary shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Clubs & Societies</p>
-                <p className="text-[11px] text-muted-foreground">Join student communities</p>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </aside>
+      <aside className="space-y-6"><div><h2 className="border-b border-border pb-3 text-sm font-semibold">Explore the source</h2>{sources.map(({href,label,icon:Icon,count}) => <Link key={href} href={href} className="flex min-h-14 items-center gap-3 border-b border-border py-3 text-sm hover:text-primary"><Icon className="size-4" /><span className="flex-1">{label}</span><span className="font-mono text-xs text-muted-foreground">{String(count).padStart(2,"0")}</span><ArrowRight className="size-3" /></Link>)}</div><div className="border-l-2 border-primary pl-4"><h2 className="text-sm font-medium">A useful starting point.</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">This guide matches keywords to sample records. Confirm locations, times, and availability with the university before making plans.</p></div></aside>
     </div>
-  </div>
-  );
+  </div>;
 }

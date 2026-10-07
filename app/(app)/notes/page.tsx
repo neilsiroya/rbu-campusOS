@@ -9,10 +9,7 @@ import {
   ThumbsUp,
   X,
   Search,
-  GraduationCap,
   Download,
-  Flame,
-  BookMarked,
 } from "lucide-react";
 import { STUDY_RESOURCES, type StudyResource } from "@/lib/campus-data";
 import { useSessionItems } from "@/lib/session-store";
@@ -156,58 +153,13 @@ export default function NotesPage() {
       </DemoNotice>
       <SessionStorageNotice message={storageError || voteError} />
 
-      {/* NexDash-inspired Knowledge Command Surface */}
-      <section className="intelligence-surface relative overflow-hidden rounded-3xl p-6 lg:p-8 stagger-in">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="flex size-2 rounded-full bg-primary animate-pulse" />
-              <p className="text-meta text-muted-foreground">
-                Knowledge Network · Active Academic Session
-              </p>
-            </div>
-            <h2 className="text-display-lg tracking-tight">
-              Explore sample study materials and save your own resource summaries.
-            </h2>
-            <p className="max-w-2xl text-body leading-relaxed text-muted-foreground">
-              Direct access to exam question patterns, lab step-by-steps, and curated notes from top semester scorers.
-            </p>
-
-            {/* Status indicators */}
-            <div className="flex flex-wrap gap-2.5 pt-2">
-              <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-background/60 px-3 py-1.5 text-xs font-medium backdrop-blur-md">
-                <BookMarked className="size-3.5 text-primary" />
-                <strong>{stats.total}</strong> Resources Indexed
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-background/60 px-3 py-1.5 text-xs font-medium backdrop-blur-md">
-                <Flame className="size-3.5 text-amber-500" />
-                <strong>{stats.popularCount}</strong> Trending Materials
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-background/60 px-3 py-1.5 text-xs font-medium backdrop-blur-md">
-                <GraduationCap className="size-3.5 text-emerald-500" />
-                <strong>{stats.subjects}</strong> Subjects Covered
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-background/60 px-3 py-1.5 text-xs font-medium backdrop-blur-md">
-                <ThumbsUp className="size-3.5 text-sky-500" />
-                <strong>{stats.totalUseful}</strong> Peer Endorsements
-              </span>
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <Button
-              onClick={() => setIsSharing(true)}
-              className="gap-2 rounded-full shadow-lg shadow-primary/20 px-6 py-6 text-sm font-semibold"
-            >
-              <Share2 className="size-4" />
-              Share Resource
-            </Button>
-          </div>
-        </div>
+      <section className="grid gap-6 border-y border-border py-7 md:grid-cols-[1fr_auto] md:items-end">
+        <div><p className="text-xs text-muted-foreground">THE SHARED ARCHIVE</p><h2 className="mt-3 text-3xl font-medium tracking-tight sm:text-4xl">Knowledge, passed on.</h2><p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">Browse sample notes, revision sheets, and lab references. Add a resource summary for your own browser session.</p><p className="mt-5 text-sm"><strong>{stats.total}</strong> resources <span className="mx-2 text-muted-foreground">/</span> <strong>{stats.subjects}</strong> subjects</p></div>
+        <Button onClick={() => setIsSharing(true)} className="min-h-12 gap-2"><Share2 className="size-4" />Share a resource</Button>
       </section>
 
       {/* Type Pill Carousel */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 custom-scrollbar">
+      <div className="flex flex-wrap items-center gap-2 py-1">
         {RESOURCE_TYPES.map((type) => {
           const isActive = selectedType === type;
           return (
@@ -215,6 +167,7 @@ export default function NotesPage() {
               key={type}
               type="button"
               onClick={() => setSelectedType(type)}
+              aria-pressed={isActive}
               className={cn(
                 "shrink-0 rounded-2xl border px-3.5 py-2 text-xs font-medium transition-all",
                 isActive
@@ -275,6 +228,7 @@ export default function NotesPage() {
             <button
               type="button"
               onClick={() => setSortBy("Popular")}
+              aria-pressed={sortBy === "Popular"}
               className={cn(
                 "rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
                 sortBy === "Popular"
@@ -287,6 +241,7 @@ export default function NotesPage() {
             <button
               type="button"
               onClick={() => setSortBy("Recent")}
+              aria-pressed={sortBy === "Recent"}
               className={cn(
                 "rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
                 sortBy === "Recent"
@@ -307,7 +262,7 @@ export default function NotesPage() {
           body="No materials match the active search and filter criteria. Share your own study guide to seed this lane."
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-0 divide-y divide-border border-y border-border">
           {filteredResources.map((item) => {
             const hasVoted = votedIds.includes(item.id);
 
@@ -315,7 +270,7 @@ export default function NotesPage() {
               <article
                 key={item.id}
                 onClick={() => setSelectedResource(item)}
-                className="interactive-card group relative flex flex-col justify-between overflow-hidden rounded-3xl p-5 cursor-pointer"
+                className="group relative grid gap-5 bg-card p-5 transition-colors hover:bg-muted/25 md:grid-cols-[minmax(0,1fr)_220px]"
               >
                 <div>
                   {/* Top Bar */}
@@ -359,8 +314,8 @@ export default function NotesPage() {
                 </div>
 
                 {/* Footer details */}
-                <div className="mt-5 border-t border-border/70 pt-3">
-                  <div className="flex items-center justify-between">
+                <div className="border-t border-border/70 pt-3 md:border-l md:border-t-0 md:pl-5 md:pt-0">
+                  <div className="flex flex-wrap items-center justify-between gap-3 md:items-start">
                     <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                       <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium">
                         {item.branch} · {item.year}
@@ -371,6 +326,8 @@ export default function NotesPage() {
                     <button
                       type="button"
                       onClick={(e) => handleUpvote(item.id, e)}
+                      aria-label={`${hasVoted ? "Remove useful vote for" : "Mark as useful:"} ${item.title}`}
+                      aria-pressed={hasVoted}
                       className={cn(
                         "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition-all",
                         hasVoted

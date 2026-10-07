@@ -20,54 +20,43 @@ export function BrandMark({
     <Link
       href={href}
       onClick={onClick}
-      className={cn("group flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90", className)}
+      aria-label="RBU CampusOS home"
+      className={cn("campus-brand group flex min-h-11 min-w-0 items-center gap-2.5", className)}
     >
-      {/* Refined Geometric CampusOS Monogram / Emblem */}
-      <div className="relative flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-foreground via-foreground/95 to-foreground/80 p-[1px] shadow-sm shadow-foreground/10 ring-1 ring-border/80 transition-transform group-hover:scale-[1.02]">
-        <div className="flex size-full items-center justify-center rounded-[11px] bg-background">
+      <div className="campus-brand-symbol relative flex size-9 shrink-0 items-center justify-center border border-foreground/20 bg-foreground text-background">
           <svg
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="size-5 text-foreground transition-colors group-hover:text-primary"
+            className="size-6"
             aria-hidden="true"
           >
-            {/* Outer precision node shield */}
             <path
-              d="M12 2.5L20 7.2V16.8L12 21.5L4 16.8V7.2L12 2.5Z"
+              d="M4 16V8L12 4L20 8V16L12 20L4 16ZM4 8L12 12L20 8M12 12V20"
               stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="opacity-40"
+              strokeWidth="1.4"
+              strokeLinejoin="miter"
             />
-            {/* Core RBU Nexus geometry */}
             <path
-              d="M12 6.5V17.5M12 6.5L17 9.5V14.5L12 17.5M12 6.5L7 9.5V14.5L12 17.5"
+              d="M8 6L16 10V18"
               stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-primary"
+              strokeWidth="1.4"
+              className="opacity-50"
             />
-            {/* Central energy core */}
-            <circle cx="12" cy="12" r="1.8" fill="currentColor" className="text-primary" />
           </svg>
-        </div>
       </div>
 
-      {/* Brand Lockup */}
-      <div className="flex min-w-0 flex-col leading-none">
-        <span className="text-[10px] font-bold tracking-[0.24em] text-primary">
+      <div className="campus-brand-wordmark flex min-w-0 flex-col gap-1 leading-none">
+        <span className="text-[10px] font-bold tracking-[0.12em] text-muted-foreground">
           RBU
         </span>
         <span
           className={cn(
-            "font-display font-semibold tracking-tight text-foreground transition-colors group-hover:text-foreground/90",
+            "font-display font-semibold tracking-[-0.045em] text-foreground",
             compact ? "text-base" : "text-lg"
           )}
         >
-          Campus<span className="text-primary">OS</span>
+          Campus<span className="font-normal">OS</span>
         </span>
         {showTagline && (
           <span className="mt-0.5 text-[10px] text-muted-foreground">

@@ -1,0 +1,98 @@
+.spatial-landing { overflow: clip; --landing-line: color-mix(in srgb, var(--foreground) 14%, transparent); }
+.spatial-nav { display: flex; align-items: center; justify-content: space-between; gap: 2rem; max-width: 1680px; margin: auto; padding: 1.6rem 4.5%; border-bottom: 1px solid var(--landing-line); }
+.spatial-brand { min-height: 44px; }
+.spatial-brand > div:first-child { width: 44px; height: 44px; border-radius: 8px; }
+.spatial-brand > div:last-child > span:last-child { font-size: 23px; }
+.spatial-nav-context, .spatial-nav-link { font-size: .75rem; }
+.spatial-nav-context { color: var(--muted-foreground); }
+.spatial-nav-link { display: inline-flex; gap: 1rem; align-items: center; min-height: 44px; }
+.spatial-nav-link:hover { color: var(--primary); }
+.spatial-hero { position: relative; isolation: isolate; min-height: min(820px, calc(100svh - 100px)); max-width: 1680px; margin: auto; padding: 5.7rem 4.5% 5rem; perspective: 1400px; }
+.spatial-hero-copy { position: relative; z-index: 2; pointer-events: none; }
+.spatial-hero-copy a { pointer-events: auto; }
+.spatial-hero-intro { font-size: .85rem; margin-bottom: 1.9rem; color: var(--muted-foreground); }
+.spatial-hero h1 { font-family: var(--font-heading); font-size: clamp(4.5rem, 8.8vw, 9rem); letter-spacing: -.075em; line-height: .95; font-weight: 600; }
+.spatial-hero-description { max-width: 40ch; font-size: .95rem; line-height: 1.75; margin-top: 2rem; color: var(--muted-foreground); }
+.spatial-enter { display: inline-flex; align-items: center; justify-content: space-between; gap: 3rem; padding: 1rem 1.25rem; min-height: 52px; border-radius: 5px; margin-top: 1.75rem; color: var(--primary-foreground); background: var(--primary); font-size: .875rem; font-weight: 600; box-shadow: 0 5px 0 color-mix(in srgb, var(--primary) 75%, black); transition: transform 180ms ease, box-shadow 180ms ease; }
+.spatial-enter:hover { transform: translateY(-2px); box-shadow: 0 7px 0 color-mix(in srgb, var(--primary) 75%, black); }
+.spatial-enter:active { transform: translateY(3px); box-shadow: 0 2px 0 color-mix(in srgb, var(--primary) 75%, black); }
+.spatial-entry-note { margin-top: 1.15rem; font-size: .6875rem; color: var(--muted-foreground); }
+.spatial-campus { position: absolute; z-index: 1; right: 1%; top: 12%; width: 59%; height: 76%; transform-style: preserve-3d; }
+.topology-drawing { position: absolute; width: 100%; height: 100%; overflow: visible; color: var(--foreground); }
+.topology-grid { opacity: .13; }
+.topology-foundation { fill: var(--surface-elevated); stroke: var(--border); }
+.topology-foundation-edge { fill: var(--muted); stroke: var(--border); }
+.topology-path { fill: none; stroke: var(--border); stroke-width: 9; }
+.topology-route { fill: none; stroke: var(--primary); stroke-width: 2; stroke-dasharray: 8 12; animation: campus-route 18s linear infinite; }
+.topology-side { fill: color-mix(in srgb, var(--foreground) 12%, var(--background)); stroke: var(--border); }
+.topology-front { fill: color-mix(in srgb, var(--foreground) 6%, var(--background)); stroke: var(--border); }
+.topology-roof { fill: var(--card); stroke: color-mix(in srgb, var(--foreground) 25%, var(--background)); stroke-width: 1; }
+.topology-roof-line { fill: none; stroke: var(--border); }
+.topology-registration { fill: none; stroke: var(--muted-foreground); opacity: .55; }
+.topology-node { fill: var(--primary); stroke: var(--background); stroke-width: 3; }
+.spatial-schedule { position: absolute; top: 14%; right: 10%; width: 300px; background: var(--card); border: 1px solid var(--border); border-radius: 7px; box-shadow: 0 34px 42px -20px #00000030, 0 6px 0 -1px var(--muted), 0 7px 0 var(--border); transform: translateZ(55px) rotate(-5deg); }
+.spatial-schedule-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--border); font-size: .7rem; }
+.spatial-schedule-header > span:last-child { color: var(--muted-foreground); font-size: .625rem; border: 1px solid var(--border); border-radius: 3px; padding: .15rem .4rem; }
+.spatial-schedule-event { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1rem; }
+.spatial-schedule-event + .spatial-schedule-event { border-top: 1px solid var(--border); }
+.spatial-schedule-event time { font-size: .6875rem; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.spatial-schedule-event strong { display: block; font-size: .8rem; font-weight: 500; }
+.spatial-schedule-event div > span { display: block; font-size: .625rem; color: var(--muted-foreground); margin-top: .35rem; }
+.spatial-schedule-dot { height: 6px; width: 6px; border-radius: 50%; background: var(--primary); margin-left: auto; }
+.spatial-schedule-footer { padding: .75rem 1rem; display: flex; align-items: center; gap: .5rem; font-size: .6rem; background: var(--surface-elevated); color: var(--muted-foreground); border-radius: 0 0 7px 7px; }
+.spatial-campus figcaption { position: absolute; bottom: 0; left: 24%; right: 8%; display: flex; flex-direction: column; gap: .4rem; font-size: .7rem; }
+.spatial-campus figcaption > span:last-child { font-size: .6rem; color: var(--muted-foreground); }
+.spatial-hero-baseline { position: absolute; bottom: 1.7rem; left: 4.5%; right: 4.5%; display: flex; align-items: center; justify-content: space-between; padding-top: 1.5rem; border-top: 1px solid var(--landing-line); font-size: .6875rem; color: var(--muted-foreground); }
+.spatial-hero-baseline > span:last-child { font-size: 1.2rem; }
+.spatial-directory { max-width: 1500px; padding: 7rem 4.5% 4rem; margin: auto; scroll-margin-top: 2rem; }
+.spatial-directory-heading { display: grid; grid-template-columns: .8fr 1.4fr 1fr; gap: 2rem; margin-bottom: 4rem; }
+.spatial-directory-heading > p { font-size: .8rem; line-height: 1.75; }
+.spatial-directory-heading > p:last-child { color: var(--muted-foreground); max-width: 34ch; }
+.spatial-directory h2 { font-size: clamp(2.8rem, 4.4vw, 4.75rem); font-weight: 500; letter-spacing: -.055em; line-height: 1.04; }
+.spatial-directory-row { display: grid; grid-template-columns: .8fr 2.4fr auto; gap: 2rem; align-items: start; border-top: 1px solid var(--landing-line); padding: 2.3rem 0; transition: padding 240ms ease, background 240ms ease; }
+.spatial-directory-row:last-child { border-bottom: 1px solid var(--landing-line); }
+.spatial-directory-label { font-size: .75rem; padding-top: .45rem; }
+.spatial-directory-row h3 { font-size: clamp(1.65rem, 2.6vw, 2.55rem); letter-spacing: -.04em; font-weight: 500; line-height: 1.12; }
+.spatial-directory-row p { margin-top: 1rem; font-size: .8rem; color: var(--muted-foreground); max-width: 52ch; line-height: 1.7; }
+.spatial-directory-tags { display: block; font-size: .625rem; color: var(--muted-foreground); margin-top: 1.4rem; }
+.spatial-directory-arrow { width: 26px; height: 26px; transition: transform 240ms ease; }
+@media (hover: hover) and (pointer: fine) { .spatial-directory-row:hover { padding-inline: 1rem; background: var(--surface-elevated); } .spatial-directory-row:hover .spatial-directory-arrow { transform: translate(3px, -3px); } }
+.spatial-product-note { display: flex; justify-content: space-between; align-items: start; gap: 3rem; max-width: 1500px; margin: auto; padding: 3rem 4.5% 6rem; }
+.spatial-product-note h2 { font-size: clamp(1.8rem, 2.8vw, 3rem); line-height: 1.12; letter-spacing: -.04em; }
+.spatial-product-note p { max-width: 45ch; font-size: .8rem; color: var(--muted-foreground); line-height: 1.8; }
+.spatial-footer { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 2rem 4.5%; border-top: 1px solid var(--landing-line); font-size: .7rem; }
+.spatial-footer > span { color: var(--muted-foreground); }
+.dark .spatial-schedule { box-shadow: 0 34px 42px -20px #000000a0, 0 6px 0 -1px var(--muted), 0 7px 0 var(--border); }
+@keyframes campus-route { to { stroke-dashoffset: -200; } }
+@media (max-width: 1100px) { .spatial-nav-context { display: none; } .spatial-hero { min-height: 760px; } .spatial-campus { top: 24%; right: -7%; width: 66%; height: 65%; } .spatial-schedule { top: 15%; right: 15%; width: 260px; } .spatial-hero-description { max-width: 30ch; } .spatial-desktop-break { display: none; } }
+@media (max-width: 760px) {
+  .spatial-nav { padding: 1.1rem 6%; gap: 1rem; }
+  .spatial-nav-link { max-width: 130px; font-size: .7rem; gap: .5rem; }
+  .spatial-nav-link svg { flex-shrink: 0; }
+  .spatial-brand > div:last-child > span:last-child { font-size: 19px; }
+  .spatial-brand > div:first-child { width: 36px; height: 36px; }
+  .spatial-hero { min-height: auto; padding: 3.4rem 6% 5rem; }
+  .spatial-hero-intro { margin-bottom: 1.5rem; font-size: .75rem; }
+  .spatial-hero h1 { font-size: clamp(3.6rem, 12vw, 6.5rem); letter-spacing: -.065em; }
+  .spatial-hero-description { max-width: 37ch; font-size: .85rem; margin-top: 1.5rem; }
+  .spatial-enter { margin-top: 1.4rem; }
+  .spatial-campus { position: relative; width: 114%; margin-left: -7%; height: 390px; right: auto; top: auto; margin-top: 1.5rem; }
+  .spatial-schedule { right: 12%; top: 9%; width: 245px; transform: rotate(-5deg); }
+  .spatial-campus figcaption { left: 10%; right: 10%; bottom: .4rem; }
+  .spatial-hero-baseline { left: 6%; right: 6%; bottom: 1.3rem; }
+  .spatial-hero-baseline > span:nth-child(2) { display: none; }
+  .spatial-directory { padding: 3.5rem 6% 2rem; }
+  .spatial-directory-heading { grid-template-columns: 1fr; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .spatial-directory h2 { font-size: 3rem; }
+  .spatial-directory-heading > p:last-child { max-width: 40ch; }
+  .spatial-directory-row { grid-template-columns: 1fr auto; gap: 1rem; padding: 1.8rem 0; }
+  .spatial-directory-label { grid-column: 1 / -1; font-size: .7rem; color: var(--primary); padding: 0; }
+  .spatial-directory-row h3 { font-size: 1.8rem; }
+  .spatial-directory-row p { font-size: .8rem; }
+  .spatial-directory-arrow { width: 21px; height: 21px; }
+  .spatial-product-note { flex-direction: column; gap: 1.5rem; padding: 2rem 6% 3.5rem; }
+  .spatial-footer { flex-wrap: wrap; padding: 2rem 6%; }
+  .spatial-footer > span { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .topology-route { animation: none; } .spatial-enter:hover, .spatial-enter:active, .spatial-directory-row:hover .spatial-directory-arrow { transform: none; } }
+.spatial-hero[data-motion="paused"] .topology-route { animation-play-state: paused; }

@@ -17,30 +17,14 @@ export default function TimetablePage() {
       <PageIntro kicker="Academics" title="Timetable" description="A personal week view. This is demo schedule data, not an official university timetable sync." />
       <DemoNotice />
       <FilterChips value={day} onChange={setDay} options={[...DAYS]} />
-      <div className="surface overflow-hidden rounded-3xl">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/50 text-meta text-muted-foreground">
-            <tr>
-              <th className="px-4 py-3">Day</th>
-              <th className="px-4 py-3">Time</th>
-              <th className="px-4 py-3">Session</th>
-              <th className="px-4 py-3">Room</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={`${row.day}-${row.time}-${row.title}`} className="border-t border-border">
-                <td className="px-4 py-3">{row.day}</td>
-                <td className="px-4 py-3 font-mono text-caption">{row.time}</td>
-                <td className="px-4 py-3">
-                  {row.title}
-                  <span className="ml-2 text-caption text-muted-foreground">{row.kind}</span>
-                </td>
-                <td className="px-4 py-3">{row.room}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {DAYS.filter(value => value !== "All" && (day === "All" || day === value)).map(value => {
+          const sessions = rows.filter(row => row.day === value);
+          return <section key={value} className="min-w-0 border-t-2 border-foreground bg-card">
+            <header className="flex items-end justify-between border-b border-border px-5 py-5"><h2 className="text-3xl font-medium tracking-tight">{value}</h2><span className="text-xs text-muted-foreground">{sessions.length} sessions</span></header>
+            <div className="space-y-5 p-5">{sessions.length ? sessions.map(row => <article key={`${row.day}-${row.time}-${row.title}`} className="border-l-2 border-primary pl-4"><p className="font-mono text-xs text-muted-foreground">{row.time}</p><h3 className="mt-2 text-base font-medium">{row.title}</h3><p className="mt-2 text-sm text-muted-foreground">{row.room} · {row.kind}</p></article>) : <p className="py-4 text-sm text-muted-foreground">No sample sessions scheduled.</p>}</div>
+          </section>;
+        })}
       </div>
     </div>
   );

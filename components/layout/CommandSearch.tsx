@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog } from "@base-ui/react/dialog";
-import { Search, X, Sparkles } from "lucide-react";
+import { Search, X, ArrowUpRight, Command } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,7 @@ import {
   MARKETPLACE_LISTINGS,
   STUDY_RESOURCES,
   FACILITIES,
+  MAP_PLACES,
 } from "@/lib/campus-data";
 import { SEARCHABLE_ROUTES } from "@/lib/nav";
 import { useOSStore } from "@/lib/os-store";
@@ -166,6 +167,9 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
         hint: makeHint(facility.category, facility.location),
         category: "Facility",
       });
+    });
+    MAP_PLACES.forEach((place) => {
+      out.push({ id: `place-${counter++}`, label: place.name, href: "/map", hint: makeHint(place.kind, place.note), category: "Facility" });
     });
     CLUBS.forEach((club) => {
       out.push({
@@ -404,7 +408,7 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
           {open && (
             <>
               <Dialog.Backdrop className="fixed inset-0 min-h-dvh bg-black/60 backdrop-blur-md z-40 animate-in fade-in-0 duration-150" />
-              <Dialog.Popup className="glass-command fixed top-1/2 left-1/2 z-50 w-[min(94vw,34rem)] max-h-[82dvh] -translate-x-1/2 -translate-y-1/2 flex flex-col overflow-hidden rounded-3xl border border-border/80 bg-card/95 text-foreground shadow-2xl backdrop-blur-2xl">
+              <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 w-[min(94vw,48rem)] max-h-[86dvh] -translate-x-1/2 -translate-y-1/2 flex flex-col overflow-hidden rounded-xl border border-border bg-card text-foreground shadow-2xl">
                 <Dialog.Title className="sr-only">Search campus</Dialog.Title>
                 <Dialog.Description className="sr-only">Search pages, campus places, people and resources.</Dialog.Description>
                 <motion.div
@@ -414,7 +418,8 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                   transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                   className="flex min-h-0 flex-1 flex-col"
                 >
-                  <div className="flex shrink-0 items-center gap-3 border-b border-border/80 px-4 py-3 bg-muted/20">
+                  <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3 text-xs"><span className="flex items-center gap-2 font-medium"><Command className="size-4 text-primary" />Campus command</span><span className="text-muted-foreground">Pages & sample directory</span></div>
+                  <div className="flex shrink-0 items-center gap-3 border-b border-border/80 px-5 py-5">
                     <Search className="size-4 text-muted-foreground" aria-hidden="true" />
                     <input
                       ref={inputRef}
@@ -433,7 +438,7 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                       }}
                       onKeyDown={handleKeyDown}
                       placeholder="Type a command, building, note, or person…"
-                      className="flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-muted-foreground"
+                      className="min-w-0 flex-1 bg-transparent text-base font-medium outline-none placeholder:text-muted-foreground sm:text-lg"
                     />
                     <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
                       <kbd className="rounded border border-border/80 bg-background/80 px-1.5 py-0.5">
@@ -467,7 +472,7 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                         className="px-4 py-8 text-center"
                       >
                         <div className="mx-auto mb-3 flex size-10 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
-                          <Sparkles className="size-4" />
+                          <Search className="size-4" />
                         </div>
                         <p className="text-sm font-semibold text-foreground">
                           Nothing found for &quot;{query}&quot;
@@ -502,16 +507,16 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                                     onClick={() => executeHit(hit)}
                                     onMouseEnter={() => setActiveIndex(idx)}
                                     className={cn(
-                                      "flex min-h-11 w-full items-center justify-between gap-3 rounded-2xl px-3.5 py-2.5 text-left transition-colors",
+                                      "flex min-h-14 w-full items-center justify-between gap-3 rounded-md px-3.5 py-3 text-left transition-colors",
                                       isActive
                                         ? "bg-primary/15 text-foreground ring-1 ring-primary/20"
                                         : "text-foreground/90 hover:bg-muted/70"
                                     )}
                                   >
-                                    <span className="flex min-w-0 items-center gap-2.5">
+                                    <span className="flex min-w-0 flex-1 flex-col items-start gap-1 sm:flex-row sm:items-center sm:gap-3">
                                       <span
                                         className={cn(
-                                          "shrink-0 rounded-lg border px-2 py-0.5 text-[10px] font-semibold",
+                                          "shrink-0 rounded-sm border px-2 py-0.5 text-[10px] font-medium",
                                           getCategoryBadge(hit.category)
                                         )}
                                       >
@@ -521,9 +526,10 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                                         {hit.label}
                                       </span>
                                     </span>
-                                    <span className="max-w-[40%] shrink-0 truncate pl-2 text-xs text-muted-foreground font-mono">
+                                    <span className="hidden max-w-[30%] shrink-0 truncate pl-2 text-xs text-muted-foreground sm:block">
                                       {hit.hint}
                                     </span>
+                                    <ArrowUpRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
                                   </button>
                                 </li>
                               );
@@ -552,7 +558,7 @@ export default function CommandSearch({ onOpen, onClose }: CommandSearchProps) {
                       </kbd>
                       K toggle
                     </span>
-                    <span className="font-mono text-[10px]">RBU Omnisearch</span>
+                    <span className="hidden font-mono text-[10px] sm:inline">{flatHits.length} destinations</span>
                   </div>
                 </motion.div>
               </Dialog.Popup>
