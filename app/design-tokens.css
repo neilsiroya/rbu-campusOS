@@ -1,0 +1,210 @@
+/* CampusOS foundation. Palette and visual primitives are owned here.
+   Component composition and motion remain in their existing stylesheets.
+   See Task 01A for compatibility names and the staged adoption boundary. */
+:root {
+  color-scheme: light;
+  --background: #f7f8fa;
+  --background-elevated: #ffffff;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-inset: #edf0f4;
+  --surface-elevated: #fcfdff;
+  --foreground: #20242b;
+  --foreground-muted: #545e6e;
+  --foreground-subtle: #606d80;
+  --border-subtle: #e4e8ee;
+  --border: #cfd6e0;
+  --border-strong: #8c98aa;
+  --primary: #3154c8;
+  --primary-hover: #2644ae;
+  --primary-subtle: #e9eeff;
+  --primary-foreground: #ffffff;
+  --secondary: #e8ecf2;
+  --secondary-foreground: #303844;
+  /* `accent` is the existing quiet hover surface, not the brand color.
+     Use primary / primary-hover / primary-subtle for brand emphasis. */
+  --accent: #e8ecf2;
+  --accent-hover: #dce3ec;
+  --accent-subtle: #f0f3f8;
+  --accent-foreground: var(--foreground);
+  --success: #176c46;
+  --warning: #855300;
+  --destructive: #b5263e;
+  --info: #275bb2;
+  --success-foreground: #ffffff;
+  --warning-foreground: #ffffff;
+  --destructive-foreground: #ffffff;
+  --info-foreground: #ffffff;
+  --focus: #3154c8;
+  --input: #8c98aa;
+
+  /* Existing public names resolve to this hierarchy; no second palette. */
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--foreground);
+  --surface-foreground: var(--foreground);
+  --surface-elevated-foreground: var(--foreground);
+  --muted: var(--surface-inset);
+  --muted-foreground: var(--foreground-muted);
+  --danger: var(--destructive);
+  --error: var(--destructive);
+  --error-foreground: var(--destructive-foreground);
+  --placeholder: var(--foreground-subtle);
+  --disabled: var(--surface-inset);
+  --disabled-foreground: var(--foreground-subtle);
+  --ring: var(--focus);
+  --focus-ring: var(--focus);
+  --focus-ring-offset: var(--background);
+  --selection-bg: var(--primary-subtle);
+  --selection-fg: var(--foreground);
+
+  /* Local font delivery: preserve the existing Arial/Helvetica heading/UI
+     family; remove unloaded Geist names and inconsistent body fallbacks. */
+  --font-ui: Arial, Helvetica, sans-serif;
+  --font-code: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  --font-sans: var(--font-ui);
+  --font-heading: var(--font-ui);
+  --font-mono: var(--font-code);
+
+  /* Four-pixel rhythm. Values match existing Tailwind spacing. */
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-page-mobile: var(--space-4);
+  --space-page-desktop: var(--space-8);
+  --space-panel: var(--space-6);
+  --space-gap: var(--space-4);
+  --space-compact: var(--space-2);
+  --space-data: var(--space-3);
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-8: var(--space-8);
+
+  --radius-subtle: .25rem;
+  --radius-control: .4rem;
+  --radius-surface: .5rem;
+  --radius-large: .75rem;
+  --radius-circular: 9999px;
+  --radius: var(--radius-surface);
+  --border-width: 1px;
+  --border-width-strong: 2px;
+  --divider: var(--border-subtle);
+  --focus-width: 2px;
+  --focus-offset: 3px;
+
+  /* Opt-in depth vocabulary; no transforms, blur or animation added. */
+  --depth-base: none;
+  --depth-inset: inset 0 1px 2px #1820360a;
+  --depth-edge: inset 0 1px 0 #ffffffb3;
+  --depth-surface: 0 1px 2px #18203608;
+  --depth-raised: 0 8px 24px #1820360a, 0 2px 5px #18203606;
+  --depth-floating: 0 12px 32px #1820361a, 0 2px 6px #1820360a;
+  --depth-overlay: 0 24px 80px #0c122833, 0 4px 12px #0c12280a;
+
+  /* Preserve existing global stacking values. Popovers are header-local;
+     dialog/search/toast share 50 today and remain ordered by portal DOM.
+     Migrate consumers without changing stacking contexts in later tasks. */
+  --layer-base: 0;
+  --layer-content: 10;
+  --layer-navigation: 20;
+  --layer-sticky: 35;
+  --layer-pointer: 39;
+  --layer-drawer-backdrop: 39;
+  --layer-drawer: 40;
+  --layer-popover: 40;
+  --layer-popover-raised: 50;
+  --layer-dialog-backdrop: 40;
+  --layer-dialog: 50;
+  --layer-command: 50;
+  --layer-toast: 50;
+  --layer-critical: 60;
+
+  /* Legacy glass consumers retain their opacity/blur behavior. Their colors
+     now derive from neutral surfaces rather than a separate green palette. */
+  --glass: color-mix(in srgb, var(--surface) 55%, transparent);
+  --glass-strong: color-mix(in srgb, var(--surface) 78%, transparent);
+  --glass-rich: color-mix(in srgb, var(--surface) 92%, transparent);
+  --glass-border: var(--border);
+  --glass-highlight: #ffffffe6;
+  --glass-shadow: #1820360d;
+  --glass-l1: color-mix(in srgb, var(--surface) 45%, transparent);
+  --glass-l2: color-mix(in srgb, var(--surface) 60%, transparent);
+  --glass-l3: color-mix(in srgb, var(--surface) 72%, transparent);
+  --glass-l4: color-mix(in srgb, var(--surface) 84%, transparent);
+  --glass-l5: color-mix(in srgb, var(--surface) 94%, transparent);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #141517;
+  --background-elevated: #191b1e;
+  --surface: #1c1e21;
+  --surface-raised: #25272b;
+  --surface-inset: #26282c;
+  --surface-elevated: #191b1e;
+  --foreground: #eeede8;
+  --foreground-muted: #b1b0ad;
+  --foreground-subtle: #9298a4;
+  --border-subtle: #2c2e32;
+  --border: #36383d;
+  --border-strong: #686e79;
+  --primary: #a3b6ff;
+  --primary-hover: #bccaff;
+  --primary-subtle: #28324f;
+  --primary-foreground: #141d3c;
+  --secondary: #2c2e32;
+  --secondary-foreground: #eeede8;
+  --accent: #2c2e32;
+  --accent-hover: #373a40;
+  --accent-subtle: #22252a;
+  --success: #83d4ac;
+  --warning: #efc575;
+  --destructive: #ff93a5;
+  --info: #9ec6ff;
+  --success-foreground: #13251d;
+  --warning-foreground: #2d220e;
+  --destructive-foreground: #34111b;
+  --info-foreground: #142238;
+  --focus: #a3b6ff;
+  --input: #686e79;
+  --depth-inset: inset 0 1px 3px #00000040;
+  --depth-edge: inset 0 1px 0 #ffffff0b;
+  --depth-surface: 0 1px 2px #00000026;
+  --depth-raised: 0 8px 24px #0000002b, 0 2px 5px #00000017;
+  --depth-floating: 0 12px 32px #00000059, 0 2px 6px #00000026;
+  --depth-overlay: 0 24px 80px #00000080, 0 4px 12px #00000040;
+  --glass: color-mix(in srgb, var(--surface) 58%, transparent);
+  --glass-strong: color-mix(in srgb, var(--surface) 80%, transparent);
+  --glass-rich: color-mix(in srgb, var(--surface) 90%, transparent);
+  --glass-highlight: #ffffff14;
+  --glass-shadow: #0000007a;
+  --glass-l1: color-mix(in srgb, var(--surface) 40%, transparent);
+  --glass-l2: color-mix(in srgb, var(--surface) 55%, transparent);
+  --glass-l3: color-mix(in srgb, var(--surface) 68%, transparent);
+  --glass-l4: color-mix(in srgb, var(--surface) 80%, transparent);
+  --glass-l5: color-mix(in srgb, var(--surface) 90%, transparent);
+}
+
+/* Unlayered so existing Tailwind outline-none cannot hide keyboard focus.
+   Preserve inset focus on clipped navigation items; no behavior changes. */
+:focus-visible {
+  outline: var(--focus-width) solid var(--focus);
+  outline-offset: var(--focus-offset);
+}
+.focus-visible-ring-inset:focus-visible { outline-offset: -2px; }
+@media (forced-colors: active) {
+  :focus-visible { outline-color: Highlight; }
+}

@@ -357,30 +357,30 @@ Those belong to later tasks.
 
 Task 01A is complete only when:
 
-- [ ] current global visual tokens were audited
-- [ ] duplicate/conflicting foundational color systems were identified
-- [ ] one semantic color hierarchy is authoritative
-- [ ] dark-mode foundation remains visually strong
-- [ ] light-mode token foundation is substantially improved
-- [ ] typography definitions are consolidated
-- [ ] duplicate font variables/naming are resolved where safely possible
-- [ ] typography roles are clearly defined
-- [ ] spacing foundation is coherent
-- [ ] radius hierarchy is coherent
-- [ ] border/divider hierarchy is coherent
-- [ ] depth/elevation vocabulary exists
-- [ ] layer/z-index hierarchy is coherent
-- [ ] accessible focus treatment is consistent
-- [ ] representative desktop views were checked
-- [ ] representative mobile views were checked
-- [ ] representative light-mode views were checked
-- [ ] representative dark-mode views were checked
-- [ ] no application functionality was intentionally changed
-- [ ] typecheck passes
-- [ ] lint passes
-- [ ] no new obvious runtime errors are introduced
-- [ ] `docs/STATE.md` is updated with verified results
-- [ ] this task's criteria are marked accurately
+- [x] current global visual tokens were audited
+- [x] duplicate/conflicting foundational color systems were identified
+- [x] one semantic color hierarchy is authoritative
+- [x] dark-mode foundation remains visually strong
+- [x] light-mode token foundation is substantially improved
+- [x] typography definitions are consolidated
+- [x] duplicate font variables/naming are resolved where safely possible
+- [x] typography roles are clearly defined
+- [x] spacing foundation is coherent
+- [x] radius hierarchy is coherent
+- [x] border/divider hierarchy is coherent
+- [x] depth/elevation vocabulary exists
+- [x] layer/z-index hierarchy is coherent
+- [x] accessible focus treatment is consistent
+- [x] representative desktop views were checked
+- [x] representative mobile views were checked
+- [x] representative light-mode views were checked
+- [x] representative dark-mode views were checked
+- [x] no application functionality was intentionally changed
+- [x] typecheck passes
+- [x] lint passes
+- [x] no new obvious runtime errors are introduced
+- [x] `docs/STATE.md` is updated with verified results
+- [x] this task's criteria are marked accurately
 
 ---
 
@@ -398,3 +398,10 @@ When complete, update `docs/STATE.md` with only:
 Do not write a long implementation diary.
 
 Task 01B should build the shared surface/card/panel visual language using the token system established here.
+## Verified completion — 2026-10-08
+
+Inspected Landing `/`, Dashboard `/dashboard`, Notifications `/notifications`, Profile `/profile`, and Study Hub `/notes` in light/dark at 1440×900 and 390×844. Existing layouts remain intact; light surfaces are neutral and clearly separated, dark surfaces retain their existing neutral depth. No root horizontal overflow; protected main regions fit. Landing has a clipped one-pixel internal width rounding difference on mobile, with no element extending beyond the viewport.
+
+Keyboard focus was checked on links, buttons, text inputs and native selects across both themes. Foundation focus contrast against the inset surface is 5.68:1 light / 7.52:1 dark. Light subtle text was adjusted to `#606d80` for 4.60:1 on the inset surface (dark: 5.10:1). These are token-pair checks, not whole-application accessibility certification; arbitrary legacy small labels remain.
+
+No errors or warnings were returned by the captured browser log review. Typecheck and lint passed again after the final token adjustment. Tailwind/PostCSS compilation previously passed with zero warnings; HMR delivered the final token successfully. Git diff/check inspected. Browser viewport and color-scheme overrides were reset. No dependencies, page/component logic, backend, animations or 3D systems changed. Task 01B was not started.

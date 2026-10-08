@@ -1,0 +1,66 @@
+/* One typography scale. Tailwind owns its standard utilities; role classes
+   below are opt-in. Existing used names remain compatibility aliases. */
+@theme {
+  --text-xs: .75rem;
+  --text-sm: .75rem;
+  --text-base: .875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.125rem;
+  --text-2xl: 1.25rem;
+  --text-3xl: 1.5rem;
+  --text-4xl: 1.875rem;
+  --text-5xl: 2.25rem;
+  --text-6xl: 3rem;
+  --text-7xl: 3.75rem;
+  --text-8xl: 4.5rem;
+  --text-9xl: 6rem;
+  --leading-tight: 1.05;
+  --leading-snug: 1.15;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+  --leading-loose: 1.75;
+  --tracking-tight: -.03em;
+  --tracking-normal: 0;
+  --tracking-wide: .02em;
+  --tracking-wider: .04em;
+}
+
+:root {
+  --type-display: clamp(2rem, 4vw, 3.5rem);
+  --type-page-title: clamp(2rem, 3vw, 3.25rem);
+  --type-section-heading: clamp(1.5rem, 3vw, 2rem);
+  --type-ui-heading: clamp(1.25rem, 2.5vw, 1.75rem);
+  --type-entity-title: 1.125rem;
+  --type-body: .875rem;
+  --type-body-compact: .75rem;
+  --type-metadata: .75rem;
+  --type-label: .75rem;
+  --type-navigation: .875rem;
+  --type-numeric: 1.5rem;
+}
+
+@layer base {
+  /* These family helpers retain existing weight/leading behavior while
+     explicit Tailwind weight and line-height utilities remain overridable. */
+  .font-display { font-family: var(--font-ui); font-weight: 700; line-height: 1.05; letter-spacing: -.025em; }
+  .font-heading { font-family: var(--font-ui); font-weight: 600; line-height: 1.2; letter-spacing: -.015em; }
+}
+
+@layer utilities {
+  .type-display, .text-display-lg, .text-display-md, .text-display-sm {
+    font-family: var(--font-ui); font-weight: 700; line-height: 1.05; letter-spacing: -.02em;
+  }
+  .type-display, .text-display-lg { font-size: var(--type-display); }
+  .text-display-md { font-size: clamp(1.75rem, 3.5vw, 2.5rem); }
+  .text-display-sm { font-size: clamp(1.5rem, 2.5vw, 2rem); letter-spacing: -.015em; }
+  .type-page-title { font-size: var(--type-page-title); font-weight: 700; line-height: 1.05; letter-spacing: -.025em; }
+  .type-section-heading, .text-h3 { font-size: var(--type-section-heading); font-weight: 600; line-height: 1.2; letter-spacing: -.01em; }
+  .type-ui-heading, .text-h4 { font-size: var(--type-ui-heading); font-weight: 600; line-height: 1.25; letter-spacing: -.005em; }
+  .type-entity-title { font-size: var(--type-entity-title); font-weight: 600; line-height: 1.35; }
+  .type-body, .text-body { font-size: var(--type-body); font-weight: 400; line-height: 1.6; }
+  .type-body-compact, .text-body-sm { font-size: var(--type-body-compact); font-weight: 400; line-height: 1.55; }
+  .type-metadata, .text-caption { font-size: var(--type-metadata); font-weight: 400; line-height: 1.5; }
+  .type-label, .text-meta { font-family: var(--font-ui); font-size: var(--type-label); font-weight: 500; line-height: 1.5; letter-spacing: .025em; text-transform: none; }
+  .type-navigation { font-size: var(--type-navigation); font-weight: 500; line-height: 1.4; }
+  .type-numeric { font-size: var(--type-numeric); font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
+}

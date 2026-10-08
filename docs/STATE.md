@@ -6,7 +6,19 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 `docs/tasks/01a-design-tokens.md`
 
-Current objective: establish one authoritative CampusOS visual-token and typography foundation before redesigning shared components or individual pages.
+Current objective: Task 01A is complete and ready for review. Stop here; Task 01B is not started.
+
+### Task 01A completion — 2026-10-08
+
+- `app/design-tokens.css` owns the light/dark semantic palette, four-pixel spacing rhythm with semantic aliases, five radius roles, border/divider/focus tokens, depth levels and documented layer values. Existing aliases remain for compatibility.
+- Preserved neutral dark base/surface colors; light uses a cool near-white canvas, white surfaces and darker muted text. Brand blue remains `primary`; `accent` retains its existing quiet hover-surface meaning. Legacy glass colors now derive from neutral surfaces, while existing blur/motion composition is retained.
+- `app/typography.css` consolidates the Tailwind text scale and eleven semantic roles: display, page title, section heading, UI heading, entity title, body, compact body, metadata, label, navigation and numeric values. Existing used names remain aliases. Arial/Helvetica UI and local monospace stacks replace unloaded Geist names and self-referential mappings. The generic smallest text size is 12px; arbitrary per-component small labels remain for later work.
+- `app/globals.css` imports both foundations and no longer owns competing palettes or duplicated typography utilities. `app/campus-design.css` retains component/page composition; its palette overrides were removed and existing header/button values reference tokens. Focus uses an opaque 2px outline with 3px offset, retaining inset navigation treatment; keyboard focus was verified on links, buttons, text inputs and native selects in both themes.
+- Verified: typecheck and lint passed; existing Tailwind/PostCSS compilation passed with zero warnings; git diff/check inspected. No TSX, dependency, data, auth, backend, animation or 3D changes. No production build or broader test suite run.
+- Browser validation completed after the user restored the localhost tab: Landing, Dashboard, Notifications, Profile and Study Hub, light/dark at 1440×900 and 390×844. No root horizontal overflow; protected main regions fit. Landing has a clipped one-pixel internal width rounding difference on mobile without content extending beyond the viewport. No errors/warnings returned by captured browser log review. Theme and viewport emulation were reset.
+- Final contrast adjustment: light `foreground-subtle` is `#606d80`, giving 4.60:1 against the inset surface; dark is 5.10:1. Focus/inset contrast is 5.68:1 light and 7.52:1 dark. Typecheck and lint passed again after this adjustment; HMR loaded the new token. These checks are not whole-app accessibility certification.
+- Legacy debt remains: glass/surface composition, hardcoded component spacing/radius/layers, page-specific typography and motion systems. New tokens are a staged foundation, not a full consumer migration.
+- Recommended Task 01B, only when separately authorized: establish shared surface/card/panel language using these tokens. Do not start it now.
 
 ## Current frontend architecture
 
@@ -33,25 +45,19 @@ Active: Framer Motion 13.5.1, Three 0.186.1 / R3F 9.8.1 / Drei 10.7.9 (map), Bas
 - **Runtime warnings:** Next.js reports smooth scrolling on html without `data-scroll-behavior="smooth"`; map emits a `THREE.Clock` deprecation warning. No crash established. Motion's warning during deliberate reduced-motion emulation is expected test feedback.
 - **Source mismatch:** header ProfileMenu always uses `CURRENT_STUDENT`; `/profile` loads authenticated metadata. The header can misidentify the signed-in person.
 - **Source mismatch:** saved preference flags have no consumers outside Settings. In particular, anonymous-composer availability is not controlled by its setting. Theme selection is separate and implemented.
-- Competing global CSS systems: legacy green/glass/token utilities, neutral overrides, and landing-specific styles. Duplicate typography names, mixed font variables, inconsistent radii, and hardcoded motion/layer values complicate predictable reuse.
+- Task 01A consolidates foundational palettes and typography. Legacy glass/surface composition and landing-specific styles still coexist; component radius, spacing, motion and layer adoption remains staged.
 - Newer row/workspace layouts coexist with older rounded card grids, uppercase micro-labels, icon/gradient decoration, and repeated dialog/form styling. Dashboard's dominant academic content also warrants review against the community-first product definition.
 - Unreferenced immersive blob/core/overlay components and old dashboard components remain. View-transition names/helper exist, but no caller of `useViewTransition` was found; active route motion is a Web Animations entrance, not verified shared-element routing.
 - Several hook lint rules are disabled. Passing checks do not establish visual, accessibility, or production-integration correctness.
 
-## Verification boundary
+## Task 00 verification boundary (historical)
 
 `npm run typecheck`, `npm run lint`, and `node --test tests/auth.test.cjs` completed successfully; auth suite: 16/16. These tests use mocks, not a live Supabase account. No production build or backend audit was performed.
 
 Browser samples: 1440×900 desktop, 1280×800 laptop, 768×1024 tablet, 390×844 mobile, and 1280×500 / 390×500 short views. Protected-page samples had no root/main horizontal overflow; Confessions dialog vertical clipping was reproduced. Matched browser/page dimensions resolved screenshot scaling during signed-in QA. No hydration error or uncaught application exception was captured in the sampled run; warnings above remain. No exhaustive device matrix, screen-reader/contrast certification, fault-injected WebGL fallback, production performance benchmark or every-control test is claimed. Cold dev compilation delays are not production timings.
 
-## Reconsider and recommended Task 01 scope
+## Modified files / exact next action
 
-For Task 01, define one authoritative semantic token/style hierarchy: typography/font delivery, neutral light/dark colors, spacing, surface/depth levels, radius, borders, focus, and layers. Standardize shared controls, filters, notices, dialogs, page headers and navigation states. Include bounded dialog height/internal scrolling and readable small labels. Assign clear responsibilities to CSS, Framer Motion and map WebGL; retain reduced-motion and mobile fallbacks. Specify desktop/mobile/short-height acceptance evidence and a small representative validation set before page redesigns.
+Task 01A files: `app/design-tokens.css`, `app/typography.css`, `app/globals.css`, `app/campus-design.css`, `docs/STATE.md`, `docs/tasks/01a-design-tokens.md`. Existing untracked `.agents/`, `.codex/`, and the unusual filename reported by Git remain untouched.
 
-Reconsider obsolete immersive-mode architecture, overlapping style/motion systems, indiscriminate card grids, decorative effects, and unnecessary creative dependencies. Dependency reconciliation and functional defect fixes need explicitly scoped later work. Do not begin those changes during this audit.
-
-## Modified files / next action
-
-Only `docs/STATE.md` and `docs/tasks/00-frontend-audit.md` are updated for this audit. Pre-existing untracked `.agents/`, `.codex/`, and the unusual filename shown by Git were left untouched.
-
-Task 00 is ready for review. The next task is the proposed Design Foundation scope above, only when separately authorized. Do not begin `01-design-foundation.md` as part of this audit. Leave functional fixes and dependency reconciliation for scoped implementation work.
+Task 01A checklist is complete. Recommended next task: Task 01B shared surface/card/panel visual language, using the new foundation; await separate authorization. Functional fixes and dependency reconciliation remain outside this task.
