@@ -2,13 +2,11 @@
 
 Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
-## Active task and completion status
+## Active task 
 
-`docs/tasks/00-frontend-audit.md` — diagnostic audit, **complete**. All acceptance criteria are checked against repository inspection and representative browser evidence. This establishes an audit baseline, not an assertion that every control is defect-free. Detailed evidence and limitations are in Task 00.
+`docs/tasks/01a-design-tokens.md`
 
-All 26 sidebar destinations and Profile rendered in the user-authenticated local preview. Short-height sidebar navigation, desktop/laptop/tablet/mobile samples, both themes, representative interactions, console/runtime warnings and overflow were inspected. Task 01 has not been created or started.
-
-Verified interactions include command-search Enter navigation/main focus, drawer keyboard wrapping/inert background/Escape focus return, mobile dock/More navigation, map list selection and empty search, academic course filtering, local guide response, and notification-overlay dismissal. No posts, accounts or backend records were created by the audit. Theme was restored to System and viewport/media overrides cleared.
+Current objective: establish one authoritative CampusOS visual-token and typography foundation before redesigning shared components or individual pages.
 
 ## Current frontend architecture
 
