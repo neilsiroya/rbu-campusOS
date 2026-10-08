@@ -2,11 +2,11 @@
 
 Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
-## Active task 
+## Active task
 
-`docs/tasks/01a-design-tokens.md`
+`docs/tasks/01b-surfaces-panels.md`
 
-Current objective: Task 01A is complete and ready for review. Stop here; Task 01B is not started.
+Current objective: establish the shared CampusOS surface, card and panel language using the Task 01A design-token foundation before redesigning individual product pages.
 
 ### Task 01A completion — 2026-10-08
 
