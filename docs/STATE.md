@@ -4,9 +4,8 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 ## Active task
 
-`docs/tasks/01c-a-controls-notices.md`
+`docs/tasks/01c-b-dialogs-overlays.md`
 
-Status: Task 01C-A complete. Shared controls and notices are implemented and validated against the specified representative set. Task 01C-B has not been started.
 
 ### Task 01C-A completion — 2026-10-09
 
