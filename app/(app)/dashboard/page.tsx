@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const { items: done, update: setDone, storageError } = useSessionItems<string>("campusos.assignments.saved", []);
   const pending = ASSIGNMENTS.filter((a) => !done.includes(a.id));
   return (
-    <div className="space-y-7">
+    <div data-controls className="space-y-7">
       <header className="dashboard-intro">
         <div><p className="mb-2 text-xs text-muted-foreground">Your workspace</p><h1>{isFocusMode ? "Focus workspace." : "Mission control."}</h1><p className="mt-3 text-sm text-muted-foreground">{isFocusMode ? "Classes, tasks, and the next thing to do." : "Your classes, communities, and next moves. One connected workspace."}</p></div>
         <Button variant="outline" className="min-h-11 shrink-0 gap-2" aria-label={isFocusMode ? "Show full dashboard" : "Focus on academics"} aria-pressed={isFocusMode} onClick={() => setMode(isFocusMode ? "normal" : "focus")}><Eye className="size-4" /><span className="hidden sm:inline">{isFocusMode ? "Full dashboard" : "Focus"}</span></Button>

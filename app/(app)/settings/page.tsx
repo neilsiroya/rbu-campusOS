@@ -50,7 +50,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="space-y-6 stagger-in">
+    <div data-controls className="space-y-6 stagger-in">
       <PageIntro
         kicker="System"
         title="Settings"
@@ -67,7 +67,6 @@ export default function SettingsPage() {
             variant={mounted && theme === "light" ? "default" : "outline"}
             aria-pressed={mounted && theme === "light"}
             onClick={() => setTheme("light")}
-            className="rounded-xl"
           >
             Light
           </Button>
@@ -75,7 +74,6 @@ export default function SettingsPage() {
             variant={mounted && theme === "dark" ? "default" : "outline"}
             aria-pressed={mounted && theme === "dark"}
             onClick={() => setTheme("dark")}
-            className="rounded-xl"
           >
             Dark
           </Button>
@@ -83,7 +81,6 @@ export default function SettingsPage() {
             variant={mounted && theme === "system" ? "default" : "outline"}
             aria-pressed={mounted && theme === "system"}
             onClick={() => setTheme("system")}
-            className="rounded-xl"
           >
             System
           </Button>
@@ -111,12 +108,12 @@ export default function SettingsPage() {
             </label>
           ))}
         </div>
-        <div className="mt-6 flex items-center gap-3">
-          <Button className="rounded-full" onClick={save}>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <Button onClick={save}>
             Save preferences
           </Button>
           {saved && !storageError && (
-            <p role="status" className="text-body-sm text-muted-foreground">Saved for this browser session.</p>
+            <p role="status" data-notice="success" className="text-body-sm text-muted-foreground">Saved for this browser session.</p>
           )}
         </div>
       </section>

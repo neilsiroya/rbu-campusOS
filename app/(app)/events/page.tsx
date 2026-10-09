@@ -40,7 +40,7 @@ export default function EventsPage() {
   const featured = EVENTS.find((e) => e.featured) ?? EVENTS[0];
 
   return (
-    <div className="space-y-6 stagger-in">
+    <div data-controls className="space-y-6 stagger-in">
       <PageIntro
         kicker="Community"
         title="Events"

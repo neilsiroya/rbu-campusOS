@@ -1,0 +1,166 @@
+warning: in the working copy of 'AGENTS.md', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/AGENTS.md b/AGENTS.md[m
+[1mindex 643577d..a25586e 100644[m
+[1m--- a/AGENTS.md[m
+[1m+++ b/AGENTS.md[m
+[36m@@ -7,3 +7,113 @@[m [mThis version has breaking changes — APIs, conventions, and file structure may[m
+ This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.[m
+ [m
+ <!-- END:nextjs-agent-rules -->[m
+[32m+[m
+[32m+[m[32m# RBU CampusOS Project Context[m
+[32m+[m
+[32m+[m[32mRBU CampusOS is a student-focused digital campus operating system for Ramdeobaba University. It is not primarily an ERP or generic SaaS dashboard.[m
+[32m+[m
+[32m+[m[32mProject documentation lives under `docs/`.[m
+[32m+[m
+[32m+[m[32m## Project context[m
+[32m+[m
+[32m+[m[32mUse documentation contextually:[m
+[32m+[m
+[32m+[m[32m- `docs/STATE.md` — current project state, active work, known issues, and next task[m
+[32m+[m[32m- `docs/PRODUCT.md` — product definition, features, terminology, and product principles[m
+[32m+[m[32m- `docs/DESIGN.md` — UI/UX, typography, motion, spatial/3D design, responsive behavior, and visual principles[m
+[32m+[m[32m- `docs/ARCHITECTURE.md` — backend, Supabase, APIs, infrastructure, security, and production architecture[m
+[32m+[m[32m- `docs/DECISIONS.md` — durable project decisions that should not repeatedly be reopened[m
+[32m+[m[32m- `docs/tasks/` — scoped implementation tasks and acceptance criteria[m
+[32m+[m
+[32m+[m[32mFor normal work, inspect the actual code and read only the documentation relevant to the active task.[m
+[32m+[m
+[32m+[m[32mDo not load every project document unnecessarily.[m
+[32m+[m
+[32m+[m[32m## Source of truth[m
+[32m+[m
+[32m+[m[32mUse information in this order:[m
+[32m+[m
+[32m+[m[32m1. current repository/code[m
+[32m+[m[32m2. `docs/STATE.md`[m
+[32m+[m[32m3. active task file[m
+[32m+[m[32m4. relevant durable documentation[m
+[32m+[m[32m5. conversation history[m
+[32m+[m
+[32m+[m[32mCurrent code is authoritative for implementation reality.[m
+[32m+[m
+[32m+[m[32mDo not rely on previous conversation memory when the repository provides newer information.[m
+[32m+[m
+[32m+[m[32m## Task discipline[m
+[32m+[m
+[32m+[m[32mWork on one defined task or goal at a time.[m
+[32m+[m
+[32m+[m[32mDo not opportunistically redesign or refactor unrelated areas.[m
+[32m+[m
+[32m+[m[32mPreserve working authentication, Supabase integrations, application routes, data behavior, and other existing functionality unless the active task explicitly changes them.[m
+[32m+[m
+[32m+[m[32mDemo data may remain where real production data is not yet available.[m
+[32m+[m
+[32m+[m[32mDo not fabricate functionality or represent demo information as verified real information.[m
+[32m+[m
+[32m+[m[32m## Design work[m
+[32m+[m
+[32m+[m[32mFor frontend work, follow `docs/DESIGN.md`.[m
+[32m+[m
+[32m+[m[32mCampusOS should feel authored, spatial, interactive, premium, and coherent.[m
+[32m+[m
+[32m+[m[32m"3D" means spatial interface design and interaction.[m
+[32m+[m
+[32m+[m[32mDo not treat arbitrary blobs, spheres, floating objects, or decorative WebGL scenes as sufficient 3D design.[m
+[32m+[m
+[32m+[m[32mAvoid generic AI-generated dashboard patterns and component-library-demo aesthetics.[m
+[32m+[m
+[32m+[m[32m## Dependencies and tools[m
+[32m+[m
+[32m+[m[32mInspect `package.json` before assuming a dependency exists.[m
+[32m+[m
+[32m+[m[32mPrefer existing tooling over adding redundant packages.[m
+[32m+[m
+[32m+[m[32mDo not use multiple libraries to solve the same problem without a clear reason.[m
+[32m+[m
+[32m+[m[32mUse connected tools, MCPs, skills, browser automation, and design resources only when they materially improve the active task.[m
+[32m+[m
+[32m+[m[32m## Verification[m
+[32m+[m
+[32m+[m[32mBefore declaring a task complete:[m
+[32m+[m
+[32m+[m[32m- inspect the actual result[m
+[32m+[m[32m- run relevant checks[m
+[32m+[m[32m- verify acceptance criteria[m
+[32m+[m[32m- inspect for runtime/console errors when applicable[m
+[32m+[m[32m- verify important responsive behavior when applicable[m
+[32m+[m[32m- inspect `git diff`[m
+[32m+[m
+[32m+[m[32mWriting code is not sufficient evidence that the task is complete.[m
+[32m+[m
+[32m+[m[32m## State handoff[m
+[32m+[m
+[32m+[m[32mAfter a meaningful milestone, or before stopping unfinished work, update `docs/STATE.md`.[m
+[32m+[m
+[32m+[m[32mRecord only:[m
+[32m+[m
+[32m+[m[32m- current objective[m
+[32m+[m[32m- what was completed[m
+[32m+[m[32m- what remains[m
+[32m+[m[32m- known bugs/regressions[m
+[32m+[m[32m- important changed areas when useful[m
+[32m+[m[32m- exact next task[m
+[32m+[m
+[32m+[m[32mDo not turn `STATE.md` into a reasoning transcript or development diary.[m
+[32m+[m
+[32m+[m[32m## Interrupted-task recovery[m
+[32m+[m
+[32m+[m[32mWhen continuing after a usage limit, context reset, new conversation, or model switch:[m
+[32m+[m
+[32m+[m[32m1. read `docs/STATE.md`[m
+[32m+[m[32m2. read the active task[m
+[32m+[m[32m3. inspect `git status`[m
+[32m+[m[32m4. inspect `git diff`[m
+[32m+[m[32m5. inspect the relevant implementation[m
+[32m+[m[32m6. continue from the first incomplete acceptance criterion[m
+[32m+[m
+[32m+[m[32mDo not restart completed work solely because previous chat context is unavailable.[m
+\ No newline at end of file[m
+[1mdiff --git a/docs/redesign-verification.md b/docs/redesign-verification.md[m
+[1mdeleted file mode 100644[m
+[1mindex 3ff5f02..0000000[m
+[1m--- a/docs/redesign-verification.md[m
+[1m+++ /dev/null[m
+[36m@@ -1,40 +0,0 @@[m
+[31m-# CampusOS redesign verification[m
+[31m-[m
+[31m-## Scope[m
+[31m-[m
+[31m-The landing and dashboard now use a campus-inspired architectural scene, direct destination links, and a shared visual system. Decorative blob panels and the separate immersive-mode entrance were removed from active routes. Campus data remains a disclosed prototype; this change does not add university-system integrations.[m
+[31m-[m
+[31m-## Checks performed[m
+[31m-[m
+[31m-- ESLint completed without errors or warnings.[m
+[31m-- Production build and its TypeScript check completed successfully across all routes.[m
+[31m-- 16 offline authentication tests passed, covering return paths, failed authentication, missing configuration, email-confirmation handling, refreshed cookies and cache headers, and switching between auth forms.[m
+[31m-- Independent interaction, visual/accessibility, and authentication reviews were completed and their actionable findings addressed.[m
+[31m-- Browser checks covered the public landing and sign-in redirect, dashboard checklist updates, assignment state across navigation and reload, keyboard search navigation, search empty state, resource details, and Escape dismissal.[m
+[31m-- Mobile checks covered the landing at 390px, Study Hub, navigation opening and Escape focus return, dark theme, and search at 390 × 500. Search results had a scrollable region and no horizontal document overflow.[m
+[31m-- Map checks covered rendering and empty search. Filtering exposed a Three/Drei HTML-label unmount error; the label was moved into the normal page interface.[m
+[31m-[m
+[31m-Protected-page UI checks used an isolated localhost fixture with sample data and no credentials. The production authentication gate was kept intact. Build success covers route compilation, not every interactive action.[m
+[31m-[m
+[31m-## Limits and follow-up[m
+[31m-[m
+[31m-- Live Supabase sign-in, email delivery, and cross-device account flows were not exercised with a real account.[m
+[31m-- The browser download event timed out during the resource-summary check; an end-to-end downloaded file was not verified.[m
+[31m-- Hardware-specific WebGL behavior, touch gestures on a physical device, and every page in every theme were not exhaustively tested.[m
+[31m-- Campus records, posts, listings, saved actions, notifications, and preferences remain sample or browser-local data as documented in the README. Hostels remains a placeholder; Campus AI is a local preset guide.[m
+[31m-[m
+[31m-## Spatial interface and cursor follow-up (7 October 2026)[m
+[31m-[m
+[31m-- Replaced the generated-image entrance with authored SVG campus topology, a layered sample schedule, one primary entry action, and a route directory. The topology is conceptual, not surveyed geography.[m
+[31m-- Adopted mineral-neutral light surfaces, graphite dark surfaces, cobalt accents, revised branding, distinct work surfaces, and short route-entry motion.[m
+[31m-- Rebuilt the cursor light as a bounded CSS layer. It preserves pointer hit targets, reacts to interactive elements, fades when idle, cancels its animation work on blur/hidden pages, and respects reduced motion and coarse pointers.[m
+[31m-- Updated dashboard, guide, event agenda, timetable, academic modules, Study Hub archive, people directory, and several secondary page treatments. Removed misleading membership/live-data copy. Hostel route now links to relevant existing directories.[m
+[31m-- Fixed short-height sidebar overflow and mobile focus return. Removed a global aria-live rule that incorrectly hid the visible guide conversation. Added accessible voting/sorting states.[m
+[31m-[m
+[31m-### Follow-up verification[m
+[31m-[m
+[31m-The final production build (including TypeScript and all 34 static outputs) and lint passed after the browser-found fixes. All 16 auth regression tests passed. Browser checks used the real public app and an isolated sample-data fixture for protected UI without changing the production authentication gate.[m
+[31m-[m
+[31m-Verified spotlight activation over controls, pointer-events:none, idle fade, and reduced-motion hiding; landing desktop/mobile overflow; dark dashboard and command search place results; 900x500 drawer scrolling through Settings and Escape focus return; guide prompt answer and clear-session behavior; visible guide conversation after the CSS repair; light event expansion and interest feedback; tablet timetable; Study Hub details and narrow 320px header without overflow. No console errors were returned during these checks.[m
+[31m-[m
+[31m-The full combination of every route, every viewport, every theme, physical touch hardware, live Supabase sign-in and resource file downloads has not been exhaustively tested. Remaining routes inherit shared visual tokens while retaining their existing composition. No backend services or new animation dependencies were introduced.[m

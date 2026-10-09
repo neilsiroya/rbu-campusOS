@@ -315,35 +315,35 @@ Do not perform the full Task 00 QA matrix.
 
 Task 01C-A is complete only when:
 
-- [ ] existing shared buttons/controls were audited
-- [ ] a small semantic button hierarchy exists
-- [ ] button states are coherent
-- [ ] icon-button treatment is coherent
-- [ ] common input styling is coherent
-- [ ] input focus/error/disabled states are defined
-- [ ] filter/selection styling is coherent
-- [ ] notice styling is coherent
-- [ ] demo/local-data disclosures remain clear
-- [ ] shared small labels touched by this task use readable semantic typography
-- [ ] control density is coherent
-- [ ] mobile touch targets remain usable
-- [ ] representative Dashboard controls were checked
-- [ ] representative Notifications controls were checked
-- [ ] representative Events controls were checked
-- [ ] representative Study Hub controls were checked
-- [ ] representative Settings controls were checked
-- [ ] light mode was checked
-- [ ] dark mode was checked
-- [ ] desktop was checked
-- [ ] mobile was checked
-- [ ] landing regression check passed
-- [ ] no intentional functionality changes were introduced
-- [ ] typecheck passes
-- [ ] lint passes
-- [ ] `git diff --check` passes
-- [ ] no obvious new runtime errors were introduced
-- [ ] task checklist is accurate
-- [ ] `docs/STATE.md` is updated
+- [x] existing shared buttons/controls were audited
+- [x] a small semantic button hierarchy exists
+- [x] button states are coherent
+- [x] icon-button treatment is coherent
+- [x] common input styling is coherent
+- [x] input focus/error/disabled states are defined
+- [x] filter/selection styling is coherent
+- [x] notice styling is coherent
+- [x] demo/local-data disclosures remain clear
+- [x] shared small labels touched by this task use readable semantic typography
+- [x] control density is coherent
+- [x] mobile touch targets remain usable
+- [x] representative Dashboard controls were checked
+- [x] representative Notifications controls were checked
+- [x] representative Events controls were checked
+- [x] representative Study Hub controls were checked
+- [x] representative Settings controls were checked
+- [x] light mode was checked
+- [x] dark mode was checked
+- [x] desktop was checked
+- [x] mobile was checked
+- [x] landing regression check passed
+- [x] no intentional functionality changes were introduced
+- [x] typecheck passes
+- [x] lint passes
+- [x] `git diff --check` passes
+- [x] no obvious new runtime errors were introduced
+- [x] task checklist is accurate
+- [x] `docs/STATE.md` is updated
 
 ---
 
@@ -361,3 +361,11 @@ When complete, update `docs/STATE.md` with:
 Keep this concise.
 
 Do not begin Task 01C-B.
+## Verified completion — 2026-10-09
+
+- Audited Base UI Button/Input, FilterChips, DemoNotice and SessionStorageNotice and the five representative consumers. Existing Button variants remain compatible; primary, secondary/outline, quiet, selected and icon treatments share semantic tokens. No new loading behavior was needed in this representative set; existing auth/form loading remains outside scope.
+- `app/controls.css` is opt-in under `data-controls` at the five content roots. Shared Button exposes its existing variant/size as data attributes; native links/filters/selects use explicit control markers. Navigation, landing and portalled dialogs are outside this CSS boundary. Normal/compact controls are 40/32px; both use 44px targets on mobile/coarse pointers. Labels use 12px semantic typography; text fields use 14px desktop and 16px mobile text.
+- Browser inspected Dashboard, Notifications, Events, Study Hub and Settings at 1440×900 and 390×844 in light/dark. Verified search filtering, selected filters, the Dashboard focus toggle (restored), disabled notification controls, input/button keyboard focus, hover/pressed feedback and Settings success feedback after saving unchanged preference values. Fixed focus clipping in the horizontal filter strip with an inset outline. No new root horizontal overflow or captured runtime errors/warnings.
+- Demo/local disclosures are unchanged. Info notices use a quiet inset surface and semantic edge; existing storage-error and Settings-success notices share the same treatment. Input error/disabled rules and the conditional storage-error notice were source-reviewed; no storage failure or input error was present naturally during this run, and no production failure was induced.
+- Landing regression passed at both dimensions/themes. Browser emulation reset. `npm run typecheck`, `npm run lint` and `git diff --check` passed. No broad test suite, production build, dependency, auth/data, navigation, dialog or motion/3D changes. Existing staged user files were preserved.
+- Remaining legacy controls outside the opt-in pages, portalled forms, and page-specific resource metadata remain deferred. Task 01C-B should address dialogs/overlays, form consistency and constrained-height behavior; it was not started.

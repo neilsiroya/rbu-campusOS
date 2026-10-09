@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/skills/task-observer/hooks/session-start.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

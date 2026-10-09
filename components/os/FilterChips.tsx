@@ -21,6 +21,7 @@ export function FilterChips<T extends string>({
         <button
           key={option}
           type="button"
+          data-control="filter"
           role="tab"
           aria-selected={value === option}
           onClick={() => onChange(option)}

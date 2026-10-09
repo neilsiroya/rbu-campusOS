@@ -141,7 +141,7 @@ export default function NotesPage() {
   };
 
   return (
-    <div className="space-y-6 stagger-in">
+    <div data-controls className="space-y-6 stagger-in">
       <PageIntro
         kicker="Academics & Knowledge"
         title="Study Hub"
@@ -158,7 +158,7 @@ export default function NotesPage() {
         <Button onClick={() => setIsSharing(true)} className="min-h-12 gap-2"><Share2 className="size-4" />Share a resource</Button>
       </section>
 
-      {/* Type Pill Carousel */}
+      {/* Resource type filters */}
       <div className="flex flex-wrap items-center gap-2 py-1">
         {RESOURCE_TYPES.map((type) => {
           const isActive = selectedType === type;
@@ -168,12 +168,7 @@ export default function NotesPage() {
               type="button"
               onClick={() => setSelectedType(type)}
               aria-pressed={isActive}
-              className={cn(
-                "shrink-0 rounded-2xl border px-3.5 py-2 text-xs font-medium transition-all",
-                isActive
-                  ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                  : "border-border/80 bg-card hover:border-border hover:bg-muted/60 text-muted-foreground hover:text-foreground"
-              )}
+              data-control="filter"
             >
               {type}
             </button>
@@ -190,7 +185,7 @@ export default function NotesPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search subjects (Signals, OS, BEE), topics, tags, or authors…"
-            className="pl-10 h-11 rounded-2xl bg-card border-border/80 text-sm"
+            data-control-icon="start"
           />
         </div>
 
@@ -200,7 +195,7 @@ export default function NotesPage() {
             aria-label="Filter by branch"
             value={selectedBranch}
             onChange={(e) => setSelectedBranch(e.target.value)}
-            className="h-10 rounded-xl border border-border bg-card px-3 text-xs font-medium text-foreground outline-none"
+            data-control="field"
           >
             {BRANCHES.map((b) => (
               <option key={b} value={b}>
@@ -214,7 +209,7 @@ export default function NotesPage() {
             aria-label="Filter by academic year"
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="h-10 rounded-xl border border-border bg-card px-3 text-xs font-medium text-foreground outline-none"
+            data-control="field"
           >
             {YEARS.map((y) => (
               <option key={y} value={y}>
@@ -224,17 +219,12 @@ export default function NotesPage() {
           </select>
 
           {/* Sort selector */}
-          <div className="flex rounded-2xl border border-border bg-card p-1">
+          <div className="flex gap-1">
             <button
               type="button"
               onClick={() => setSortBy("Popular")}
               aria-pressed={sortBy === "Popular"}
-              className={cn(
-                "rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
-                sortBy === "Popular"
-                  ? "bg-primary text-primary-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
+              data-control="filter"
             >
               Most Useful
             </button>
@@ -242,12 +232,7 @@ export default function NotesPage() {
               type="button"
               onClick={() => setSortBy("Recent")}
               aria-pressed={sortBy === "Recent"}
-              className={cn(
-                "rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
-                sortBy === "Recent"
-                  ? "bg-primary text-primary-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
+              data-control="filter"
             >
               Recent
             </button>
@@ -332,12 +317,7 @@ export default function NotesPage() {
                       onClick={(e) => handleUpvote(item.id, e)}
                       aria-label={`${hasVoted ? "Remove useful vote for" : "Mark as useful:"} ${item.title}`}
                       aria-pressed={hasVoted}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition-all",
-                        hasVoted
-                          ? "border-primary bg-primary/15 text-primary"
-                          : "border-border/80 bg-background/50 text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                      )}
+                      data-control="button" data-variant="outline" data-size="sm"
                     >
                       <ThumbsUp className={cn("size-3.5", hasVoted && "fill-current text-primary")} />
                       <span>{item.useful}</span>

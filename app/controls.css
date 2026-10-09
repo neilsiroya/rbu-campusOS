@@ -1,0 +1,131 @@
+/* Task 01C-A: opt in at a page content root with data-controls.
+   Shared Base UI behavior stays intact. Portalled dialogs and app navigation
+   do not inherit this migration. Native controls can use data-control.
+   Normal = 40px, compact = 32px; both become 44px on small/touch screens. */
+[data-controls] :is([data-slot="button"], [data-control="button"], [data-control="filter"]) {
+  --control-bg: var(--primary);
+  --control-fg: var(--primary-foreground);
+  --control-hover: var(--primary-hover);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  gap: var(--space-2);
+  min-height: 2.5rem;
+  height: auto;
+  min-width: 2.5rem;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--control-bg);
+  color: var(--control-fg);
+  font-size: var(--type-label);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  box-shadow: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition-property: background-color, color, border-color, box-shadow;
+}
+[data-controls] :is([data-variant="outline"], [data-variant="secondary"], [data-control="filter"]) {
+  --control-bg: var(--surface);
+  --control-fg: var(--foreground);
+  --control-hover: var(--accent);
+  border-color: var(--border);
+}
+[data-controls] [data-variant="secondary"] { --control-bg: var(--surface-inset); }
+[data-controls] :is([data-variant="ghost"], [data-variant="link"]) {
+  --control-bg: transparent;
+  --control-fg: var(--foreground);
+  --control-hover: var(--accent-subtle);
+}
+[data-controls] [data-variant="link"] { --control-fg: var(--primary); }
+[data-controls] [data-variant="destructive"] {
+  --control-bg: color-mix(in srgb, var(--destructive) 8%, var(--surface));
+  --control-fg: var(--destructive);
+  --control-hover: color-mix(in srgb, var(--destructive) 15%, var(--surface));
+}
+[data-controls] :is([data-size="sm"], [data-size="xs"], [data-control="filter"]) {
+  min-height: 2rem;
+  padding-block: var(--space-1);
+}
+[data-controls] [data-size^="icon"] { width: 2.5rem; padding: var(--space-2); }
+[data-controls] :is([data-slot="button"], [data-control="button"], [data-control="filter"]):is([aria-pressed="true"], [aria-selected="true"]) {
+  --control-bg: var(--primary-subtle);
+  --control-fg: var(--primary);
+  --control-hover: var(--primary-subtle);
+  border-color: var(--primary);
+  box-shadow: inset 0 -2px 0 var(--primary);
+}
+@media (hover: hover) {
+  [data-controls] :is([data-slot="button"], [data-control="button"], [data-control="filter"]):hover:not(:disabled):not([aria-disabled="true"]) {
+    background: var(--control-hover);
+  }
+}
+[data-controls] :is([data-slot="button"], [data-control="button"], [data-control="filter"]):active:not(:disabled):not([aria-disabled="true"]) {
+  box-shadow: var(--depth-inset);
+  filter: brightness(.94);
+  transform: none;
+  scale: none;
+}
+[data-controls] :is([data-slot="button"], [data-control="button"], [data-control="filter"]):is(:disabled, [aria-disabled="true"]) {
+  background: var(--disabled);
+  color: var(--disabled-foreground);
+  border-color: var(--border-subtle);
+  box-shadow: none;
+  opacity: 1;
+  cursor: not-allowed;
+}
+[data-controls] :is([data-slot="input"], [data-control="field"]) {
+  min-height: 2.5rem;
+  height: auto;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--input);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--foreground);
+  font-size: var(--type-body);
+  line-height: 1.5;
+  box-shadow: none;
+}
+[data-controls] [data-control-icon="start"] { padding-inline-start: 2.5rem; }
+[data-controls] :is([data-slot="input"], [data-control="field"])::placeholder { color: var(--placeholder); }
+[data-controls] :is([data-slot="input"], [data-control="field"]):is([aria-invalid="true"], [data-invalid]) { border-color: var(--destructive); }
+[data-controls] :is([data-slot="input"], [data-control="field"]):disabled {
+  background: var(--disabled);
+  color: var(--disabled-foreground);
+  opacity: 1;
+  cursor: not-allowed;
+}
+[data-controls] :is([data-slot="button"], [data-control], [data-slot="input"]):focus-visible {
+  outline: var(--focus-width) solid var(--focus);
+  outline-offset: var(--focus-offset);
+  box-shadow: none;
+}
+/* Keep the focus outline inside horizontally scrolling filter strips. */
+[data-controls] [data-control="filter"]:focus-visible { outline-offset: calc(-1 * var(--focus-width)); }
+[data-controls] [data-notice] {
+  --notice-tone: var(--info);
+  border: 0;
+  border-inline-start: var(--border-width-strong) solid var(--notice-tone);
+  border-radius: var(--radius-subtle);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-inset);
+  color: var(--foreground-muted);
+  font-size: var(--type-body-compact);
+  line-height: 1.55;
+}
+[data-controls] [data-notice="error"] { --notice-tone: var(--destructive); color: var(--destructive); }
+[data-controls] [data-notice="success"] { --notice-tone: var(--success); color: var(--success); }
+@media (max-width: 639px), (pointer: coarse) {
+  [data-controls] :is([data-slot="button"], [data-control="button"], [data-control="filter"], [data-slot="input"], [data-control="field"]) { min-height: 2.75rem; }
+  [data-controls] :is([data-slot="button"], [data-control="button"], [data-control="filter"]) { min-width: 2.75rem; }
+  [data-controls] [data-size^="icon"] { width: 2.75rem; }
+  [data-controls] :is([data-slot="input"], [data-control="field"]) { font-size: 1rem; }
+}
+@media (forced-colors: active) {
+  [data-controls] :is([data-slot="button"], [data-control], [data-slot="input"]):focus-visible { outline-color: Highlight; }
+  [data-controls] :is([aria-pressed="true"], [aria-selected="true"]) { border-color: Highlight; }
+}

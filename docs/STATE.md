@@ -6,7 +6,16 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 `docs/tasks/01c-a-controls-notices.md`
 
-Current objective: standardize CampusOS shared buttons, inputs, filters, notices and control states using the Task 01A token and Task 01B surface foundations. Dialog and overlay systems remain deferred to Task 01C-B.
+Status: Task 01C-A complete. Shared controls and notices are implemented and validated against the specified representative set. Task 01C-B has not been started.
+
+### Task 01C-A completion — 2026-10-09
+
+- Added `app/controls.css`, imported by globals, scoped to `data-controls` content roots on Dashboard, Notifications, Events, Study Hub and Settings. Base UI Button exposes existing variant/size attributes; Input keeps its existing implementation and native/Base UI behavior. Shared filters and notices expose semantic styling markers. Navigation, landing, portals and unmigrated pages retain their existing treatment.
+- Coherent primary, secondary/outline, quiet and selected materials, restrained radius, focus/hover/pressed/disabled states, native search/select treatment and 40/32px normal/compact density; 44px mobile/coarse-pointer targets. Control/notice labels use semantic typography at 12px minimum; mobile text fields use 16px. Filter focus is inset to avoid scroll-container clipping. No added motion.
+- Consolidated Study Hub type/sort filters and selects, Notifications action links, and Settings success feedback. Demo/local disclosure wording and all handlers remain intact. Notices use neutral inset material with semantic info/error/success edges; no unused notice categories added.
+- Verified the five pages in light/dark at 1440×900 and 390×844, plus landing regression only. Checked search filtering, selected filters, Dashboard toggle and keyboard focus, existing disabled notification controls, hover/pressed feedback and Settings save feedback with unchanged preference values. No root horizontal overflow or captured browser errors/warnings. Input error/disabled and conditional storage-error styling were source-reviewed rather than fault-injected. Browser emulation reset.
+- Typecheck, lint and diff check pass; no build or broad QA matrix. No dependencies, auth, Supabase, product logic, page layouts, navigation, dialogs or motion/3D systems changed. Existing staged `.agents/`, `.codex/` and unusual filename changes were preserved.
+- Legacy controls remain outside the opt-in roots; portalled forms and resource metadata still have older styling. Existing issues below remain. Recommended next task, only when authorized: 01C-B dialog/overlay forms, constrained scrolling and short-height behavior, using the established controls and surfaces.
 
 ### Task 01B completion — 2026-10-09
 
@@ -68,6 +77,6 @@ Browser samples: 1440×900 desktop, 1280×800 laptop, 768×1024 tablet, 390×844
 
 ## Modified files / exact next action
 
-Task 01B changed areas: `app/surfaces.css`, `app/globals.css`, `app/(app)/dashboard/page.tsx`, `app/(app)/notifications/page.tsx`, `app/(app)/profile/page.tsx`, `app/(app)/notes/page.tsx`, `app/(app)/events/page.tsx`, `docs/STATE.md`, `docs/tasks/01b-surfaces-panels.md`. Existing untracked `.agents/`, `.codex/`, and the unusual filename reported by Git remain untouched.
+Task 01C-A files: `app/controls.css`, `app/globals.css`, `components/ui/button.tsx`, `components/os/FilterChips.tsx`, `components/os/DemoNotice.tsx`, `components/os/SessionStorageNotice.tsx`, `app/(app)/dashboard/page.tsx`, `app/(app)/notifications/page.tsx`, `app/(app)/events/page.tsx`, `app/(app)/notes/page.tsx`, `app/(app)/settings/page.tsx`, `docs/tasks/01c-a-controls-notices.md`, `docs/STATE.md`.
 
-Tasks 01A and 01B are complete; the Task 01B checklist is satisfied. Exact next task, only when separately authorized: Task 01C shared controls, buttons, filters, notices and dialogs using the established foundations. Stop here; functional fixes and dependency reconciliation remain separately scoped work.
+Tasks 01A, 01B and 01C-A are complete. Stop here. Exact recommended next task, only when separately authorized: Task 01C-B dialogs/overlay forms and constrained-height behavior. Functional fixes and dependency reconciliation remain separately scoped work.
