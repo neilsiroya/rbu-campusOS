@@ -6,7 +6,17 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 `docs/tasks/01b-surfaces-panels.md`
 
-Current objective: establish the shared CampusOS surface, card and panel language using the Task 01A design-token foundation before redesigning individual product pages.
+Status: Task 01B complete. The shared CampusOS surface, card and panel language is implemented and validated against its representative set. No next task has been started.
+
+### Task 01B completion — 2026-10-09
+
+- Implemented `app/surfaces.css`, imported by `app/globals.css`: opt-in semantic base, section, contained, raised, inset, row and data surfaces; floating/overlay material definitions are available without migrating popovers or dialogs. Roles use Task 01A background, border, radius, depth and spacing tokens. Compact/normal/spacious density and interactive/selected/disabled styles are shared.
+- Migrated only Dashboard, Notifications, Profile, Study Hub and Events. Open sections and divider rows reduce repeated boxes; raised surfaces distinguish prominent content; inset surfaces contain secondary information. Existing layouts, handlers, routes, auth, data, navigation and motion remain intact. Notifications no longer imply that the whole article is clickable.
+- Legacy `components/ui/card.tsx` consumers are outside the representative set; legacy glass/card styles remain for unmigrated pages. Existing controls, notices, dialogs, small labels and page-specific styling remain staged work. Landing is unchanged.
+- Source review and `git diff --check` completed; `npm run typecheck` and `npm run lint` passed. No build or broad test suite run. Implementation stayed unchanged during final browser validation.
+- Browser validation completed after the user restored localhost: signed-in Dashboard, Notifications, Profile, Study Hub and Events in light/dark at 1440×900 and 390×844. Screenshot/computed-style checks confirm role hierarchy, restrained borders/depth, 0/4/8/12px radii and responsive density. No root/main or migrated-surface horizontal overflow. Verified Events hover/pressed/expanded selection, Dashboard link focus and Study Hub keyboard focus/resource selection. Disabled materials were source-reviewed; this set has no disabled surface consumer.
+- Landing regression checks passed in both themes/sizes, with the previously recorded clipped one-pixel mobile internal width rounding and no root overflow. Captured browser error/warning logs were empty. Theme and viewport emulation were reset. No new regression was found in the representative set; existing issues below remain outside this task.
+- Recommended Task 01C scope: shared controls, buttons, filters, notices and constrained/scrollable dialogs using the 01A tokens and 01B materials. Do not start Task 01C during this task.
 
 ### Task 01A completion — 2026-10-08
 
@@ -58,6 +68,6 @@ Browser samples: 1440×900 desktop, 1280×800 laptop, 768×1024 tablet, 390×844
 
 ## Modified files / exact next action
 
-Task 01A files: `app/design-tokens.css`, `app/typography.css`, `app/globals.css`, `app/campus-design.css`, `docs/STATE.md`, `docs/tasks/01a-design-tokens.md`. Existing untracked `.agents/`, `.codex/`, and the unusual filename reported by Git remain untouched.
+Task 01B changed areas: `app/surfaces.css`, `app/globals.css`, `app/(app)/dashboard/page.tsx`, `app/(app)/notifications/page.tsx`, `app/(app)/profile/page.tsx`, `app/(app)/notes/page.tsx`, `app/(app)/events/page.tsx`, `docs/STATE.md`, `docs/tasks/01b-surfaces-panels.md`. Existing untracked `.agents/`, `.codex/`, and the unusual filename reported by Git remain untouched.
 
-Task 01A checklist is complete. Recommended next task: Task 01B shared surface/card/panel visual language, using the new foundation; await separate authorization. Functional fixes and dependency reconciliation remain outside this task.
+Tasks 01A and 01B are complete; the Task 01B checklist is satisfied. Exact next task, only when separately authorized: Task 01C shared controls, buttons, filters, notices and dialogs using the established foundations. Stop here; functional fixes and dependency reconciliation remain separately scoped work.
