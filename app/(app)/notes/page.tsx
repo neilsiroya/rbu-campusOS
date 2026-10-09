@@ -262,7 +262,7 @@ export default function NotesPage() {
           body="No materials match the active search and filter criteria. Share your own study guide to seed this lane."
         />
       ) : (
-        <div className="grid gap-0 divide-y divide-border border-y border-border">
+        <div className="surface-list grid gap-0">
           {filteredResources.map((item) => {
             const hasVoted = votedIds.includes(item.id);
 
@@ -270,7 +270,11 @@ export default function NotesPage() {
               <article
                 key={item.id}
                 onClick={() => setSelectedResource(item)}
-                className="group relative grid gap-5 bg-card p-5 transition-colors hover:bg-muted/25 md:grid-cols-[minmax(0,1fr)_220px]"
+                data-surface="row"
+                data-surface-density="normal"
+                data-surface-interactive
+                data-selected={selectedResource?.id === item.id}
+                className="group relative grid gap-5 transition-colors md:grid-cols-[minmax(0,1fr)_220px]"
               >
                 <div>
                   {/* Top Bar */}

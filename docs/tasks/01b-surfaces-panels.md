@@ -391,36 +391,38 @@ Do not perform the entire Task 00 viewport matrix.
 
 Task 01B is complete only when:
 
-- [ ] current shared surface/card systems were audited
-- [ ] actual recurring surface roles were identified
-- [ ] one coherent semantic surface hierarchy exists
-- [ ] reusable shared surface primitives/styles exist where justified
-- [ ] new primitives use Task 01A semantic tokens
-- [ ] excessive generic glass/card styling is reduced in shared primitives
-- [ ] radius usage follows the new hierarchy
-- [ ] border usage is intentional
-- [ ] depth/elevation is coherent
-- [ ] common surface spacing is coherent
-- [ ] interactive surfaces have clear hover/focus/pressed/selected states
-- [ ] light-mode surface hierarchy is substantially improved
-- [ ] dark-mode hierarchy remains strong
-- [ ] representative Dashboard view was checked
-- [ ] representative Notifications view was checked
-- [ ] representative Profile view was checked
-- [ ] representative Study Hub view was checked
-- [ ] one discovery/content view was checked
-- [ ] desktop representative validation was performed
-- [ ] mobile representative validation was performed
-- [ ] light mode was validated
-- [ ] dark mode was validated
-- [ ] landing page was checked for obvious regression
-- [ ] no intentional product functionality changes were introduced
-- [ ] typecheck passes
-- [ ] lint passes
-- [ ] no obvious new runtime errors were introduced
-- [ ] task checklist is accurate
-- [ ] `docs/STATE.md` is updated
-- [ ] recommended scope for Task 01C is recorded
+- [x] current shared surface/card systems were audited
+- [x] actual recurring surface roles were identified
+- [x] one coherent semantic surface hierarchy exists
+- [x] reusable shared surface primitives/styles exist where justified
+- [x] new primitives use Task 01A semantic tokens
+- [x] excessive generic glass/card styling is reduced in shared primitives
+- [x] radius usage follows the new hierarchy
+- [x] border usage is intentional
+- [x] depth/elevation is coherent
+- [x] common surface spacing is coherent
+- [x] interactive surfaces have clear hover/focus/pressed/selected states
+- [x] light-mode surface hierarchy is substantially improved
+- [x] dark-mode hierarchy remains strong
+- [x] representative Dashboard view was checked
+- [x] representative Notifications view was checked
+- [x] representative Profile view was checked
+- [x] representative Study Hub view was checked
+- [x] one discovery/content view was checked
+- [x] desktop representative validation was performed
+- [x] mobile representative validation was performed
+- [x] light mode was validated
+- [x] dark mode was validated
+- [x] landing page was checked for obvious regression
+- [x] no intentional product functionality changes were introduced
+- [x] typecheck passes
+- [x] lint passes
+- [x] no obvious new runtime errors were introduced
+- [x] task checklist is accurate
+- [x] `docs/STATE.md` is updated
+- [x] recommended scope for Task 01C is recorded
+
+Completed 2026-10-09. Source review confirms the shared hierarchy and five representative migrations; typecheck, lint and diff checks pass. Signed-in Dashboard, Notifications, Profile, Study Hub and Events were inspected in light/dark at 1440×900 and 390×844. Computed styles and screenshots confirm responsive density, 0/4/8/12px role radii, restrained depth, open sections and divider rows without root/main or migrated-surface horizontal overflow. Events hover/pressed/expanded selection, Dashboard link focus and Study Hub keyboard focus/resource selection were checked; disabled material rules were reviewed in source (no disabled surface consumer exists in this set). Landing regression checks passed in both themes/sizes; its previously recorded clipped one-pixel mobile internal width rounding remains without root overflow. Captured browser error/warning logs were empty. Theme/viewport emulation was reset. No application changes were needed during final validation. Task 01C is recommended in STATE.md and was not started.
 
 ---
 

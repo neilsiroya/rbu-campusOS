@@ -46,18 +46,18 @@ export default function ProfilePage() {
       {!identity.authenticated && (
         <DemoNotice>Showing a demo identity until an authenticated Supabase profile is available.</DemoNotice>
       )}
-      <section className="surface rounded-3xl p-6">
+      <section data-surface="contained" data-surface-density="normal">
         <div className="grid size-16 place-items-center rounded-2xl bg-foreground font-display text-3xl text-background">
           {identity.name.charAt(0)}
         </div>
         <h2 className="mt-5 text-display-sm">{identity.name}</h2>
         {identity.email && <p className="mt-1 break-words text-body text-muted-foreground">{identity.email}</p>}
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-2xl bg-muted/45 p-4">
+          <div data-surface="inset" data-surface-density="compact">
             <p className="text-meta text-muted-foreground">Branch</p>
             <p className="mt-1 font-medium">{identity.branch}</p>
           </div>
-          <div className="rounded-2xl bg-muted/45 p-4">
+          <div data-surface="inset" data-surface-density="compact">
             <p className="text-meta text-muted-foreground">Year</p>
             <p className="mt-1 font-medium">{identity.year}</p>
           </div>

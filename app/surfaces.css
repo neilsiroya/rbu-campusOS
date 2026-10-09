@@ -1,0 +1,101 @@
+/* CampusOS materials. Opt-in attributes preserve markup, layout and behavior.
+   Use section for open groupings, contained for ordinary panels, raised only
+   for priority content, inset for secondary content. Floating/overlay are
+   materials only: their owners retain positioning, stacking and focus traps.
+   data-surface-density controls padding; omit it for existing composition.
+   Interactive surfaces must already have native links/buttons or a keyboard
+   action inside. State attributes describe existing state, never implement it. */
+[data-surface] {
+  --surface-padding: var(--space-panel);
+  min-width: 0;
+  color: var(--foreground);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-surface);
+  box-shadow: var(--depth-base);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+[data-surface="base"], [data-surface="section"] {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+[data-surface="base"] { background: var(--background); }
+[data-surface="raised"] {
+  background: var(--surface-raised);
+  border-color: var(--border);
+  border-radius: var(--radius-large);
+  box-shadow: var(--depth-edge), var(--depth-raised);
+}
+[data-surface="inset"] {
+  background: var(--surface-inset);
+  border: 0;
+  border-radius: var(--radius-subtle);
+  box-shadow: var(--depth-inset);
+}
+[data-surface="floating"], [data-surface="overlay"] {
+  background: var(--surface-raised);
+  border-color: var(--border-strong);
+  border-radius: var(--radius-large);
+  box-shadow: var(--depth-floating);
+}
+[data-surface="overlay"] { box-shadow: var(--depth-overlay); }
+
+/* Rows and stat cells retain their existing grids, with one boundary rather
+   than a repeated card perimeter. A list owns its outer top/bottom rules. */
+[data-surface="row"], [data-surface="data"] {
+  border: 0;
+  border-radius: 0;
+}
+[data-surface="data"] { background: var(--surface-inset); }
+[data-surface="row"][data-unread="true"] {
+  box-shadow: inset var(--border-width-strong) 0 0 var(--primary);
+}
+.surface-list { border-block: var(--border-width) solid var(--divider); }
+.surface-list > [data-surface] + [data-surface] {
+  border-top: var(--border-width) solid var(--divider);
+}
+[data-surface-density="compact"] { --surface-padding: var(--space-4); }
+[data-surface-density="normal"] { --surface-padding: var(--space-panel); }
+[data-surface-density="spacious"] { --surface-padding: var(--space-8); }
+[data-surface-density] { padding: var(--surface-padding); }
+@media (max-width: 639px) {
+  [data-surface-density="normal"] { --surface-padding: var(--space-4); }
+  [data-surface-density="spacious"] { --surface-padding: var(--space-6); }
+}
+
+/* Static material feedback; no new transforms or transitions. */
+@media (hover: hover) {
+  [data-surface-interactive]:not(:disabled):not([aria-disabled="true"]):hover {
+    background: var(--accent-subtle);
+    border-color: var(--border-strong);
+  }
+}
+[data-surface-interactive]:focus-visible,
+[data-surface-interactive]:has(:focus-visible) {
+  outline: var(--focus-width) solid var(--focus);
+  outline-offset: calc(-1 * var(--focus-width));
+}
+[data-surface-interactive]:not(:disabled):not([aria-disabled="true"]):active {
+  background: var(--accent-hover);
+  box-shadow: var(--depth-inset);
+}
+[data-surface-interactive][data-selected="true"],
+[data-surface-interactive][aria-selected="true"],
+[data-surface-interactive][aria-pressed="true"] {
+  background: var(--primary-subtle);
+  box-shadow: inset var(--border-width-strong) 0 0 var(--primary);
+}
+[data-surface-interactive]:disabled,
+[data-surface-interactive][aria-disabled="true"] {
+  color: var(--disabled-foreground);
+  background: var(--disabled);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+@media (forced-colors: active) {
+  [data-surface-interactive]:focus-visible,
+  [data-surface-interactive]:has(:focus-visible) { outline-color: Highlight; }
+  [data-surface-interactive][data-selected="true"] { border-inline-start: 2px solid Highlight; }
+}

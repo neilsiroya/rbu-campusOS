@@ -4,9 +4,9 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 ## Active task
 
-`docs/tasks/01b-surfaces-panels.md`
+`docs/tasks/01c-a-controls-notices.md`
 
-Status: Task 01B complete. The shared CampusOS surface, card and panel language is implemented and validated against its representative set. No next task has been started.
+Current objective: standardize CampusOS shared buttons, inputs, filters, notices and control states using the Task 01A token and Task 01B surface foundations. Dialog and overlay systems remain deferred to Task 01C-B.
 
 ### Task 01B completion — 2026-10-09
 

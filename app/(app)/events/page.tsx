@@ -48,9 +48,9 @@ export default function EventsPage() {
       />
       <DemoNotice /><SessionStorageNotice message={storageError} />
 
-      {filter === "All" && <section className="overflow-hidden border border-border">
+      {filter === "All" && <section data-surface="raised" className="overflow-hidden">
         <article className="grid md:grid-cols-[1.7fr_1fr]">
-          <div className="bg-foreground p-8 text-background">
+          <div data-surface-density="spacious" className="bg-foreground text-background">
             <p className="text-meta opacity-70">Featured</p>
             <h2 className="mt-3 text-display-md leading-tight">{featured.title}</h2>
             <p className="mt-4 text-body leading-relaxed opacity-80">{featured.description}</p>
@@ -64,7 +64,7 @@ export default function EventsPage() {
               {interested.includes(featured.id) ? "Interested (this session)" : "I’m interested"}
             </Button>
           </div>
-          <div className="flex flex-col justify-between gap-8 bg-muted/40 p-8">
+          <div data-surface="inset" data-surface-density="spacious" className="flex flex-col justify-between gap-8">
             <div><p className="text-xs text-muted-foreground">ON THE PROGRAMME</p><p className="mt-4 text-6xl font-medium tracking-tighter">{String(EVENTS.length).padStart(2, "0")}</p><p className="mt-2 text-sm">Ways to take part.</p></div>
             <p className="mt-3 text-sm text-muted-foreground">{SESSION_NOTICE}</p>
           </div>
@@ -75,7 +75,7 @@ export default function EventsPage() {
 
       <FilterChips value={filter} onChange={setFilter} options={FILTERS} />
 
-      <div className="divide-y divide-border border-y border-border">
+      <div className="surface-list">
         {list.length === 0 ? (
           <div className="sm:col-span-2">
             <EmptyState title="No events on your calendar" body="Try another category — the week is wider than one lane." />
@@ -87,10 +87,11 @@ export default function EventsPage() {
             return (
               <article
                 key={event.id}
-                className={cn(
-                  "bg-card px-5 py-6 transition-colors hover:bg-muted/30 sm:px-7",
-                  expanded && "border-primary/40"
-                )}
+                data-surface="row"
+                data-surface-density="normal"
+                data-surface-interactive
+                data-selected={expanded}
+                className="transition-colors"
               >
                 <button
                   type="button"
