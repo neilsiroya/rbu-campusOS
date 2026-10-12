@@ -1,0 +1,100 @@
+/* Task 01D: structural planes only. Page composition and navigation states
+   remain owned by their consumers and the later navigation task. */
+.app-shell {
+  --shell-gutter: var(--space-4);
+  --shell-sidebar-width: 15.5rem;
+  --shell-header-height: 4rem;
+  background: var(--background-elevated);
+}
+.app-workspace { min-height: 0; }
+.app-shell .app-header :is([data-slot="button"], [data-control="button"]) { align-self: center; }
+.app-shell .app-header {
+  z-index: var(--layer-sticky);
+  height: calc(var(--shell-header-height) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) max(var(--shell-gutter), env(safe-area-inset-right)) 0 max(var(--shell-gutter), env(safe-area-inset-left));
+  background: var(--surface);
+  border: 0;
+  border-bottom: var(--border-width) solid var(--divider);
+  border-radius: 0;
+  box-shadow: var(--depth-edge);
+}
+.app-shell .app-main {
+  background: var(--background);
+  background-image: none;
+  padding: var(--space-6) max(var(--shell-gutter), env(safe-area-inset-right)) var(--space-6) max(var(--shell-gutter), env(safe-area-inset-left));
+  scrollbar-gutter: stable;
+  scroll-padding-block: var(--space-6);
+}
+.app-page-content { width: 100%; max-width: 90rem; margin-inline: auto; }
+.app-shell .app-sidebar {
+  width: min(var(--shell-sidebar-width), calc(100vw - var(--space-8)));
+  background: var(--surface);
+  border: 0;
+  border-right: var(--border-width) solid var(--divider);
+  border-radius: 0;
+  box-shadow: var(--depth-overlay);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+.app-shell .shell-identity {
+  min-height: var(--shell-header-height);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-width) solid var(--divider);
+}
+.app-shell .shell-navigation {
+  padding: var(--space-6) var(--space-3);
+  scrollbar-gutter: stable;
+  scroll-padding-block: var(--space-4);
+}
+.app-shell .shell-navigation h2 {
+  font-size: var(--type-label);
+  line-height: 1.5;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.app-shell .shell-account {
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border-width) solid var(--divider);
+}
+.app-shell .campus-brand-wordmark > span:first-child {
+  font-size: var(--type-label);
+  letter-spacing: normal;
+}
+.app-shell .shell-profile-id { font-size: var(--type-metadata); }
+.app-shell .app-header kbd { font-size: var(--type-label); }
+.app-shell .shell-account [data-slot="button"] { justify-content: flex-start; }
+.app-shell .app-mobile-dock {
+  position: relative;
+  flex-shrink: 0;
+  min-height: calc(4.25rem + env(safe-area-inset-bottom));
+  padding: var(--space-1) max(var(--space-2), env(safe-area-inset-right)) env(safe-area-inset-bottom) max(var(--space-2), env(safe-area-inset-left));
+  background: var(--surface);
+  border-top: var(--border-width) solid var(--divider);
+  box-shadow: var(--depth-edge);
+  z-index: var(--layer-navigation);
+}
+.shell-drawer-backdrop {
+  background: rgb(0 0 0 / 45%);
+  z-index: var(--layer-drawer-backdrop);
+}
+@media (min-width: 640px) {
+  .app-shell .app-header [aria-label="Search campus (Control or Command K)"] { width: auto; }
+  .app-shell { --shell-gutter: var(--space-6); }
+  .app-shell .app-main { padding-block: var(--space-8); }
+}
+@media (min-width: 1024px) {
+  .app-shell .shell-mobile-control { display: none; }
+  .app-shell { --shell-sidebar-width: 14.5rem; }
+  .app-shell .app-sidebar { background: var(--background-elevated); box-shadow: var(--depth-edge); }
+  .app-shell .shell-identity { padding-block: var(--space-2); }
+  .app-shell .app-mobile-dock { display: none; }
+}
+@media (min-width: 1440px) {
+  .app-shell { --shell-sidebar-width: 15.5rem; --shell-gutter: var(--space-8); }
+}
+@media (max-height: 550px) {
+  .app-shell .shell-navigation { padding-block: var(--space-3); }
+  .app-shell .shell-account { padding-block: var(--space-2); }
+  .app-shell .app-main { padding-block: var(--space-4); }
+}

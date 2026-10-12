@@ -58,6 +58,8 @@ export default function ProfileMenu() {
       <button
         ref={triggerRef}
         type="button"
+        data-control="button"
+        data-variant="ghost"
         onClick={() => {
           setLogoutError("");
           setOpen((value) => !value);
@@ -72,13 +74,14 @@ export default function ProfileMenu() {
         </span>
         <span className="hidden text-left lg:block">
           <span className="block text-xs font-medium leading-none">{CURRENT_STUDENT.name}</span>
-          <span className="mt-0.5 block text-[10px] text-muted-foreground">{CURRENT_STUDENT.id}</span>
+          <span className="shell-profile-id type-metadata mt-0.5 block text-muted-foreground">{CURRENT_STUDENT.id}</span>
         </span>
       </button>
       {open ? (
         <div
           id="profile-actions"
-          className="glass-strong absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl py-1 shadow-xl"
+          data-surface="floating"
+          className="absolute right-0 z-50 mt-2 w-56 overflow-hidden py-1"
         >
           <nav aria-label="Profile options">
             <Link href="/profile" className="flex min-h-11 items-center gap-2 px-3 py-2 text-sm hover:bg-muted" onClick={() => setOpen(false)}>

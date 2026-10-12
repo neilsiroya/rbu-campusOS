@@ -22,11 +22,6 @@ a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 }
 @media (hover: none) { .interactive-card:hover { transform: none; } }
 .stagger-in > * { opacity: 1; animation: none; transform: none; }
-.app-header { background: var(--background); z-index: var(--layer-sticky); }
-.app-sidebar { background: var(--surface-elevated); border-radius: 0; box-shadow: none; }
-.app-sidebar nav { padding-top: 1.5rem; }
-.app-sidebar nav h2 { font-family: var(--font-sans); font-size: .6875rem; letter-spacing: .08em; }
-.app-main { background: var(--background); scrollbar-gutter: stable; }
 .page-intro { padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
 .page-intro h1 { font-size: clamp(2rem, 3vw, 3.25rem); letter-spacing: -.05em; font-weight: 700; }
 .page-intro p { max-width: 65ch; }
@@ -134,11 +129,8 @@ a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 }
 
 /* Surface hierarchy: work planes, recessed activity and raised command tools. */
-.app-sidebar { box-shadow: 1px 0 0 var(--border); }
-.app-sidebar nav { scrollbar-gutter: stable; scroll-padding-block: 1rem; }
 .app-sidebar nav a { transition: background 160ms ease, color 160ms ease, transform 160ms ease; }
 .app-sidebar nav a:active { transform: translateX(2px); }
-.app-main { background-image: linear-gradient(180deg, color-mix(in srgb, var(--card) 35%, transparent), transparent 360px); }
 .activity-surface { background: var(--muted); box-shadow: inset 0 1px 2px #00000005; }
 .command-surface, .glass-command { box-shadow: var(--depth-edge), var(--depth-overlay); }
 .featured-card { border-radius: .5rem; border-top: 3px solid var(--primary); }
@@ -148,14 +140,8 @@ a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 .campus-brand-symbol { border-radius: 3px; box-shadow: 2px 2px 0 color-mix(in srgb, var(--foreground) 15%, transparent); transition: box-shadow var(--motion-control) ease, transform var(--motion-control) ease; }
 .campus-brand:hover .campus-brand-symbol { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 color-mix(in srgb, var(--foreground) 20%, transparent); }
 .app-sidebar nav a:focus-visible { outline-offset: -2px; }
-.app-main { scroll-padding-block: 1.5rem 6rem; }
 @media (max-width: 380px) {
   .app-header-brand .campus-brand-wordmark { display: none; }
-}
-@media (max-height: 600px) {
-  .app-sidebar > div:first-child { padding-block: .65rem; }
-  .app-sidebar nav { padding-top: .8rem; padding-bottom: 1rem; }
-  .app-sidebar > div:last-child { padding-block: .5rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .interactive-card:hover, .app-sidebar nav a:active, [data-slot="button"]:active:not(:disabled), .campus-brand:hover .campus-brand-symbol { transform: none; }

@@ -76,7 +76,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <ViewTransitionWrapper className="flex min-h-0 flex-1 flex-col">
-      <div className="relative flex h-screen h-[100dvh] w-full overflow-hidden text-foreground">
+      <div className="app-shell relative flex h-screen h-[100dvh] w-full overflow-hidden text-foreground">
         <a
           href="#main-content"
           className="sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:not-sr-only focus:rounded-lg focus:bg-background focus:px-4 focus:py-3 focus:text-foreground focus:shadow-lg"
@@ -90,7 +90,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
         <SharedElement id="app-header" className="relative flex min-w-0 flex-1">
           <div
-            className="relative flex min-w-0 flex-1 flex-col overflow-hidden"
+            className="app-workspace relative flex min-w-0 flex-1 flex-col overflow-hidden"
             inert={isMobileMenuOpen ? true : undefined}
           >
             <Header
@@ -100,10 +100,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <main
               id="main-content"
               tabIndex={-1}
-              className="app-main custom-scrollbar relative min-h-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-4 sm:pb-24 md:p-6 md:pb-24 lg:pb-8 lg:p-8"
+              className="app-main custom-scrollbar relative min-h-0 flex-1 overflow-y-auto"
             >
               <SharedElement id="page-content">
-                <div className="mx-auto w-full max-w-7xl">
+                <div className="app-page-content">
                   {children}
                 </div>
               </SharedElement>
@@ -113,8 +113,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <nav
               aria-label="Mobile Bottom Navigation"
               className={cn(
-                "fixed inset-x-0 bottom-0 z-20 flex items-stretch border-t border-border/70 bg-surface-elevated lg:hidden",
-                "min-h-[calc(4rem+env(safe-area-inset-bottom))] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
+                "app-mobile-dock flex items-stretch lg:hidden"
               )}
             >
               <LayoutGroup id="mobile-dock-nav" inherit>
@@ -127,7 +126,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                       href={item.href}
                       aria-current={isActive ? "page" : undefined}
                       className={cn(
-                        "relative flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                        "type-label relative flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                         isActive
                           ? "font-bold text-primary"
                           : "text-muted-foreground hover:text-foreground"
@@ -149,7 +148,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 <button
                   type="button"
                   onClick={() => setIsMobileMenuOpen(true)}
-                  className="relative flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                  className="type-label relative flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
                   aria-label="Open full menu"
                   aria-controls="app-sidebar"
                   aria-expanded={isMobileMenuOpen}
@@ -165,7 +164,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {isMobileMenuOpen ? (
           <button
             type="button"
-            className="fixed inset-0 z-[39] bg-foreground/20 backdrop-blur-sm lg:hidden"
+            className="shell-drawer-backdrop fixed inset-0 lg:hidden"
             aria-hidden="true"
             tabIndex={-1}
             onClick={() => setIsMobileMenuOpen(false)}

@@ -454,48 +454,48 @@ Do not perform full application QA.
 
 Task 01D is complete only when:
 
-- [ ] existing shell architecture was audited before modification
-- [ ] persistent shell planes have a coherent hierarchy
-- [ ] desktop shell proportions are intentional
-- [ ] sidebar/container relationship is coherent
-- [ ] header utility plane is coherent
-- [ ] content workspace integrates naturally with the shell
-- [ ] shell-level gutters/spacing are consistent
-- [ ] shell supports both dense and editorial page types
-- [ ] short-height sidebar remains usable
-- [ ] mobile shell has intentional structure
-- [ ] mobile safe areas remain correct
-- [ ] mobile drawer remains accessible
-- [ ] mobile dock remains usable
-- [ ] shell typography follows semantic roles
-- [ ] shell uses established surface/control systems
-- [ ] no unnecessary glass/card nesting was introduced
-- [ ] no arbitrary 3D decoration was introduced
-- [ ] Dashboard shell context was checked
-- [ ] community/social shell context was checked
-- [ ] Events shell context was checked
-- [ ] Study Hub shell context was checked
-- [ ] Map shell context was checked
-- [ ] Profile shell context was checked
-- [ ] desktop was validated
-- [ ] laptop was validated
-- [ ] tablet was validated
-- [ ] mobile was validated
-- [ ] short-height desktop was validated
-- [ ] light mode was validated
-- [ ] dark mode was validated
-- [ ] Command Center has no obvious regression
-- [ ] Notifications has no obvious regression
-- [ ] Profile menu has no obvious regression
-- [ ] representative dialog has no obvious regression
-- [ ] Map canvas has no obvious regression
-- [ ] no intentional product functionality changes were introduced
-- [ ] typecheck passes
-- [ ] lint passes
-- [ ] `git diff --check` passes
-- [ ] no obvious new runtime errors were introduced
-- [ ] task checklist is accurate
-- [ ] `docs/STATE.md` is updated
+- [x] existing shell architecture was audited before modification
+- [x] persistent shell planes have a coherent hierarchy
+- [x] desktop shell proportions are intentional
+- [x] sidebar/container relationship is coherent
+- [x] header utility plane is coherent
+- [x] content workspace integrates naturally with the shell
+- [x] shell-level gutters/spacing are consistent
+- [x] shell supports both dense and editorial page types
+- [x] short-height sidebar remains usable
+- [x] mobile shell has intentional structure
+- [x] mobile safe areas remain correct
+- [x] mobile drawer remains accessible
+- [x] mobile dock remains usable
+- [x] shell typography follows semantic roles
+- [x] shell uses established surface/control systems
+- [x] no unnecessary glass/card nesting was introduced
+- [x] no arbitrary 3D decoration was introduced
+- [x] Dashboard shell context was checked
+- [x] community/social shell context was checked
+- [x] Events shell context was checked
+- [x] Study Hub shell context was checked
+- [x] Map shell context was checked
+- [x] Profile shell context was checked
+- [x] desktop was validated
+- [x] laptop was validated
+- [x] tablet was validated
+- [x] mobile was validated
+- [x] short-height desktop was validated
+- [x] light mode was validated
+- [x] dark mode was validated
+- [x] Command Center has no obvious regression
+- [x] Notifications has no obvious regression
+- [x] Profile menu has no obvious regression
+- [x] representative dialog has no obvious regression
+- [x] Map canvas has no obvious regression
+- [x] no intentional product functionality changes were introduced
+- [x] typecheck passes
+- [x] lint passes
+- [x] `git diff --check` passes
+- [x] no obvious new runtime errors were introduced
+- [x] task checklist is accurate
+- [x] `docs/STATE.md` is updated
 
 ---
 
@@ -516,3 +516,14 @@ When complete, update `docs/STATE.md` with:
 Do not begin Task 01E.
 
 Task 01E should establish the navigation hierarchy, grouping, active states and interaction language across desktop sidebar, mobile drawer and mobile dock using the Task 01D shell.
+
+## Verified completion - 2026-10-12
+
+- Architecture audit before edits: authenticated layout retains the transition provider and AppShell. AppShell owns the persistent viewport, drawer state/focus/inertness and dock. Sidebar owns identity, independently scrolling navigation and sign-out feedback. Header owns breadcrumbs and existing search/theme/notification/profile access. The route provider continues resetting/focusing main and its existing reduced-motion-aware entrance. Command Center and migrated dialogs remain portalled above the shell; notification/profile previews remain anchored to the utility plane.
+- `app/shell.css` now owns structural geometry/materials; competing shell-only declarations were removed from campus-design.css. Established 01A tokens and 01B contained/floating surfaces distinguish navigation, utility and content planes without glass/gradient/card nesting. Opt-in 01C-A controls apply to shell utilities; 01C-B modal and backdrop conventions remain compatible. No page, route/data/auth, dependency or motion architecture changed.
+- Desktop: 248px sidebar at 1440px, 232px at laptop width, 64px utility plane, 32/24px horizontal gutters and a 90rem maximum useful content width. Main and sidebar independently scroll. Header/identity align; short-height spacing contracts without removing destinations. Mobile/tablet: drawer retains its existing focus logic and inert workspace; dock occupies a 68px flex region instead of covering content. Safe-area padding is retained at top/bottom/side edges. Mobile gutters are 16px, tablet 24px. Physical notched devices were not tested; env-based safe-area behavior was source-reviewed alongside zero-inset viewport checks.
+- Representative browser set, without a full cross-product matrix: Dashboard 1440x900 dark; Events 1280x800 light; Profile 1280x500 light; Study Hub 768x1024 dark; Confessions 390x844 light/dark; Map 1440x900 light. All had no root/main horizontal overflow. Main scrolling preserves the fixed header/sidebar; client navigation resets main scroll and focuses main. Short-height sidebar scroll reaches Settings, which retains a visible keyboard outline.
+- Mobile drawer verified keyboard opening, initial close focus, forward/reverse boundary wrapping, Escape and backdrop dismissal, trigger focus return and workspace inertness/background interception. Dock Map destination still routes correctly; main ends at dock top (956px at tablet, 776px at mobile), leaving bottom content reachable. Existing destination grouping/item states are retained.
+- Command Center opening/filtering/Escape/focus return, Notifications opening/Escape, Profile menu opening/Escape and anchored floating bounds passed at desktop. Confessions composer remains bounded at 390x844, blocks the header through its backdrop and returns focus after Escape; Tab/Shift+Tab remain usable. Map canvas rendered the existing campus model at 1440x900 (752x458 CSS pixels) without root/main overflow. No product mutations or logout were performed.
+- The first browser pass identified opt-in control CSS overriding responsive button visibility and search width; shell-scoped corrections hide mobile controls on desktop and preserve the expanded search trigger. Final checks passed. Typecheck, lint and diff check pass. Browser logs contained no captured errors; only existing smooth-scroll and THREE.Clock warnings appeared. Original dark theme restored; viewport/device emulation reset. No build or broad QA suite was run.
+- Remaining debt: navigation grouping/states/interaction language are deferred to separately authorized Task 01E. Existing ProfileMenu identity mismatch, unused Settings preferences, legacy page/overlay materials and runtime warnings remain. Task 01E/01F were not started.

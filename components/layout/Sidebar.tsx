@@ -53,6 +53,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   return (
     <aside
       id="app-sidebar"
+      data-surface="contained"
       onKeyDown={handleKeyDown}
       className={cn(
         "app-sidebar fixed inset-y-0 left-0 z-40 flex h-[100dvh] min-h-0 w-64 max-w-[calc(100vw-2rem)] flex-col overflow-hidden border-r border-border/70 surface-elevated transition-transform duration-300 ease-out lg:relative lg:translate-x-0",
@@ -60,12 +61,12 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       )}
       aria-label="Main navigation"
     >
-      <div className="flex shrink-0 items-center justify-between px-5 py-5 border-b border-border/50">
+      <div data-controls className="shell-identity flex shrink-0 items-center justify-between">
         <BrandMark onClick={closeMobileMenu} />
         <Button
           variant="ghost"
           size="icon"
-          className="size-11 lg:hidden"
+          className="shell-mobile-control size-11 lg:hidden"
           onClick={closeMobileMenu}
           aria-label="Close navigation"
         >
@@ -75,12 +76,12 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
       <nav
         aria-label="Primary navigation"
-        className="custom-scrollbar min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-3 pb-8"
+        className="shell-navigation custom-scrollbar min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain"
       >
         <LayoutGroup id="sidebar-nav" inherit>
         {NAV_GROUPS.map((group) => (
           <div key={group.group} className="space-y-1">
-            <h2 className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
+            <h2 className="type-label px-3 pb-1 font-semibold text-muted-foreground flex items-center gap-2">
               <ChevronRight className="size-3.5 opacity-50" aria-hidden="true" />
               {group.group}
             </h2>
@@ -128,7 +129,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </LayoutGroup>
       </nav>
 
-      <div className="shrink-0 border-t border-border/70 p-4">
+      <div data-controls className="shell-account shrink-0">
         {logoutError ? (
           <p role="alert" className="mb-2 rounded-lg bg-danger/10 px-3 py-2 text-xs text-danger">
             {logoutError}

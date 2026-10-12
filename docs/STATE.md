@@ -6,7 +6,16 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 `docs/tasks/01d-app-shell.md`
 
-Current objective: redesign and consolidate the structural visual hierarchy of the authenticated CampusOS application shell using the established token, surface, control and dialog foundations. Individual page redesigns and final navigation treatment remain deferred.
+Current objective: Task 01D complete. Stop; Task 01E navigation requires separate authorization.
+
+### Task 01D completion - 2026-10-12
+
+- Retained authenticated layout, route/entrance provider, independently scrolling main/sidebar, drawer state/focus containment and background inertness. AppShell's mobile dock now occupies layout space instead of covering page content; product routes, navigation groups, handlers, auth/data/backend and motion architecture are unchanged.
+- Added `app/shell.css`, imported by globals; retired competing shell-only CSS from campus-design.css. Navigation/base, utility and content planes use established neutral surfaces/depth/dividers and semantic typography. Header/sidebar utility controls use 01C-A; Profile preview uses the existing floating material. Header identity still uses CURRENT_STUDENT; its mismatch with /profile remains deliberately unresolved.
+- Desktop/laptop: 248/232px sidebar, 64px header, 32/24px gutters, flexible workspace up to 90rem. Short-height sidebar independently scrolls through Settings with visible keyboard focus. Tablet/mobile: 24/16px gutters, 68px in-flow dock and safe-area padding; drawer retains keyboard wrapping, Escape/backdrop dismissal, focus return and background blocking. No outer page card, glass frame, arbitrary 3D or page redesign added.
+- Validated Dashboard (1440x900 dark), Events (1280x800 light), Profile (1280x500 light), Study Hub (768x1024 dark), Confessions (390x844 light/dark) and Map (1440x900 light). No sampled root/main horizontal overflow. Main scroll and client route reset/focus pass; mobile/tablet content ends above dock. Safe-area env rules were source-reviewed with zero-inset browser viewports, not physical notched devices.
+- Command Center search/Escape/focus return, Notifications and Profile menu opening/Escape/anchored placement, mobile Confessions dialog layering/keyboard/focus return and the rendered Map canvas passed regression checks. No post/resource/state mutation or logout. Initial control visibility/search-width conflicts were corrected within shell scope. Typecheck, lint and diff check pass; captured logs show no errors and only the existing smooth-scroll and THREE.Clock warnings. Dark theme restored and viewport emulation reset; no build/full app QA.
+- Remaining: existing identity/preference mismatches, legacy page/overlay materials and warnings. Navigation item states/grouping/interaction and existing navigation/route motion remain deferred. Exact recommended next task, only when authorized: Task 01E navigation hierarchy/grouping/active states and interaction language across desktop sidebar, mobile drawer and dock using this shell. Task 01E/01F were not started.
 
 ### Task 01C-B completion — 2026-10-09
 
@@ -86,6 +95,6 @@ Browser samples: 1440×900 desktop, 1280×800 laptop, 768×1024 tablet, 390×844
 
 ## Modified files / exact next action
 
-Task 01C-B files: `app/dialogs.css`, `app/globals.css`, `components/ui/dialog.tsx`, `components/layout/NotificationsMenu.tsx`, `app/(app)/confessions/page.tsx`, `app/(app)/notes/page.tsx`, `docs/tasks/01c-b-dialogs-overlays.md`, `docs/STATE.md`.
+Task 01D files: `app/shell.css`, `app/campus-design.css`, `app/globals.css`, `components/layout/AppShell.tsx`, `components/layout/Header.tsx`, `components/layout/Sidebar.tsx`, `components/layout/ProfileMenu.tsx`, `docs/tasks/01d-app-shell.md`, `docs/STATE.md`.
 
-Tasks 01A, 01B, 01C-A and 01C-B are complete. Stop here. Exact recommended next task, only when separately authorized: Task 01D authenticated application-shell structural hierarchy. Functional fixes and dependency reconciliation remain separately scoped work.
+Task 01D is complete. Stop here. Exact recommended next task, only when separately authorized: Task 01E navigation hierarchy, grouping, active states and interaction language. Task 01F spatial motion, functional fixes and dependency reconciliation remain separately scoped work.
