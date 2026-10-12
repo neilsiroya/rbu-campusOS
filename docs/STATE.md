@@ -4,8 +4,9 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 ## Active task
 
-`docs/tasks/01c-b-dialogs-overlays.md`
+`docs/tasks/01d-app-shell.md`
 
+Current objective: redesign and consolidate the structural visual hierarchy of the authenticated CampusOS application shell using the established token, surface, control and dialog foundations. Individual page redesigns and final navigation treatment remain deferred.
 
 ### Task 01C-B completion — 2026-10-09
 
