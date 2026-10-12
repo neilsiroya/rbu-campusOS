@@ -4,9 +4,9 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 ## Active task
 
-`docs/tasks/01e-navigation.md`
+`docs/tasks/01f-spatial-motion.md`
 
-Current objective: Task 01E is complete. Stop here; Task 01F requires separate authorization.
+Current objective: establish the reusable CampusOS spatial-motion and interaction architecture that will power the upcoming immersive landing and authenticated flagship redesigns. Task 01F must visibly prove route continuity, depth and tactile interaction on a controlled representative set without redesigning complete pages or introducing decorative WebGL.
 
 ### Task 01E completion - 2026-10-12
 
