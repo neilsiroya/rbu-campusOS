@@ -4,9 +4,9 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 ## Active task
 
-`docs/tasks/01d-app-shell.md`
+`docs/tasks/01e-navigation.md`
 
-Current objective: Task 01D complete. Stop; Task 01E navigation requires separate authorization.
+Current objective: establish the final CampusOS navigation hierarchy, grouping, destination ordering, active states and cross-device interaction language using the Task 01D application shell. Global spatial motion and individual page redesigns remain deferred.
 
 ### Task 01D completion - 2026-10-12
 
