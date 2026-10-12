@@ -7,6 +7,15 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 `docs/tasks/01c-b-dialogs-overlays.md`
 
 
+### Task 01C-B completion — 2026-10-09
+
+- Established shared compositional dialog content/header/body/footer in `components/ui/dialog.tsx` and `app/dialogs.css`, imported by globals. Uses 01A tokens, 01B overlay/floating materials and 01C-A controls. Viewport/safe-area bounds, body-only scrolling, stable header/actions and body-local focus scrolling are reusable; Base UI still owns focus containment, modal blocking and dismissal. No new motion or dependencies.
+- Migrated Confessions composer and Study Hub sharing form; Notifications preview uses the same composition/material while retaining its anchored nonmodal behavior. No compact confirmation/action dialog exists; existing full detail dialogs were inspected and retained. All business handlers/state, disclosures, native validation, auth, routes and backend behavior are preserved.
+- Resolved Confessions short-height clipping: at 1280×500 and 390×500 the dialog spans y=16–484 with internal scrolling and visible actions. At 390×844 normal content fits y=105.8–738.2. Native textarea growth remains bounded at y=16–828 and creates internal scroll. No dialog-caused root horizontal overflow.
+- Browser validation: Confessions at all three required sizes; Study Hub share at 1440×900 light / 390×844 dark; Notifications at desktop dark/light and verified hidden mobile trigger. Keyboard opening, focus placement/visibility, Tab/Shift+Tab containment, Escape/Cancel/close/backdrop dismissal, trigger focus return and modal background blocking pass in the representative set. Blank Confessions submission preserves native required validation; no post/resource created. Command Center open/search/Escape/focus-return regression checks pass at desktop/mobile. Browser logs contain no captured errors/warnings; theme/viewport emulation reset.
+- Typecheck, lint and diff check pass. Remaining legacy overlays: Study Hub detail, Marketplace detail/create, Profile menu and navigation drawer. Existing identity/preference mismatches and runtime warnings recorded below remain outside scope. No new known regression in the validated set.
+- Recommended next task, only when separately authorized: Task 01D authenticated app-shell structural hierarchy (header/sidebar/content/mobile navigation), without individual page redesigns. Task 01D was not started.
+
 ### Task 01C-A completion — 2026-10-09
 
 - Added `app/controls.css`, imported by globals, scoped to `data-controls` content roots on Dashboard, Notifications, Events, Study Hub and Settings. Base UI Button exposes existing variant/size attributes; Input keeps its existing implementation and native/Base UI behavior. Shared filters and notices expose semantic styling markers. Navigation, landing, portals and unmigrated pages retain their existing treatment.
@@ -59,7 +68,7 @@ Active: Framer Motion 13.5.1, Three 0.186.1 / R3F 9.8.1 / Drei 10.7.9 (map), Bas
 
 ## Confirmed problems and relevant debt
 
-- **Browser confirmed:** Confessions composer exceeds short viewports without internal scrolling: dialog y=-3.7 to 503.7 at 1280×500 and y=-22.7 to 522.7 at 390×500; overflow-y is visible. Normal 390×844 fits. A shared constrained/scrollable dialog policy is needed.
+- **Resolved in Task 01C-B:** Confessions short-height clipping now uses shared constrained dialog/body scrolling; verified at 1280×500, 390×500 and 390×844. Legacy overlays outside the representative set still need separately scoped adoption.
 - **Runtime warnings:** Next.js reports smooth scrolling on html without `data-scroll-behavior="smooth"`; map emits a `THREE.Clock` deprecation warning. No crash established. Motion's warning during deliberate reduced-motion emulation is expected test feedback.
 - **Source mismatch:** header ProfileMenu always uses `CURRENT_STUDENT`; `/profile` loads authenticated metadata. The header can misidentify the signed-in person.
 - **Source mismatch:** saved preference flags have no consumers outside Settings. In particular, anonymous-composer availability is not controlled by its setting. Theme selection is separate and implemented.
@@ -76,6 +85,6 @@ Browser samples: 1440×900 desktop, 1280×800 laptop, 768×1024 tablet, 390×844
 
 ## Modified files / exact next action
 
-Task 01C-A files: `app/controls.css`, `app/globals.css`, `components/ui/button.tsx`, `components/os/FilterChips.tsx`, `components/os/DemoNotice.tsx`, `components/os/SessionStorageNotice.tsx`, `app/(app)/dashboard/page.tsx`, `app/(app)/notifications/page.tsx`, `app/(app)/events/page.tsx`, `app/(app)/notes/page.tsx`, `app/(app)/settings/page.tsx`, `docs/tasks/01c-a-controls-notices.md`, `docs/STATE.md`.
+Task 01C-B files: `app/dialogs.css`, `app/globals.css`, `components/ui/dialog.tsx`, `components/layout/NotificationsMenu.tsx`, `app/(app)/confessions/page.tsx`, `app/(app)/notes/page.tsx`, `docs/tasks/01c-b-dialogs-overlays.md`, `docs/STATE.md`.
 
-Tasks 01A, 01B and 01C-A are complete. Stop here. Exact recommended next task, only when separately authorized: Task 01C-B dialogs/overlay forms and constrained-height behavior. Functional fixes and dependency reconciliation remain separately scoped work.
+Tasks 01A, 01B, 01C-A and 01C-B are complete. Stop here. Exact recommended next task, only when separately authorized: Task 01D authenticated application-shell structural hierarchy. Functional fixes and dependency reconciliation remain separately scoped work.

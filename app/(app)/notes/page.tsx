@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
+import { DialogContent, DialogHeader, DialogBody, DialogFooter } from "@/components/ui/dialog";
 import {
   BookOpen,
   FileText,
@@ -456,128 +457,128 @@ export default function NotesPage() {
 
       {/* Share Modal */}
       {isSharing && (
-        <Dialog.Root open={isSharing} onOpenChange={setIsSharing}><Dialog.Portal><Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
-          <Dialog.Popup
-            aria-label="Share resource"
-            className="glass-rich fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg max-h-[90dvh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl p-6 shadow-2xl"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                  <Share2 className="size-5" />
+        <Dialog.Root open={isSharing} onOpenChange={setIsSharing}>
+          <DialogContent>
+            <DialogHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                    <Share2 className="size-5" />
+                  </div>
+                  <Dialog.Title className="type-section-heading">Share Study Resource</Dialog.Title>
                 </div>
-                <h2 className="font-display text-xl font-bold">Share Study Resource</h2>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSharing(false)}
-                aria-label="Close"
-              >
-                <X className="size-4" />
-              </Button>
-            </div>
-
-            <p className="mt-1 text-xs text-muted-foreground">
-              Add lecture notes, previous year question solutions, or revision cheat sheets for your peers.
-            </p>
-
-            <form onSubmit={handleShare} className="mt-5 space-y-4">
-              <div className="space-y-1.5">
-                <label htmlFor="notes-resource-title" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Resource Title *</label>
-                <Input id="notes-resource-title"
-                  required
-                  placeholder="e.g. Signals & Systems Complete Unit 3 Notes"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="rounded-xl"
-                />
+                <Dialog.Close render={<Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Close share resource"
+                >
+                  <X className="size-4" />
+                </Button>} />
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <Dialog.Description className="mt-1 text-sm text-muted-foreground">
+                Add lecture notes, previous year question solutions, or revision cheat sheets for your peers.
+              </Dialog.Description>
+            </DialogHeader>
+
+            <form onSubmit={handleShare} className="campus-dialog-form">
+              <DialogBody className="space-y-4">
                 <div className="space-y-1.5">
-                  <label htmlFor="notes-subject-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Subject Name *</label>
-                <Input id="notes-subject-name"
+                  <label htmlFor="notes-resource-title" className="type-label text-muted-foreground">Resource Title *</label>
+                  <Input id="notes-resource-title"
                     required
-                    placeholder="e.g. Operating Systems, BEE"
-                    value={form.subject}
-                    onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                    placeholder="e.g. Signals & Systems Complete Unit 3 Notes"
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    className="rounded-xl"
+                  />
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label htmlFor="notes-subject-name" className="type-label text-muted-foreground">Subject Name *</label>
+                  <Input id="notes-subject-name"
+                      required
+                      placeholder="e.g. Operating Systems, BEE"
+                      value={form.subject}
+                      onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                      className="rounded-xl"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="notes-resource-type" className="type-label text-muted-foreground">Resource Type</label>
+                  <select data-control="field" id="notes-resource-type"
+                      value={form.type}
+                      onChange={(e) =>
+                        setForm({ ...form, type: e.target.value as StudyResource["type"] })
+                      }
+                      className="h-10 w-full rounded-xl border border-input bg-background px-3 text-xs font-medium"
+                    >
+                      <option value="Lecture notes">Lecture notes</option>
+                      <option value="Previous-year paper">Previous-year paper</option>
+                      <option value="Cheat sheet">Cheat sheet</option>
+                      <option value="Lab manual">Lab manual</option>
+                      <option value="Study guide">Study guide</option>
+                      <option value="Project resource">Project resource</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label htmlFor="notes-branch" className="type-label text-muted-foreground">Branch</label>
+                  <select data-control="field" id="notes-branch"
+                      value={form.branch}
+                      onChange={(e) => setForm({ ...form, branch: e.target.value })}
+                      className="h-10 w-full rounded-xl border border-input bg-background px-3 text-xs font-medium"
+                    >
+                      <option value="CSE">CSE</option>
+                      <option value="ECE">ECE</option>
+                      <option value="ME">ME</option>
+                      <option value="EE">EE</option>
+                      <option value="Design">Design</option>
+                      <option value="All">All Branches</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="notes-year" className="type-label text-muted-foreground">Year</label>
+                  <select data-control="field" id="notes-year"
+                      value={form.year}
+                      onChange={(e) => setForm({ ...form, year: e.target.value })}
+                      className="h-10 w-full rounded-xl border border-input bg-background px-3 text-xs font-medium"
+                    >
+                      <option value="1st">1st Year</option>
+                      <option value="2nd">2nd Year</option>
+                      <option value="3rd">3rd Year</option>
+                      <option value="4th">4th Year</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label htmlFor="notes-tags-comma-separated-" className="type-label text-muted-foreground">Tags (comma separated)</label>
+                  <Input id="notes-tags-comma-separated-"
+                    placeholder="e.g. Fourier, Unit 3, Exam Prep, Formulas"
+                    value={form.tags}
+                    onChange={(e) => setForm({ ...form, tags: e.target.value })}
                     className="rounded-xl"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="notes-resource-type" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Resource Type</label>
-                <select id="notes-resource-type"
-                    value={form.type}
-                    onChange={(e) =>
-                      setForm({ ...form, type: e.target.value as StudyResource["type"] })
-                    }
-                    className="h-10 w-full rounded-xl border border-input bg-background px-3 text-xs font-medium"
-                  >
-                    <option value="Lecture notes">Lecture notes</option>
-                    <option value="Previous-year paper">Previous-year paper</option>
-                    <option value="Cheat sheet">Cheat sheet</option>
-                    <option value="Lab manual">Lab manual</option>
-                    <option value="Study guide">Study guide</option>
-                    <option value="Project resource">Project resource</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <label htmlFor="notes-branch" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Branch</label>
-                <select id="notes-branch"
-                    value={form.branch}
-                    onChange={(e) => setForm({ ...form, branch: e.target.value })}
-                    className="h-10 w-full rounded-xl border border-input bg-background px-3 text-xs font-medium"
-                  >
-                    <option value="CSE">CSE</option>
-                    <option value="ECE">ECE</option>
-                    <option value="ME">ME</option>
-                    <option value="EE">EE</option>
-                    <option value="Design">Design</option>
-                    <option value="All">All Branches</option>
-                  </select>
+                  <label htmlFor="notes-description-key-topics" className="type-label text-muted-foreground">Description & Key Topics</label>
+                  <Textarea data-control="field" id="notes-description-key-topics"
+                    placeholder="Explain what this covers, which professors or syllabus units it aligns with…"
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    className="min-h-[90px] rounded-xl text-xs"
+                  />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label htmlFor="notes-year" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Year</label>
-                <select id="notes-year"
-                    value={form.year}
-                    onChange={(e) => setForm({ ...form, year: e.target.value })}
-                    className="h-10 w-full rounded-xl border border-input bg-background px-3 text-xs font-medium"
-                  >
-                    <option value="1st">1st Year</option>
-                    <option value="2nd">2nd Year</option>
-                    <option value="3rd">3rd Year</option>
-                    <option value="4th">4th Year</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label htmlFor="notes-tags-comma-separated-" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tags (comma separated)</label>
-                <Input id="notes-tags-comma-separated-"
-                  placeholder="e.g. Fourier, Unit 3, Exam Prep, Formulas"
-                  value={form.tags}
-                  onChange={(e) => setForm({ ...form, tags: e.target.value })}
-                  className="rounded-xl"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label htmlFor="notes-description-key-topics" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description & Key Topics</label>
-                <Textarea id="notes-description-key-topics"
-                  placeholder="Explain what this covers, which professors or syllabus units it aligns with…"
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  className="min-h-[90px] rounded-xl text-xs"
-                />
-              </div>
-
-              <div className="mt-6 flex justify-end gap-2 pt-2">
+              </DialogBody>
+              <DialogFooter>
                 <Button
                   type="button"
                   variant="outline"
@@ -589,9 +590,9 @@ export default function NotesPage() {
                 <Button type="submit" className="rounded-full">
                   Share into Hub (Session)
                 </Button>
-              </div>
+              </DialogFooter>
             </form>
-          </Dialog.Popup></Dialog.Portal>
+          </DialogContent>
         </Dialog.Root>
       )}
     </div>

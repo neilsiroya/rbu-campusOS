@@ -1,0 +1,60 @@
+/* Opt-in overlay composition. Base UI owns modal interaction; only the body
+   scrolls, leaving the title and actions visible as content grows. */
+.campus-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-dialog-backdrop);
+  background: rgb(0 0 0 / 45%);
+}
+.campus-dialog {
+  --overlay-padding: var(--space-6);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: var(--layer-dialog);
+  width: min(32rem, calc(100vw - 2 * max(var(--space-4), env(safe-area-inset-left), env(safe-area-inset-right))));
+  max-height: calc(100dvh - 2 * max(var(--space-4), env(safe-area-inset-top), env(safe-area-inset-bottom)));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--foreground);
+}
+.campus-dialog-form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.campus-overlay-header {
+  flex-shrink: 0;
+  padding: var(--overlay-padding);
+  border-bottom: var(--border-width) solid var(--divider);
+}
+.campus-overlay-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--overlay-padding);
+  scroll-padding-block: var(--space-4);
+}
+.campus-overlay-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  padding: var(--space-4) var(--overlay-padding);
+  border-top: var(--border-width) solid var(--divider);
+}
+.campus-dialog [data-control="field"]:is(textarea) { min-height: 6rem; resize: vertical; }
+.campus-dialog label { font-size: var(--text-xs); text-transform: none; letter-spacing: normal; }
+.campus-notifications-overlay {
+  --overlay-padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 6rem - env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+@media (max-width: 639px), (max-height: 550px) {
+  .campus-dialog { --overlay-padding: var(--space-4); }
+}

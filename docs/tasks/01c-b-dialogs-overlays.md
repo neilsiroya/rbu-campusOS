@@ -337,36 +337,36 @@ Do not rerun the entire Task 00 matrix.
 
 Task 01C-B is complete only when:
 
-- [ ] current dialog/overlay implementations were audited
-- [ ] shared dialog material uses Tasks 01A/01B foundations
-- [ ] overlay forms use Task 01C-A controls where appropriate
-- [ ] reusable constrained-height behavior exists
-- [ ] dialog body can scroll internally when required
-- [ ] action/footer regions remain reachable
-- [ ] safe viewport spacing exists
-- [ ] light-mode dialog hierarchy is coherent
-- [ ] dark-mode dialog hierarchy is coherent
-- [ ] dialog action hierarchy is coherent
-- [ ] keyboard focus remains visible
-- [ ] focus containment behavior remains correct
-- [ ] Escape behavior remains correct
-- [ ] focus returns correctly
-- [ ] background interaction remains appropriately blocked
-- [ ] Confessions composer works at 1280×500
-- [ ] Confessions composer works at 390×500
-- [ ] Confessions composer works at 390×844
-- [ ] Confessions fields and actions remain reachable
-- [ ] Confessions has no dialog-caused horizontal overflow
-- [ ] representative form-heavy dialog was validated if one exists
-- [ ] representative compact dialog was validated if one exists
-- [ ] Command Center has no obvious regression
-- [ ] no intentional product functionality changes were introduced
-- [ ] typecheck passes
-- [ ] lint passes
-- [ ] `git diff --check` passes
-- [ ] no obvious new runtime errors were introduced
-- [ ] task checklist is accurate
-- [ ] `docs/STATE.md` is updated
+- [x] current dialog/overlay implementations were audited
+- [x] shared dialog material uses Tasks 01A/01B foundations
+- [x] overlay forms use Task 01C-A controls where appropriate
+- [x] reusable constrained-height behavior exists
+- [x] dialog body can scroll internally when required
+- [x] action/footer regions remain reachable
+- [x] safe viewport spacing exists
+- [x] light-mode dialog hierarchy is coherent
+- [x] dark-mode dialog hierarchy is coherent
+- [x] dialog action hierarchy is coherent
+- [x] keyboard focus remains visible
+- [x] focus containment behavior remains correct
+- [x] Escape behavior remains correct
+- [x] focus returns correctly
+- [x] background interaction remains appropriately blocked
+- [x] Confessions composer works at 1280×500
+- [x] Confessions composer works at 390×500
+- [x] Confessions composer works at 390×844
+- [x] Confessions fields and actions remain reachable
+- [x] Confessions has no dialog-caused horizontal overflow
+- [x] representative form-heavy dialog was validated if one exists
+- [x] representative compact dialog was validated if one exists
+- [x] Command Center has no obvious regression
+- [x] no intentional product functionality changes were introduced
+- [x] typecheck passes
+- [x] lint passes
+- [x] `git diff --check` passes
+- [x] no obvious new runtime errors were introduced
+- [x] task checklist is accurate
+- [x] `docs/STATE.md` is updated
 
 ---
 
@@ -386,3 +386,14 @@ When complete, update `docs/STATE.md` with:
 Do not begin Task 01D.
 
 Task 01D should focus on the authenticated application shell and its structural visual hierarchy, not individual page redesigns.
+
+## Verified completion — 2026-10-09
+
+- Audited all raw Base UI dialogs: Confessions composer, Study Hub resource detail/share, Marketplace item detail/create and Command Center. Also inspected Notifications/Profile nonmodal regions and the navigation drawer. No compact confirmation/action dialog exists; the two detail dialogs are full resource/item inspectors. No consumer was invented. Existing detail actions already distinguish quiet/outline close from primary download/save-interest; no competing Open/Close pair was found.
+- Added compositional `DialogContent`, `DialogHeader`, `DialogBody`, `DialogFooter` and opt-in `app/dialogs.css`. Base UI retains portal/modal/focus/dismissal behavior. Task 01B overlay/floating materials and 01C-A controls apply within migrated portals. Viewport/safe-area padding, bounded width/height, internal body scrolling, stable title/actions and body-local focus scrolling are shared. No new animation; reduced-motion policy remains unchanged.
+- Migrated Confessions and Study Hub sharing form. Notifications remains an anchored, nonmodal region with shared material/body/footer composition; its desktop trigger is intentionally absent at 390px. Product handlers, state, native required validation and demo disclosures are preserved.
+- Confessions browser checks: 1280×500 dark and 390×500 light both fit at y=16–484; body client/scroll heights 316/422 and 304/468 respectively. 390×844 dark fits at y=105.8–738.2, body 468/468. Tab and Shift+Tab cycle within the modal, focused fields scroll into view, actions stay reachable, and Escape/Cancel return focus to the trigger. No root horizontal overflow. Native blank-submit validation focuses the textarea without creating a post. A native textarea resize at 390×844 grows the body to 648/683 while the dialog stays within y=16–828 with its footer visible.
+- Study Hub share validated at 1440×900 light and 390×844 dark: named title/description, labeled close, keyboard opening, initial focus, full forward/reverse focus cycle, internal mobile scroll, stable footer, Escape/Cancel/backdrop dismissal and trigger focus return. Backdrop intercepts background hits and body scrolling is locked. No horizontal overflow. No resource was submitted.
+- Notifications checked at 1440×900 in dark/light: bounds fit, restrained floating material, keyboard opening, close/Escape focus return and preserved nonmodal behavior. Mobile absence verified at 390×844. Command Center regression checks at both representative sizes: opening, search filtering, Escape and focus return work; its implementation is untouched.
+- Typecheck, lint and diff check pass. Captured browser error/warning logs are empty. Browser theme/viewport emulation was reset. No build, backend checks or broader route/device matrix performed.
+- Remaining legacy overlays: Study Hub resource detail, Marketplace detail/create, Profile menu and navigation drawer. Task 01D is recommended for authenticated shell structure/hierarchy only; it was not started.

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Bell, X } from "lucide-react";
+import { DialogHeader, DialogBody, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/lib/notifications";
 import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
@@ -58,9 +59,11 @@ export default function NotificationsMenu() {
           id="notifications-preview"
           role="region"
           aria-label="Recent notifications"
-          className="glass-strong absolute right-0 z-40 mt-2 w-[min(20rem,calc(100vw_-_1.5rem))] rounded-2xl p-2 shadow-xl"
+          data-surface="floating"
+          data-controls
+          className="campus-notifications-overlay absolute right-0 z-40 mt-2 w-[min(20rem,calc(100vw_-_1.5rem))]"
         >
-          <div className="flex items-center justify-between px-2 py-1">
+          <DialogHeader className="flex items-center justify-between">
             <p className="font-medium">Notifications</p>
             <Button
               variant="ghost"
@@ -73,36 +76,40 @@ export default function NotificationsMenu() {
             >
               <X className="size-4" aria-hidden="true" />
             </Button>
-          </div>
-          <SessionStorageNotice message={storageError} />
-          {items.slice(0, 4).map((notification) => (
+          </DialogHeader>
+          <DialogBody>
+            <SessionStorageNotice message={storageError} />
+            {items.slice(0, 4).map((notification) => (
+              <Link
+                key={notification.id}
+                href={notification.href}
+                onClick={() => {
+                  read(notification.id);
+                  setOpen(false);
+                }}
+                className="block min-h-11 rounded-xl px-3 py-2 hover:bg-muted"
+              >
+                <div className="flex justify-between gap-2">
+                  <p className="text-sm font-medium">{notification.title}</p>
+                  {notification.unread ? (
+                    <span className="size-2 shrink-0 rounded-full bg-primary" aria-label="Unread" />
+                  ) : null}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {notification.body} · {notification.time}
+                </p>
+              </Link>
+            ))}
+          </DialogBody>
+          <DialogFooter>
             <Link
-              key={notification.id}
-              href={notification.href}
-              onClick={() => {
-                read(notification.id);
-                setOpen(false);
-              }}
-              className="block min-h-11 rounded-xl px-3 py-2 hover:bg-muted"
+              href="/notifications"
+              onClick={() => setOpen(false)}
+              className="mt-1 block min-h-11 rounded-xl px-3 py-2 text-center text-sm hover:bg-muted"
             >
-              <div className="flex justify-between gap-2">
-                <p className="text-sm font-medium">{notification.title}</p>
-                {notification.unread ? (
-                  <span className="size-2 shrink-0 rounded-full bg-primary" aria-label="Unread" />
-                ) : null}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {notification.body} · {notification.time}
-              </p>
+              View all notifications
             </Link>
-          ))}
-          <Link
-            href="/notifications"
-            onClick={() => setOpen(false)}
-            className="mt-1 block min-h-11 rounded-xl px-3 py-2 text-center text-sm hover:bg-muted"
-          >
-            View all notifications
-          </Link>
+          </DialogFooter>
         </div>
       ) : null}
     </div>

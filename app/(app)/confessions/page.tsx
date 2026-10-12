@@ -23,6 +23,7 @@ import { PageIntro } from "@/components/os/PageIntro";
 import { SessionStorageNotice } from "@/components/os/SessionStorageNotice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DialogContent, DialogHeader, DialogBody, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
 const categories: Array<"All" | ConfessionCategory> = [
@@ -128,10 +129,8 @@ export default function ConfessionsPage() {
               </Button>
             }
           />
-          <Dialog.Portal>
-            <Dialog.Backdrop className="fixed inset-0 min-h-dvh bg-black/50 backdrop-blur-sm z-40" />
-            <Dialog.Popup className="glass-strong fixed top-1/2 left-1/2 z-50 w-[min(92vw,30rem)] -translate-x-1/2 -translate-y-1/2 flex flex-col gap-4 rounded-3xl p-6 text-foreground shadow-2xl">
-              <div className="flex items-center gap-2">
+          <DialogContent>
+              <DialogHeader className="flex items-center gap-2">
                 <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Flame className="size-4" />
                 </div>
@@ -144,90 +143,92 @@ export default function ConfessionsPage() {
                     confession content to a moderation service.
                   </Dialog.Description>
                 </div>
-              </div>
+              </DialogHeader>
 
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   submitConfession();
                 }}
-                className="space-y-4"
+                className="campus-dialog-form"
               >
-                <div className="space-y-1.5">
-                  <label htmlFor="confession-alias" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Choose Anonymous Alias
-                  </label>
-                  <select
-                    id="confession-alias"
-                    value={alias}
-                    onChange={(e) => setAlias(e.target.value)}
-                    className="w-full h-9 rounded-xl border border-border/80 bg-background px-3 text-sm focus:outline-none"
-                  >
-                    {ALIASES.map((a) => (
-                      <option key={a} value={a}>
-                        {a}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Category
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {categories
-                      .filter((cat): cat is ConfessionCategory => cat !== "All")
-                      .map((cat) => (
-                      <Button
-                        key={cat}
-                        type="button"
-                        size="sm"
-                        variant={composerCategory === cat ? "default" : "outline"}
-                        aria-pressed={composerCategory === cat}
-                        onClick={() => setComposerCategory(cat)}
-                        className="rounded-full text-xs"
-                      >
-                        {cat}
-                      </Button>
-                    ))}
+                <DialogBody className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label htmlFor="confession-alias" className="type-label text-muted-foreground">
+                      Choose Anonymous Alias
+                    </label>
+                    <select
+                      data-control="field"
+                      id="confession-alias"
+                      value={alias}
+                      onChange={(e) => setAlias(e.target.value)}
+                      className="w-full h-9 rounded-xl border border-border/80 bg-background px-3 text-sm focus:outline-none"
+                    >
+                      {ALIASES.map((a) => (
+                        <option key={a} value={a}>
+                          {a}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                </div>
 
-                <div className="space-y-1.5">
-                  <label htmlFor="confession-body" className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Your Confession
-                  </label>
-                  <Textarea
-                    id="confession-body"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    placeholder="Keep it kind, specific, and safe…"
-                    className="min-h-24 resize-none"
-                    required
-                    autoFocus
-                  />
-                </div>
+                  <div className="space-y-1.5">
+                    <span className="type-label text-muted-foreground">
+                      Category
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {categories
+                        .filter((cat): cat is ConfessionCategory => cat !== "All")
+                        .map((cat) => (
+                        <Button
+                          key={cat}
+                          type="button"
+                          size="sm"
+                          variant={composerCategory === cat ? "default" : "outline"}
+                          aria-pressed={composerCategory === cat}
+                          onClick={() => setComposerCategory(cat)}
+                          className="rounded-full text-xs"
+                        >
+                          {cat}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
 
-                <div className="flex items-start gap-2 rounded-xl bg-primary/10 border border-primary/20 px-3 py-2.5 text-[11px] text-muted-foreground">
-                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
-                  <span>
-                    This demo stores the post in your browser session only. It is
-                    not sent to a moderation service.
-                  </span>
-                </div>
+                  <div className="space-y-1.5">
+                    <label htmlFor="confession-body" className="type-label text-muted-foreground">
+                      Your Confession
+                    </label>
+                    <Textarea
+                      data-control="field"
+                      id="confession-body"
+                      value={body}
+                      onChange={(e) => setBody(e.target.value)}
+                      placeholder="Keep it kind, specific, and safe…"
+                      className="min-h-24 resize-none"
+                      required
+                    />
+                  </div>
 
-                <div className="flex justify-end gap-2 pt-1">
+                  <div data-notice="info" className="flex items-start gap-2 text-xs text-muted-foreground">
+                    <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
+                    <span>
+                      This demo stores the post in your browser session only. It is
+                      not sent to a moderation service.
+                    </span>
+                  </div>
+
+                </DialogBody>
+                <DialogFooter>
                   <Dialog.Close
                     render={<Button type="button" variant="ghost" size="sm">Cancel</Button>}
                   />
                   <Button type="submit" size="sm" className="rounded-full gap-1.5">
                     Whisper Anonymously
                   </Button>
-                </div>
+                </DialogFooter>
               </form>
-            </Dialog.Popup>
-          </Dialog.Portal>
+          </DialogContent>
         </Dialog.Root>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
