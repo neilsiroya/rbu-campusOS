@@ -6,7 +6,17 @@ Last audited: 2026-10-08. Repository baseline: `e6db0dd`.
 
 `docs/tasks/01e-navigation.md`
 
-Current objective: establish the final CampusOS navigation hierarchy, grouping, destination ordering, active states and cross-device interaction language using the Task 01D application shell. Global spatial motion and individual page redesigns remain deferred.
+Current objective: Task 01E is complete. Stop here; Task 01F requires separate authorization.
+
+### Task 01E completion - 2026-10-12
+
+- Shared hierarchy now contains all 27 protected destinations: standalone Dashboard; Campus life (Feed, Events, Clubs, People, Confessions, Sports, Gaming); Discover (Map, Facilities, Services, Hostels, Lost & Found, Marketplace); Academics (Study Hub, Academics, Timetable, Attendance, Assignments, Exams); Opportunities (Internships, Hackathons, Placements); Personal (Notifications, Profile, Campus AI, Settings). Campus activity leads academic utilities. Profile remains in its menu and is now directly listed too. All original labels/icons and routes are retained.
+- Desktop and drawer share compact neutral navigation items, static edge/current markers, semantic typography, consistent 16px Lucide icons, hover/pressed surfaces and inset keyboard focus. Added navigation.css and consolidated exact/segment-aware most-specific matching for sidebar, dock and breadcrumb. Travelling spring indicators/redundant dot removed; global route/drawer motion unchanged.
+- Dock: Dashboard, Campus Feed, Events, Campus Map, More. Full labels may wrap; icons align and the existing in-flow dock reserves about 77px at 390x844, leaving main content above it. All routes remain available in the drawer. Shell structure, safe-area rules, accessibility and application behavior are preserved.
+- Validated Dashboard/Feed/Map at 1440x900 dark, Study Hub/Internships at 1280x800 light, Profile/Settings at 1280x500 light, and Confessions/Events/Feed at 390x844 light/dark. Click/keyboard client navigation, active states, hover/press/focus, independent main/sidebar scroll, short-height final-item access, drawer focus wrapping/dismissal/return/inertness and dock navigation pass. No sampled root/main horizontal overflow. No nested protected route exists; no extra tablet matrix because responsive shell logic is unchanged.
+- Command Center filtering/Escape/focus return, Notifications/Profile menus, Confessions dialog layering and Map canvas pass. Final Dashboard return confirmed on desktop/mobile with correct current state and main focus. Next.js dev badge intercepts the center of the mobile Dashboard item; keyboard and unobstructed pointer area work. This development-only overlay obstruction remains; no shell/product workaround introduced. Cold dev compilation caused tool timeouts, not an established production failure.
+- Typecheck, lint and diff check pass; captured logs show no errors and only previously documented smooth-scroll/THREE.Clock warnings. Checklist complete; original dark theme retained, viewport emulation reset. No dependencies, backend/product changes, production build or full QA rerun.
+- Remaining: dev badge overlap, existing identity/preference mismatches, legacy page materials and warnings. Recommended Task 01F: define accessible/reduced-motion route continuity, shared shell interactions and selected useful surface depth, without arbitrary 3D decoration. Task 01F has not started.
 
 ### Task 01D completion - 2026-10-12
 
@@ -95,6 +105,6 @@ Browser samples: 1440×900 desktop, 1280×800 laptop, 768×1024 tablet, 390×844
 
 ## Modified files / exact next action
 
-Task 01D files: `app/shell.css`, `app/campus-design.css`, `app/globals.css`, `components/layout/AppShell.tsx`, `components/layout/Header.tsx`, `components/layout/Sidebar.tsx`, `components/layout/ProfileMenu.tsx`, `docs/tasks/01d-app-shell.md`, `docs/STATE.md`.
+Task 01E files: `lib/nav.ts`, `components/layout/Sidebar.tsx`, `components/layout/AppShell.tsx`, `components/layout/Header.tsx`, `app/navigation.css`, `app/globals.css`, `app/campus-design.css`, `docs/tasks/01e-navigation.md`, `docs/STATE.md`.
 
-Task 01D is complete. Stop here. Exact recommended next task, only when separately authorized: Task 01E navigation hierarchy, grouping, active states and interaction language. Task 01F spatial motion, functional fixes and dependency reconciliation remain separately scoped work.
+Task 01E complete. Stop. Exact recommended next task, only when separately authorized: Task 01F motion and spatial-interface system. Functional fixes and dependency reconciliation remain separately scoped.

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Menu, Moon, Sun, X, ChevronRight } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { titleForPath, NAV_GROUPS } from "@/lib/nav";
+import { titleForPath, navigationForPath } from "@/lib/nav";
 import { BrandMark } from "@/components/os/BrandMark";
 import CommandSearch from "./CommandSearch";
 import NotificationsMenu from "./NotificationsMenu";
@@ -19,7 +19,7 @@ export default function Header({ onMenuToggle, isMobileMenuOpen }: {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(subscribe, () => true, () => false);
   const dark = mounted && resolvedTheme === "dark";
-  const group = NAV_GROUPS.find((g) => g.items.some((i) => pathname === i.href || pathname.startsWith(`${i.href}/`)))?.group;
+  const group = navigationForPath(pathname)?.group;
   return (
     <header data-surface="contained" data-controls className="app-header flex shrink-0 items-center justify-between gap-2">
       <div className="flex min-w-0 items-center gap-2">

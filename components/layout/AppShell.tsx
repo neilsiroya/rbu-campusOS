@@ -6,20 +6,13 @@ import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { ViewTransitionWrapper, SharedElement } from "./ViewTransitionWrapper";
-import {
-  LayoutDashboard,
-  GraduationCap,
-  Map,
-  Sparkles,
-  Menu,
-} from "lucide-react";
-import { motion, LayoutGroup, useReducedMotion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { Menu } from "lucide-react";
+import { MOBILE_NAV_ITEMS, navigationForPath } from "@/lib/nav";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const reduceMotion = useReducedMotion();
+  const currentDestination = navigationForPath(pathname);
 
   useEffect(() => {
     const onResize = () => {
@@ -67,13 +60,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     };
   }, [isMobileMenuOpen]);
 
-  const mobileNavItems = [
-    { label: "Home", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Academics", href: "/academics", icon: GraduationCap },
-    { label: "Map", href: "/map", icon: Map },
-    { label: "AI", href: "/campus-ai", icon: Sparkles },
-  ];
-
   return (
     <ViewTransitionWrapper className="flex min-h-0 flex-1 flex-col">
       <div className="app-shell relative flex h-screen h-[100dvh] w-full overflow-hidden text-foreground">
@@ -112,51 +98,33 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             {/* Mobile Thumb-Accessible Dock */}
             <nav
               aria-label="Mobile Bottom Navigation"
-              className={cn(
-                "app-mobile-dock flex items-stretch lg:hidden"
-              )}
+              className="app-mobile-dock flex items-stretch lg:hidden"
             >
-              <LayoutGroup id="mobile-dock-nav" inherit>
-                {mobileNavItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      aria-current={isActive ? "page" : undefined}
-                      className={cn(
-                        "type-label relative flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-                        isActive
-                          ? "font-bold text-primary"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="mobile-dock-active"
-                          className="absolute inset-1 rounded-md bg-primary/10 border-t-2 border-primary"
-                          transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 32 }}
-                          aria-hidden="true"
-                        />
-                      )}
-                      <Icon className="relative z-10 size-4" aria-hidden="true" />
-                      <span className="relative z-10">{item.label}</span>
-                    </Link>
-                  );
-                })}
-                <button
-                  type="button"
-                  onClick={() => setIsMobileMenuOpen(true)}
-                  className="type-label relative flex min-h-[44px] min-w-[44px] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2 font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-                  aria-label="Open full menu"
-                  aria-controls="app-sidebar"
-                  aria-expanded={isMobileMenuOpen}
-                >
-                  <Menu className="relative z-10 size-4" aria-hidden="true" />
-                  <span className="relative z-10">More</span>
-                </button>
-              </LayoutGroup>
+              {MOBILE_NAV_ITEMS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={currentDestination?.href === item.href ? "page" : undefined}
+                    className="campus-nav-item campus-dock-item type-label"
+                  >
+                    <Icon aria-hidden="true" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="campus-nav-item campus-dock-item type-label"
+                aria-label="Open full menu"
+                aria-controls="app-sidebar"
+                aria-expanded={isMobileMenuOpen}
+              >
+                <Menu aria-hidden="true" />
+                <span>More</span>
+              </button>
             </nav>
           </div>
         </SharedElement>

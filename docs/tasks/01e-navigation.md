@@ -558,45 +558,45 @@ Do not rerun the entire Task 00 QA matrix.
 
 Task 01E is complete only when:
 
-- [ ] all protected navigation destinations were inventoried
-- [ ] every valid destination remains reachable
-- [ ] navigation grouping reflects CampusOS product hierarchy
-- [ ] destination ordering is intentional
-- [ ] community/campus identity is not subordinated to academic-dashboard framing
-- [ ] desktop navigation hierarchy is coherent
-- [ ] navigation items share one visual language
-- [ ] active route is immediately understandable
-- [ ] active route does not rely solely on color where practical
-- [ ] hover state is coherent
-- [ ] focus-visible state is coherent
-- [ ] pressed state is coherent
-- [ ] group labels are readable and restrained
-- [ ] icons are visually consistent
-- [ ] mobile drawer shares the same information architecture
-- [ ] mobile drawer accessibility remains intact
-- [ ] mobile dock contains an intentional high-value subset
-- [ ] complete navigation remains reachable on mobile
-- [ ] dock active states are coherent
-- [ ] desktop/laptop navigation was validated
-- [ ] mobile navigation was validated
-- [ ] short-height sidebar was validated
-- [ ] light mode was validated
-- [ ] dark mode was validated
-- [ ] representative routes from each major group were tested
-- [ ] active state remains correct after client navigation
-- [ ] shell has no obvious regression
-- [ ] Command Center has no obvious regression
-- [ ] Notifications has no obvious regression
-- [ ] Profile menu has no obvious regression
-- [ ] representative dialog layering has no obvious regression
-- [ ] Map layout has no obvious regression
-- [ ] no intentional product functionality changes were introduced
-- [ ] typecheck passes
-- [ ] lint passes
-- [ ] `git diff --check` passes
-- [ ] no obvious new runtime errors were introduced
-- [ ] task checklist is accurate
-- [ ] `docs/STATE.md` is updated
+- [x] all protected navigation destinations were inventoried
+- [x] every valid destination remains reachable
+- [x] navigation grouping reflects CampusOS product hierarchy
+- [x] destination ordering is intentional
+- [x] community/campus identity is not subordinated to academic-dashboard framing
+- [x] desktop navigation hierarchy is coherent
+- [x] navigation items share one visual language
+- [x] active route is immediately understandable
+- [x] active route does not rely solely on color where practical
+- [x] hover state is coherent
+- [x] focus-visible state is coherent
+- [x] pressed state is coherent
+- [x] group labels are readable and restrained
+- [x] icons are visually consistent
+- [x] mobile drawer shares the same information architecture
+- [x] mobile drawer accessibility remains intact
+- [x] mobile dock contains an intentional high-value subset
+- [x] complete navigation remains reachable on mobile
+- [x] dock active states are coherent
+- [x] desktop/laptop navigation was validated
+- [x] mobile navigation was validated
+- [x] short-height sidebar was validated
+- [x] light mode was validated
+- [x] dark mode was validated
+- [x] representative routes from each major group were tested
+- [x] active state remains correct after client navigation
+- [x] shell has no obvious regression
+- [x] Command Center has no obvious regression
+- [x] Notifications has no obvious regression
+- [x] Profile menu has no obvious regression
+- [x] representative dialog layering has no obvious regression
+- [x] Map layout has no obvious regression
+- [x] no intentional product functionality changes were introduced
+- [x] typecheck passes
+- [x] lint passes
+- [x] `git diff --check` passes
+- [x] no obvious new runtime errors were introduced
+- [x] task checklist is accurate
+- [x] `docs/STATE.md` is updated
 
 ---
 
@@ -619,3 +619,53 @@ When complete, update `docs/STATE.md` with:
 Do not begin Task 01F.
 
 Task 01F should define the CampusOS motion and spatial-interface system across route transitions, shared shell interactions and selected high-value surfaces without introducing arbitrary 3D decoration.
+## Implementation inventory - 2026-10-12
+
+Before edits: 27 protected page routes, all flat (no nested/deeper page to exercise). 26 were in NAV_GROUPS; Profile was available through the header menu. Desktop and drawer rendered the same list. Existing sidebar/dock matching was exact-or-segment-prefix; breadcrumb title matching was exact-only. There are no disabled navigation destinations or destination badges. Existing Lucide associations are retained; all destination icons now use 16px / 1.75 stroke.
+
+| Route | Original label | Icon | Original group | Desktop / drawer | Original dock label |
+| --- | --- | --- | --- | --- | --- |
+| `/dashboard` | Dashboard | LayoutDashboard | Overview | Yes / Yes | Home |
+| `/feed` | Campus Feed | Newspaper | Community | Yes / Yes | No |
+| `/confessions` | Confessions | Ghost | Community | Yes / Yes | No |
+| `/events` | Events | Calendar | Community | Yes / Yes | No |
+| `/clubs` | Clubs | Users | Community | Yes / Yes | No |
+| `/people` | People | UserRound | Community | Yes / Yes | No |
+| `/lost-found` | Lost & Found | Search | Community | Yes / Yes | No |
+| `/map` | Campus Map | Map | Campus & Exchange | Yes / Yes | Map |
+| `/marketplace` | Marketplace | ShoppingBag | Campus & Exchange | Yes / Yes | No |
+| `/facilities` | Facilities | Building2 | Campus & Exchange | Yes / Yes | No |
+| `/services` | Services | LifeBuoy | Campus & Exchange | Yes / Yes | No |
+| `/hostels` | Hostels | Building2 | Campus & Exchange | Yes / Yes | No |
+| `/notes` | Study Hub | BookOpen | Knowledge & Academics | Yes / Yes | No |
+| `/academics` | Academics | GraduationCap | Knowledge & Academics | Yes / Yes | Academics |
+| `/timetable` | Timetable | Clock3 | Knowledge & Academics | Yes / Yes | No |
+| `/attendance` | Attendance | ClipboardList | Knowledge & Academics | Yes / Yes | No |
+| `/assignments` | Assignments | FileText | Knowledge & Academics | Yes / Yes | No |
+| `/exams` | Exams | GraduationCap | Knowledge & Academics | Yes / Yes | No |
+| `/sports` | Sports | Trophy | Student Life | Yes / Yes | No |
+| `/gaming` | Gaming | Gamepad2 | Student Life | Yes / Yes | No |
+| `/internships` | Internships | Briefcase | Opportunities | Yes / Yes | No |
+| `/hackathons` | Hackathons | Zap | Opportunities | Yes / Yes | No |
+| `/placements` | Placements | GraduationCap | Opportunities | Yes / Yes | No |
+| `/campus-ai` | Campus AI | Sparkles | System & AI | Yes / Yes | AI |
+| `/notifications` | Notifications | Bell | System & AI | Yes / Yes | No |
+| `/settings` | Settings | Settings | System & AI | Yes / Yes | No |
+| `/profile` | Profile | UserRound (new main-nav entry) | Profile menu only | Via Profile menu / via header menu | No |
+
+Final order: standalone Dashboard (Home, without a redundant visible group heading); Campus life: Campus Feed, Events, Clubs, People, Confessions, Sports, Gaming; Discover: Campus Map, Facilities, Services, Hostels, Lost & Found, Marketplace; Academics: Study Hub, Academics, Timetable, Attendance, Assignments, Exams; Opportunities: Internships, Hackathons, Placements; Personal: Notifications, Profile, Campus AI, Settings.
+
+Campus activity and participation precede utilities and academics. Discover places location and services together before exchange. Study Hub leads academic tools. Personal collects alerts, identity and platform utilities. The dock shares the exact labels/icons for Dashboard, Campus Feed, Events, Campus Map, plus More. Every original destination remains in the shared hierarchy; Profile is now also directly listed. Command Center continues deriving its route index from this configuration.
+
+Current-page treatment is a neutral inset surface with a static edge mark and semibold label, exposed through aria-current. One segment-aware, most-specific matcher serves sidebar, dock and breadcrumb. Hover, inset keyboard focus and pressed surfaces share 01A tokens. Items are 40px desktop / at least 44px drawer and dock; labels retain semantic 14px navigation / 12px compact typography. Existing travelling spring indicators and redundant dot were replaced with static markers; route/drawer motion and shell structure are unchanged.
+
+## Verified completion - 2026-10-12
+
+- Completed: Dashboard, Campus Feed and Campus Map at 1440x900 dark; Study Hub and Internships at 1280x800 light; Profile/Settings at 1280x500 light; Confessions, Events and Campus Feed at 390x844 light/dark. All sampled root/main regions have no horizontal overflow. Map canvas rendered at 752x458 CSS pixels. No nested protected page exists, so nested matching is source-reviewed only.
+- Desktop/laptop click and keyboard routes select the expected current destination and reset/focus main. Sidebar scroll reaches Settings at short height (visible y=390.8-430.8); its inset focus outline is visible. Main scroll remains independent. Real pointer hover and pressed states and dock keyboard focus/pressed feedback were observed.
+- Mobile drawer: all 27 links remain in the shared list. Keyboard opening, initial close focus, forward/reverse wrapping, Escape, close button, backdrop dismissal, focus return and background inertness/interception pass. Drawer navigation to Confessions and dock navigation to Events/Feed pass. Full labels wrap on mobile; dock icons are aligned, and the in-flow dock reserves approximately 77px, with main ending at its top. Existing safe-area rules are retained; no physical notched device test is claimed. Responsive shell logic/breakpoints are unchanged, so no additional tablet pass is required.
+- Command Center keyboard opening, Profile filtering and Escape/focus return pass. Notifications and Profile menu open/dismiss and return focus. Confessions dialog remains y=105.8-738.2 at 390x844; its backdrop intercepts both header and dock, initial alias focus and Escape/trigger return pass. No product data mutated.
+- Typecheck and lint passed; diff check passed before final documentation. Captured logs have no errors, only existing smooth-scroll and THREE.Clock warnings.
+- Final return-to-Dashboard check passed on desktop and mobile, including keyboard and pointer, correct current markers and main-content focus. The initial mobile center click hit the Next.js development badge (confirmed by hit testing); clicking an unobstructed part of the same link succeeds. This dev-only overlay obstruction remains, without application changes. Cold development compilation also caused navigation-tool timeouts; no production timing claim is made.
+- Final typecheck, lint and diff check pass. Source inventory comparison confirms 27 distinct navigation entries for 27 protected pages, with no missing destinations. Docs are UTF-8. Original dark theme retained and viewport/device emulation reset. No production build or repeated full audit was run.
+- Remaining debt: development badge overlap, existing ProfileMenu identity mismatch, unused Settings preferences, existing smooth-scroll/THREE.Clock warnings, and deferred route/drawer/global spatial motion. No new application navigation regression found in the representative set. Task 01F should define route continuity, shared-shell interaction motion and selected useful surface depth while preserving accessibility/reduced motion; it has not been started.

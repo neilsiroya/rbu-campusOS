@@ -3,14 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, X, ChevronRight } from "lucide-react";
+import { LogOut, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase";
-import { NAV_GROUPS } from "@/lib/nav";
+import { NAV_GROUPS, navigationForPath } from "@/lib/nav";
 import { BrandMark } from "@/components/os/BrandMark";
 import { Button } from "@/components/ui/button";
-import { useReducedMotion, LayoutGroup } from "framer-motion";
-import { motion } from "framer-motion";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -22,7 +20,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState("");
-  const shouldReduceMotion = useReducedMotion();
+  const currentDestination = navigationForPath(pathname);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -76,57 +74,30 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
       <nav
         aria-label="Primary navigation"
-        className="shell-navigation custom-scrollbar min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain"
+        className="shell-navigation custom-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain"
       >
-        <LayoutGroup id="sidebar-nav" inherit>
         {NAV_GROUPS.map((group) => (
-          <div key={group.group} className="space-y-1">
-            <h2 className="type-label px-3 pb-1 font-semibold text-muted-foreground flex items-center gap-2">
-              <ChevronRight className="size-3.5 opacity-50" aria-hidden="true" />
-              {group.group}
-            </h2>
+          <div key={group.group} className="navigation-group" role="group" aria-label={group.group}>
+            {group.group !== "Home" && (
+              <h2 className="type-label navigation-group-label">{group.group}</h2>
+            )}
             {group.items.map((item) => {
               const Icon = item.icon;
-              const isActive =
-                pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={closeMobileMenu}
-                  aria-current={isActive ? "page" : undefined}
-                  className={cn(
-                    "relative flex min-h-11 items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-150",
-                    isActive
-                      ? "text-primary font-semibold"
-                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-                  )}
+                  aria-current={currentDestination?.href === item.href ? "page" : undefined}
+                  className="campus-nav-item type-navigation"
                 >
-                  {isActive && (
-                    <motion.div
-                      layoutId="sidebar-active-pill"
-                      className="absolute inset-0 rounded-md bg-primary/10 border-l-2 border-primary"
-                      transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 350, damping: 30 }}
-                      aria-hidden="true"
-                    />
-                  )}
-                  <Icon className="relative z-10 size-4 shrink-0" aria-hidden="true" />
-                  <span className="relative z-10">{item.name}</span>
-                  {isActive && (
-                    <motion.div
-                      className="relative z-10 ml-auto size-1.5 rounded-full bg-primary"
-                      initial={shouldReduceMotion ? false : { scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                      aria-hidden="true"
-                    />
-                  )}
+                  <Icon aria-hidden="true" />
+                  <span>{item.name}</span>
                 </Link>
               );
             })}
           </div>
         ))}
-        </LayoutGroup>
       </nav>
 
       <div data-controls className="shell-account shrink-0">

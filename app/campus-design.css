@@ -129,8 +129,6 @@ a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 }
 
 /* Surface hierarchy: work planes, recessed activity and raised command tools. */
-.app-sidebar nav a { transition: background 160ms ease, color 160ms ease, transform 160ms ease; }
-.app-sidebar nav a:active { transform: translateX(2px); }
 .activity-surface { background: var(--muted); box-shadow: inset 0 1px 2px #00000005; }
 .command-surface, .glass-command { box-shadow: var(--depth-edge), var(--depth-overlay); }
 .featured-card { border-radius: .5rem; border-top: 3px solid var(--primary); }
@@ -139,10 +137,9 @@ a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 [data-slot="button"]:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: var(--focus-offset); }
 .campus-brand-symbol { border-radius: 3px; box-shadow: 2px 2px 0 color-mix(in srgb, var(--foreground) 15%, transparent); transition: box-shadow var(--motion-control) ease, transform var(--motion-control) ease; }
 .campus-brand:hover .campus-brand-symbol { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 color-mix(in srgb, var(--foreground) 20%, transparent); }
-.app-sidebar nav a:focus-visible { outline-offset: -2px; }
 @media (max-width: 380px) {
   .app-header-brand .campus-brand-wordmark { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .interactive-card:hover, .app-sidebar nav a:active, [data-slot="button"]:active:not(:disabled), .campus-brand:hover .campus-brand-symbol { transform: none; }
+  .interactive-card:hover, [data-slot="button"]:active:not(:disabled), .campus-brand:hover .campus-brand-symbol { transform: none; }
 }
