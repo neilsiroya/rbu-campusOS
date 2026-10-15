@@ -11,6 +11,7 @@ const PARTS = [
   path.join(ROOT, 'v3', 'core-06b.b64'),
   path.join(ROOT, 'v3', 'core-07.b64'),
 ]
+const EXPECTED_LENGTHS = [8668, 8668, 8668, 8668, 8668, 8668, 4400, 4268, 7396]
 const EXPECTED_SHA1 = '203cd1662c6356c073b04f25cb9a8b2038322e43'
 const EXPECTED_SHA256 = '13adaa1cd2f0e3398193bfb8d8f6a62b62f26571068117397f00e726b878cdf0'
 
@@ -28,11 +29,14 @@ function run(cmd, args) {
 }
 
 function main() {
-  for (const file of PARTS) {
+  const encodedParts = PARTS.map((file, index) => {
     if (!fs.existsSync(file)) throw new Error(`SOURCE_CHUNK_MISSING ${file}`)
-  }
+    const text = fs.readFileSync(file, 'utf8').trim()
+    if (text.length !== EXPECTED_LENGTHS[index]) throw new Error(`SOURCE_CHUNK_LENGTH_MISMATCH ${path.basename(file)} ${text.length}`)
+    return text
+  })
 
-  const core = Buffer.concat(PARTS.map((file) => Buffer.from(fs.readFileSync(file, 'utf8').trim(), 'base64')))
+  const core = Buffer.concat(encodedParts.map((text) => Buffer.from(text, 'base64')))
   const sha1 = digest('sha1', core)
   const sha256 = digest('sha256', core)
   if (sha1 !== EXPECTED_SHA1) throw new Error(`SOURCE_ARCHIVE_SHA1_MISMATCH ${sha1}`)
