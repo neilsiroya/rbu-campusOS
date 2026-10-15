@@ -5,7 +5,12 @@ const cp = require('child_process')
 
 const ROOT = process.cwd()
 const APP = path.join(ROOT, 'app')
-const PARTS = Array.from({ length: 8 }, (_, i) => path.join(ROOT, 'v3', `core-${String(i).padStart(2, '0')}.b64`))
+const PARTS = [
+  ...Array.from({ length: 6 }, (_, i) => path.join(ROOT, 'v3', `core-${String(i).padStart(2, '0')}.b64`)),
+  path.join(ROOT, 'v3', 'core-06a.b64'),
+  path.join(ROOT, 'v3', 'core-06b.b64'),
+  path.join(ROOT, 'v3', 'core-07.b64'),
+]
 const EXPECTED_SHA1 = '203cd1662c6356c073b04f25cb9a8b2038322e43'
 const EXPECTED_SHA256 = '13adaa1cd2f0e3398193bfb8d8f6a62b62f26571068117397f00e726b878cdf0'
 
