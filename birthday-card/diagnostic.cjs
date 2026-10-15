@@ -13,6 +13,18 @@ if (result.status === 0) {
   process.exit(0)
 }
 
+const exactSourceFailures = [
+  ['SOURCE_CHUNK_MISSING', 111],
+  ['SOURCE_ARCHIVE_SHA1_MISMATCH', 112],
+  ['SOURCE_EXTRACTION_FAILED', 113],
+]
+for (const [marker, code] of exactSourceFailures) {
+  if (text.includes(marker)) {
+    console.error(`DIAGNOSTIC_SOURCE_CODE=${code}`)
+    process.exit(code)
+  }
+}
+
 const stages = [
   ['npx playwright test', 30],
   ['npx playwright install chromium', 29],
@@ -25,7 +37,7 @@ const stages = [
   ['> npm run photos:build', 22],
   ['> npm install --no-audit --no-fund', 21],
 ]
-let code = text.includes('ORIGINAL_PHOTOS_OK 10/10') ? 20 : (text.includes('SOURCE_ARCHIVE_OK') ? 12 : 11)
+let code = text.includes('ORIGINAL_PHOTOS_OK 10/10') ? 20 : (text.includes('SOURCE_ARCHIVE_OK') ? 12 : 114)
 for (const [marker, stageCode] of stages) {
   if (text.includes(marker)) { code = stageCode; break }
 }
