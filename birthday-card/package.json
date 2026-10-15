@@ -1,0 +1,8 @@
+{
+  "name": "birthday-card-fine-art-deploy-wrapper",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build.cjs"
+  }
+}
