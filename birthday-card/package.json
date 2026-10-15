@@ -3,6 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "node build-v3.cjs"
+    "build": "node typecheck-diagnostic.cjs"
   }
 }
